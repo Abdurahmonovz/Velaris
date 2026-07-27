@@ -1,0 +1,132 @@
+import React from 'react';
+import { useApp } from '../context/AppContext';
+import { Package, Clock, CheckCircle2, Truck, AlertCircle, MapPin } from 'lucide-react';
+import { OrderStatus } from '../types';
+
+export const OrdersScreen: React.FC = () => {
+  const { orders, refreshOrders, t } = useApp();
+
+  const getStatusStep = (status: OrderStatus): number => {
+    switch (status) {
+      case 'To\'lov kutilmoqda': return 1;
+      case 'Qabul qilindi': return 1;
+      case 'Tayyorlanmoqda': return 2;
+      case 'Jo\'natildi': return 3;
+      case 'Yetkazildi': return 4;
+      case 'Bekor qilindi': return -1;
+      default: return 1;
+    }
+  };
+
+  return (
+    <div className="space-y-4 pb-28 pt-2 px-4 max-w-md mx-auto">
+      {/* Title */}
+      <div className="flex items-center justify-between">
+        <h1 className="text-xl font-serif font-bold text-gray-100 gold-gradient-text">
+          {t('ordersTitle')}
+        </h1>
+        <button
+          onClick={() => refreshOrders()}
+          className="text-xs text-[#D4AF37] hover:underline"
+        >
+          Yangilash
+        </button>
+      </div>
+
+      {orders.length === 0 ? (
+        <div className="text-center py-16 bg-[#140921] rounded-2xl border border-white/5 space-y-3">
+          <Package className="w-10 h-10 text-gray-500 mx-auto" />
+          <p className="text-xs text-gray-400">{t('noOrders')}</p>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {orders.map((order) => {
+            const step = getStatusStep(order.status as OrderStatus);
+            const isCancelled = step === -1;
+
+            return (
+              <div
+                key={order.id}
+                className="p-4 bg-gradient-to-br from-[#1A0E2B] to-[#12081E] rounded-2xl border border-[#D4AF37]/25 space-y-3 shadow-lg"
+              >
+                {/* Header info */}
+                <div className="flex items-center justify-between border-b border-white/10 pb-2.5">
+                  <div>
+                    <span className="text-[10px] text-gray-400 block">{t('orderId')}</span>
+                    <span className="text-sm font-bold text-[#D4AF37]">#{order.id}</span>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-[10px] text-gray-400 block">{order.created_at?.slice(0, 10)}</span>
+                    <span className="text-xs font-semibold text-gray-200">
+                      {order.total_amount.toLocaleString('uz-UZ')} {t('som')}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Progress Status Bar */}
+                {!isCancelled ? (
+                  <div className="py-2 space-y-2">
+                    <div className="flex items-center justify-between text-[10px] font-bold">
+                      <span className={step >= 1 ? 'text-[#D4AF37] flex items-center gap-0.5' : 'text-gray-500'}>
+                        {order.status === "To'lov kutilmoqda" ? "Tekshirilmoqda ☑️" : "Qabul qilindi"}
+                      </span>
+                      <span className={step >= 2 ? 'text-[#D4AF37] font-bold animate-pulse' : 'text-gray-500'}>
+                        {step === 2 ? "⚙️ Tayyorlanmoqda" : "Tayyorlanmoqda"}
+                      </span>
+                      <span className={step >= 3 ? 'text-[#D4AF37] font-bold animate-pulse' : 'text-gray-500'}>
+                        {step === 3 ? "🚚 Jo'natildi" : "Jo'natildi"}
+                      </span>
+                      <span className={step >= 4 ? 'text-emerald-400 font-bold' : 'text-gray-500'}>
+                        {step === 4 ? "✅ Yetkazildi" : "Yetkazildi"}
+                      </span>
+                    </div>
+
+                    {/* Progress Track */}
+                    <div className="relative w-full h-2.5 bg-[#0D0517] rounded-full overflow-hidden border border-[#D4AF37]/30">
+                      <div
+                        className="h-full bg-gradient-to-r from-[#F5E4A0] via-[#D4AF37] to-[#A37F1D] transition-all duration-700 ease-out shadow-gold-glow"
+                        style={{
+                          width: `${step === 1 ? '25%' : step === 2 ? '50%' : step === 3 ? '75%' : '100%'}`,
+                        }}
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  <div className="p-2 bg-red-500/10 border border-red-500/30 rounded-xl flex items-center gap-2 text-xs text-red-400 font-semibold">
+                    <AlertCircle className="w-4 h-4" />
+                    <span>Buyurtma bekor qilindi</span>
+                  </div>
+                )}
+
+                {/* Items Summary */}
+                <div className="space-y-1.5 pt-1">
+                  <span className="text-[10px] text-gray-400 font-medium uppercase">Mahsulotlar:</span>
+                  <div className="space-y-1">
+                    {order.items.map((item, idx) => (
+                      <div key={idx} className="flex items-center justify-between text-xs text-gray-300 bg-[#140824] px-2.5 py-1.5 rounded-lg border border-white/5">
+                        <span className="truncate max-w-[200px]">
+                          {item.name} ({item.size})
+                        </span>
+                        <span className="font-semibold text-[#D4AF37]">
+                          {item.quantity} dona x {item.unitPrice.toLocaleString('uz-UZ')} {t('som')}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Address info */}
+                <div className="text-[10px] text-gray-400 flex items-center gap-1 pt-1">
+                  <MapPin className="w-3 h-3 text-[#D4AF37]" />
+                  <span className="truncate">
+                    {order.address.region}, {order.address.district}, {order.address.street}
+                  </span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+};
