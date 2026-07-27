@@ -2,7 +2,8 @@ import TelegramBot from 'node-telegram-bot-api';
 import { db } from './db.js';
 
 const BOT_TOKEN = process.env.BOT_TOKEN || '8812053297:AAHYqr7B5dECnRi6r2cFSpKy-qOjD0cUWSk';
-const ADMIN_CHAT_IDS = ['5744542264', '7146730534'];
+const envAdminIds = process.env.ADMIN_CHAT_ID ? process.env.ADMIN_CHAT_ID.split(',').map(s => s.trim()) : [];
+const ADMIN_CHAT_IDS = Array.from(new Set([...envAdminIds, '5744542264', '7146730534']));
 
 let bot = null;
 
