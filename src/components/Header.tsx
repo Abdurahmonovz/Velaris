@@ -1,9 +1,9 @@
 import React from 'react';
 import { useApp } from '../context/AppContext';
-import { Search, Globe, Shield } from 'lucide-react';
+import { Search, Globe, Shield, Sun, Moon } from 'lucide-react';
 
 export const Header: React.FC = () => {
-  const { language, setLanguage, searchQuery, setSearchQuery, user, setActiveTab, t } = useApp();
+  const { language, setLanguage, theme, toggleTheme, user, setActiveTab, t } = useApp();
 
   const toggleLang = () => {
     setLanguage(language === 'uz' ? 'ru' : 'uz');
@@ -51,6 +51,15 @@ export const Header: React.FC = () => {
               <span>Admin</span>
             </button>
           )}
+
+          {/* Dark / Light Theme Toggle Button */}
+          <button
+            onClick={toggleTheme}
+            className="p-1.5 rounded-full border border-[#D4AF37]/30 bg-[#1E0F30] text-xs font-semibold text-[#D4AF37] hover:border-[#D4AF37] transition active:scale-95"
+            title={theme === 'dark' ? 'Kunduzgi rejim (Light Mode)' : 'Tungi rejim (Dark Mode)'}
+          >
+            {theme === 'dark' ? <Moon className="w-3.5 h-3.5 text-[#D4AF37]" /> : <Sun className="w-3.5 h-3.5 text-amber-400" />}
+          </button>
 
           {/* Language Switcher */}
           <button

@@ -5,6 +5,9 @@ import { translations } from '../locales/translations';
 interface AppContextType {
   language: Language;
   setLanguage: (lang: Language) => void;
+  theme: 'dark' | 'light';
+  setTheme: (theme: 'dark' | 'light') => void;
+  toggleTheme: () => void;
   t: (key: keyof typeof translations['uz']) => string;
   user: User | null;
   setUser: (user: User | null) => void;
@@ -45,6 +48,24 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [language, setLanguageState] = useState<Language>(() => {
     return (localStorage.getItem('velaris_lang') as Language) || 'uz';
   });
+
+  const [theme, setThemeState] = useState<'dark' | 'light'>(() => {
+    return (localStorage.getItem('velaris_theme') as 'dark' | 'light') || 'dark';
+  });
+
+  const toggleTheme = () => {
+    const next = theme === 'dark' ? 'light' : 'dark';
+    setThemeState(next);
+    localStorage.setItem('velaris_theme', next);
+  };
+
+  useEffect(() => {
+    if (theme === 'light') {
+      document.documentElement.classList.add('light');
+    } else {
+      document.documentElement.classList.remove('light');
+    }
+  }, [theme]);
 
   const [isFirstLaunch, setIsFirstLaunch] = useState<boolean>(() => {
     return !localStorage.getItem('velaris_lang');
@@ -333,6 +354,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       value={{
         language,
         setLanguage,
+        theme,
+        setTheme: setThemeState,
+        toggleTheme,
         t,
         user,
         setUser,

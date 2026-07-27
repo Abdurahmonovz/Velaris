@@ -7,11 +7,18 @@
     background-color: #0A0510;
     color: #F3F4F6;
     font-family: 'Plus Jakarta Sans', sans-serif;
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
 
   h1, h2, h3, h4, .font-serif-luxury {
     font-family: 'Cormorant Garamond', Georgia, serif;
   }
+}
+
+/* Light Theme Overrides */
+html.light body {
+  background-color: #F7F4EF !important;
+  color: #1F162B !important;
 }
 
 /* Custom Luxury Glassmorphism & Gold Styling */
