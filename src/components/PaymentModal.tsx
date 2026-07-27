@@ -242,7 +242,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
             <label className="border-2 border-dashed border-[#D4AF37]/40 rounded-2xl p-4 bg-[#1A0E2B]/50 hover:bg-[#1A0E2B] transition flex flex-col items-center justify-center cursor-pointer text-center space-y-2">
               <input
                 type="file"
-                accept="image/*"
+                accept="image/webp, image/png, image/jpeg, image/jpg, image/avif, image/gif, image/*, .webp"
                 onChange={handleFileChange}
                 className="hidden"
               />

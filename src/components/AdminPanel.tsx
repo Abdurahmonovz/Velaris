@@ -709,7 +709,7 @@ export const AdminPanel: React.FC = () => {
                     📁 Fayldan rasm yuklash
                     <input
                       type="file"
-                      accept="image/*"
+                      accept="image/webp, image/png, image/jpeg, image/jpg, image/avif, image/gif, image/*, .webp"
                       className="hidden"
                       onChange={(e) => {
                         const file = e.target.files?.[0];
@@ -818,7 +818,7 @@ export const AdminPanel: React.FC = () => {
                     📁 Fayldan rasm yuklash
                     <input
                       type="file"
-                      accept="image/*"
+                      accept="image/webp, image/png, image/jpeg, image/jpg, image/avif, image/gif, image/*, .webp"
                       className="hidden"
                       onChange={(e) => {
                         const file = e.target.files?.[0];
@@ -925,7 +925,7 @@ export const AdminPanel: React.FC = () => {
                     📁 Fayldan rasm yuklash
                     <input
                       type="file"
-                      accept="image/*"
+                      accept="image/webp, image/png, image/jpeg, image/jpg, image/avif, image/gif, image/*, .webp"
                       className="hidden"
                       onChange={(e) => {
                         const file = e.target.files?.[0];
