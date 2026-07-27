@@ -15,10 +15,74 @@
   }
 }
 
-/* Light Theme Overrides */
+/* Light Theme Overrides - Royal Vanilla Pearl & Champagne Gold */
 html.light body {
-  background-color: #F7F4EF !important;
+  background-color: #FAF7F2 !important;
   color: #1F162B !important;
+}
+
+html.light header, 
+html.light nav {
+  background-color: rgba(250, 247, 242, 0.95) !important;
+  border-color: rgba(212, 175, 55, 0.3) !important;
+}
+
+html.light .glass-panel {
+  background: rgba(255, 255, 255, 0.9) !important;
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(212, 175, 55, 0.3) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05) !important;
+}
+
+html.light .glass-card,
+html.light .bg-\[\#0A0510\],
+html.light .bg-\[\#12081E\],
+html.light .bg-\[\#160A26\],
+html.light .bg-\[\#140921\],
+html.light .bg-\[\#1E0F30\],
+html.light .bg-\[\#1A0E2B\],
+html.light .bg-\[\#150B21\],
+html.light .bg-\[\#170928\],
+html.light .bg-\[\#26123D\] {
+  background: #FFFFFF !important;
+  border-color: rgba(212, 175, 55, 0.25) !important;
+  color: #1F162B !important;
+  box-shadow: 0 4px 15px rgba(212, 175, 55, 0.08) !important;
+}
+
+html.light .text-gray-100,
+html.light .text-gray-200,
+html.light .text-gray-300 {
+  color: #1F162B !important;
+}
+
+html.light .text-gray-400,
+html.light .text-gray-500 {
+  color: #6E5B80 !important;
+}
+
+html.light .border-white\/10,
+html.light .border-white\/5,
+html.light .border-white\/20 {
+  border-color: rgba(212, 175, 55, 0.25) !important;
+}
+
+html.light input,
+html.light select,
+html.light textarea {
+  background-color: #F5F0E8 !important;
+  color: #1F162B !important;
+  border-color: rgba(212, 175, 55, 0.4) !important;
+}
+
+html.light input::placeholder {
+  color: #8E7A9F !important;
+}
+
+html.light .gold-gradient-text {
+  background: linear-gradient(135deg, #B8860B 0%, #AA771C 50%, #8B6508 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 /* Custom Luxury Glassmorphism & Gold Styling */
