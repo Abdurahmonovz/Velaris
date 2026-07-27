@@ -20,8 +20,8 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
 }) => {
   const { user, refreshOrders, setActiveTab, t } = useApp();
 
-  const cardNumber = '5614 6814 2987 8998';
-  const cardHolder = 'Abdurahmonov Zayniddin';
+  const cardNumber = '9860 1201 0261 5172';
+  const cardHolder = 'Azamat Umarqulov';
 
   const [copied, setCopied] = useState(false);
   const [receiptImage, setReceiptImage] = useState<string>('');

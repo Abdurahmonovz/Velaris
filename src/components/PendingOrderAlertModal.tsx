@@ -42,11 +42,11 @@ export const PendingOrderAlertModal: React.FC<PendingOrderAlertModalProps> = ({
         <div className="p-3 bg-[#1E0F30] rounded-2xl border border-[#D4AF37]/30 space-y-2 text-xs">
           <div className="flex justify-between text-gray-400">
             <span>Karta raqami:</span>
-            <span className="font-mono font-bold text-[#D4AF37]">5614 6814 2987 8998</span>
+            <span className="font-mono font-bold text-[#D4AF37]">9860 1201 0261 5172</span>
           </div>
           <div className="flex justify-between text-gray-400">
             <span>Karta egasi:</span>
-            <span className="font-bold text-gray-200">Abdurahmonov Zayniddin</span>
+            <span className="font-bold text-gray-200">Azamat Umarqulov</span>
           </div>
           <div className="flex justify-between text-gray-200 pt-1 border-t border-white/10 font-bold">
             <span>Jami summa:</span>

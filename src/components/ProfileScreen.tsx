@@ -17,7 +17,7 @@ const AdminLoginButton: React.FC = () => {
 
     // Check if phone matches admin numbers
     const clean = adminPhone.replace(/\D/g, '');
-    const isAdmin = ['998937188885', '937188885', '998955805852', '955805852', '998901234567'].includes(clean);
+    const isAdmin = ['998937188885', '937188885', '998955805852', '955805852', '998921983377', '921983377', '998901234567'].includes(clean);
 
     if (isAdmin) {
       setIsOpen(false);

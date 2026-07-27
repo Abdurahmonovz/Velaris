@@ -458,7 +458,7 @@ export function initDb() {
   }
 
   // Create default admin users if not existing
-  const adminPhones = ['+998937188885', '+998955805852', '+998901234567'];
+  const adminPhones = ['+998937188885', '+998955805852', '+998921983377', '+998901234567'];
   for (const phone of adminPhones) {
     const check = db.prepare('SELECT * FROM users WHERE phone = ?').get(phone);
     if (!check) {
