@@ -206,8 +206,20 @@ export const AdminPanel: React.FC = () => {
     }
   };
 
+  const [isSavingProduct, setIsSavingProduct] = useState(false);
+
   const handleSaveProduct = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!productForm.name.trim()) {
+      alert('Iltimos, atir nomini kiriting!');
+      return;
+    }
+    if (!productForm.brand.trim()) {
+      alert('Iltimos, atir brendini kiriting!');
+      return;
+    }
+
+    setIsSavingProduct(true);
     try {
       const url = editingProductId ? `/api/products/${editingProductId}` : '/api/products';
       const method = editingProductId ? 'PUT' : 'POST';
@@ -222,9 +234,16 @@ export const AdminPanel: React.FC = () => {
         setIsProductModalOpen(false);
         refreshProducts();
         fetchStats();
+        alert(editingProductId ? 'Atir muvaffaqiyatli tahrirlandi! ✅' : 'Yangi atir muvaffaqiyatli saqlandi! ✅');
+      } else {
+        const errorData = await res.json().catch(() => ({}));
+        alert('Saqlashda xatolik: ' + (errorData.error || `Server xatosi (${res.status})`));
       }
     } catch (err) {
       console.error('Failed to save product:', err);
+      alert('Tarmoq xatosi: ' + (err as Error).message);
+    } finally {
+      setIsSavingProduct(false);
     }
   };
 
@@ -744,9 +763,10 @@ export const AdminPanel: React.FC = () => {
 
               <button
                 type="submit"
-                className="w-full py-3 gold-btn rounded-xl text-xs font-bold shadow-gold-glow"
+                disabled={isSavingProduct}
+                className="w-full py-3 gold-btn rounded-xl text-xs font-bold shadow-gold-glow disabled:opacity-50"
               >
-                Saqlash
+                {isSavingProduct ? 'Saqlanmoqda...' : 'Saqlash'}
               </button>
             </form>
           </div>
