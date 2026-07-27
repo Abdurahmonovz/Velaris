@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import { Product, Order, Category, AdminStats } from '../types';
 import { Shield, Package, DollarSign, Users, Plus, Edit, Trash2, CheckCircle, RefreshCw, X, FolderPlus, Layers } from 'lucide-react';
+import { getApiUrl } from '../config';
 
 export const AdminPanel: React.FC = () => {
   const { products, categories, banners, refreshProducts, refreshCategories, refreshBanners, setActiveTab, t } = useApp();
@@ -62,7 +63,7 @@ export const AdminPanel: React.FC = () => {
 
   const fetchStats = async () => {
     try {
-      const res = await fetch('/api/admin/stats');
+      const res = await fetch(getApiUrl('/api/admin/stats'));
       if (res.ok) {
         const data = await res.json();
         setStats(data);
@@ -74,7 +75,7 @@ export const AdminPanel: React.FC = () => {
 
   const fetchAdminOrders = async () => {
     try {
-      const res = await fetch('/api/admin/orders');
+      const res = await fetch(getApiUrl('/api/admin/orders'));
       if (res.ok) {
         const data = await res.json();
         setOrders(data);
@@ -94,7 +95,7 @@ export const AdminPanel: React.FC = () => {
     if (!bannerForm.title_uz || !bannerForm.image) return;
 
     try {
-      const res = await fetch('/api/banners', {
+      const res = await fetch(getApiUrl('/api/banners'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(bannerForm),
@@ -120,7 +121,7 @@ export const AdminPanel: React.FC = () => {
   const handleDeleteBanner = async (id: number) => {
     if (!confirm('Ushbu reklama bannerini o\'chirishga ishonchingiz komilmi?')) return;
     try {
-      const res = await fetch(`/api/banners/${id}`, { method: 'DELETE' });
+      const res = await fetch(getApiUrl(`/api/banners/${id}`), { method: 'DELETE' });
       if (res.ok) {
         refreshBanners();
       }
@@ -137,7 +138,7 @@ export const AdminPanel: React.FC = () => {
       const url = editingCategoryId ? `/api/categories/${editingCategoryId}` : '/api/categories';
       const method = editingCategoryId ? 'PUT' : 'POST';
 
-      const res = await fetch(url, {
+      const res = await fetch(getApiUrl(url), {
         method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(categoryForm),
@@ -157,7 +158,7 @@ export const AdminPanel: React.FC = () => {
   const handleDeleteCategory = async (id: number) => {
     if (!confirm('Ushbu toifani o\'chirishga ishonchingiz komilmi?')) return;
     try {
-      const res = await fetch(`/api/categories/${id}`, { method: 'DELETE' });
+      const res = await fetch(getApiUrl(`/api/categories/${id}`), { method: 'DELETE' });
       if (res.ok) {
         refreshCategories();
       }
@@ -179,7 +180,7 @@ export const AdminPanel: React.FC = () => {
 
   const handleUpdateOrderStatus = async (orderId: number, status: string) => {
     try {
-      const res = await fetch(`/api/admin/orders/${orderId}/status`, {
+      const res = await fetch(getApiUrl(`/api/admin/orders/${orderId}/status`), {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status }),
@@ -196,7 +197,7 @@ export const AdminPanel: React.FC = () => {
   const handleDeleteProduct = async (id: number) => {
     if (!confirm('Ushbu atirni o\'chirishga ishonchingiz komilmi?')) return;
     try {
-      const res = await fetch(`/api/products/${id}`, { method: 'DELETE' });
+      const res = await fetch(getApiUrl(`/api/products/${id}`), { method: 'DELETE' });
       if (res.ok) {
         refreshProducts();
         fetchStats();
@@ -224,7 +225,7 @@ export const AdminPanel: React.FC = () => {
       const url = editingProductId ? `/api/products/${editingProductId}` : '/api/products';
       const method = editingProductId ? 'PUT' : 'POST';
 
-      const res = await fetch(url, {
+      const res = await fetch(getApiUrl(url), {
         method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(productForm),

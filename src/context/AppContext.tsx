@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Language, User, Product, Category, Banner, CartItem, DecantSize, Order } from '../types';
 import { translations } from '../locales/translations';
+import { getApiUrl } from '../config';
 
 interface AppContextType {
   language: Language;
@@ -124,7 +125,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // Fetch initial data
   const refreshProducts = async () => {
     try {
-      const res = await fetch('/api/products');
+      const res = await fetch(getApiUrl('/api/products'));
       if (res.ok) {
         const data = await res.json();
         setProducts(data);
@@ -136,7 +137,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const fetchCategories = async () => {
     try {
-      const res = await fetch('/api/categories');
+      const res = await fetch(getApiUrl('/api/categories'));
       if (res.ok) {
         const data = await res.json();
         setCategories(data);
@@ -148,7 +149,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const fetchBanners = async () => {
     try {
-      const res = await fetch('/api/banners');
+      const res = await fetch(getApiUrl('/api/banners'));
       if (res.ok) {
         const data = await res.json();
         setBanners(data);
