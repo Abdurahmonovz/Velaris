@@ -90,10 +90,21 @@ export const AdminPanel: React.FC = () => {
     fetchAdminOrders();
   }, []);
 
+  const [isSavingBanner, setIsSavingBanner] = useState(false);
+  const [isSavingCategory, setIsSavingCategory] = useState(false);
+
   const handleSaveBanner = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!bannerForm.title_uz || !bannerForm.image) return;
+    if (!bannerForm.title_uz.trim()) {
+      alert('Iltimos, banner sarlavhasini kiriting!');
+      return;
+    }
+    if (!bannerForm.image) {
+      alert('Iltimos, banner rasmini tanlang yoki rasm havolasini yozing!');
+      return;
+    }
 
+    setIsSavingBanner(true);
     try {
       const res = await fetch(getApiUrl('/api/banners'), {
         method: 'POST',
@@ -112,9 +123,16 @@ export const AdminPanel: React.FC = () => {
           link: '/catalog',
         });
         refreshBanners();
+        alert('Reklama banneri muvaffaqiyatli qo\'shildi! ✅');
+      } else {
+        const errData = await res.json().catch(() => ({}));
+        alert('Banner saqlashda xatolik: ' + (errData.error || `Server xatosi (${res.status})`));
       }
     } catch (err) {
       console.error('Failed to save banner:', err);
+      alert('Tarmoq xatosi: ' + (err as Error).message);
+    } finally {
+      setIsSavingBanner(false);
     }
   };
 
@@ -132,8 +150,12 @@ export const AdminPanel: React.FC = () => {
 
   const handleSaveCategory = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!categoryForm.name_uz) return;
+    if (!categoryForm.name_uz.trim()) {
+      alert('Iltimos, toifa nomini kiriting!');
+      return;
+    }
 
+    setIsSavingCategory(true);
     try {
       const url = editingCategoryId ? `/api/categories/${editingCategoryId}` : '/api/categories';
       const method = editingCategoryId ? 'PUT' : 'POST';
@@ -149,9 +171,16 @@ export const AdminPanel: React.FC = () => {
         setEditingCategoryId(null);
         setCategoryForm({ slug: '', name_uz: '', name_ru: '', image: '' });
         refreshCategories();
+        alert(editingCategoryId ? 'Toifa tahrirlandi! ✅' : 'Yangi toifa qo\'shildi! ✅');
+      } else {
+        const errData = await res.json().catch(() => ({}));
+        alert('Toifa saqlashda xatolik: ' + (errData.error || `Server xatosi (${res.status})`));
       }
     } catch (err) {
       console.error('Failed to save category:', err);
+      alert('Tarmoq xatosi: ' + (err as Error).message);
+    } finally {
+      setIsSavingCategory(false);
     }
   };
 
@@ -870,9 +899,10 @@ export const AdminPanel: React.FC = () => {
 
               <button
                 type="submit"
-                className="w-full py-3 gold-btn rounded-xl text-xs font-bold shadow-gold-glow"
+                disabled={isSavingBanner}
+                className="w-full py-3 gold-btn rounded-xl text-xs font-bold shadow-gold-glow disabled:opacity-50"
               >
-                Banner Qushish
+                {isSavingBanner ? 'Saqlanmoqda...' : 'Banner Qo\'shish'}
               </button>
             </form>
           </div>
@@ -977,9 +1007,10 @@ export const AdminPanel: React.FC = () => {
 
               <button
                 type="submit"
-                className="w-full py-3 gold-btn rounded-xl text-xs font-bold shadow-gold-glow"
+                disabled={isSavingCategory}
+                className="w-full py-3 gold-btn rounded-xl text-xs font-bold shadow-gold-glow disabled:opacity-50"
               >
-                {editingCategoryId ? "Saqlash" : "Toifa Qo'shish"}
+                {isSavingCategory ? 'Saqlanmoqda...' : (editingCategoryId ? "Saqlash" : "Toifa Qo'shish")}
               </button>
             </form>
           </div>
