@@ -7,23 +7,29 @@ const AdminLoginButton: React.FC = () => {
   const { updateUserProfile, setActiveTab } = useApp();
   const [isOpen, setIsOpen] = useState(false);
   const [adminPhone, setAdminPhone] = useState('');
+  const [adminPassword, setAdminPassword] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
 
   const handleAdminVerify = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!adminPhone) return;
+    if (!adminPhone || !adminPassword) return;
 
-    await updateUserProfile({ phone: adminPhone });
+    if (adminPassword.trim() !== '5852') {
+      setErrorMsg("❌ Noto'g'ri maxfiy kalit (Password)!");
+      return;
+    }
 
     // Check if phone matches admin numbers
     const clean = adminPhone.replace(/\D/g, '');
     const isAdmin = ['998937188885', '937188885', '998955805852', '955805852', '998921983377', '921983377', '998901234567'].includes(clean);
 
     if (isAdmin) {
+      await updateUserProfile({ phone: adminPhone });
+      setErrorMsg('');
       setIsOpen(false);
       setActiveTab('admin');
     } else {
-      setErrorMsg('Ushbu telefon raqami admin sifatida ro\'yxatdan o\'tmagan!');
+      setErrorMsg('❌ Ushbu telefon raqami admin sifatida ro\'yxatdan o\'tmagan!');
     }
   };
 
@@ -54,27 +60,43 @@ const AdminLoginButton: React.FC = () => {
             </div>
 
             <p className="text-[11px] text-gray-300">
-              Admin huquqiga ega bo'lgan telefon raqamingizni kiriting:
+              Admin telefon raqamingiz va maxfiy parolingizni kiriting:
             </p>
 
             {errorMsg && (
-              <p className="text-[10px] text-red-400 bg-red-500/10 p-2 rounded-lg text-center">
+              <p className="text-[10px] text-red-400 bg-red-500/10 p-2 rounded-lg text-center font-medium">
                 {errorMsg}
               </p>
             )}
 
             <form onSubmit={handleAdminVerify} className="space-y-3">
-              <input
-                type="tel"
-                placeholder="+998 9X XXX XX XX"
-                value={adminPhone}
-                onChange={(e) => setAdminPhone(e.target.value)}
-                className="w-full bg-[#1E0F30] border border-[#D4AF37]/30 rounded-xl px-3 py-2.5 text-xs text-gray-100 focus:outline-none focus:border-[#D4AF37]"
-                required
-              />
+              <div>
+                <label className="text-[10px] text-gray-400 block mb-1">Admin Telefon Raqami</label>
+                <input
+                  type="tel"
+                  placeholder="+998 9X XXX XX XX"
+                  value={adminPhone}
+                  onChange={(e) => setAdminPhone(e.target.value)}
+                  className="w-full bg-[#1E0F30] border border-[#D4AF37]/30 rounded-xl px-3 py-2.5 text-xs text-gray-100 focus:outline-none focus:border-[#D4AF37]"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="text-[10px] text-gray-400 block mb-1">Maxfiy Parol (Password)</label>
+                <input
+                  type="password"
+                  placeholder="****"
+                  value={adminPassword}
+                  onChange={(e) => setAdminPassword(e.target.value)}
+                  className="w-full bg-[#1E0F30] border border-[#D4AF37]/30 rounded-xl px-3 py-2.5 text-xs text-gray-100 focus:outline-none focus:border-[#D4AF37]"
+                  required
+                />
+              </div>
+
               <button
                 type="submit"
-                className="w-full py-2.5 gold-btn rounded-xl text-xs font-bold shadow-gold-glow"
+                className="w-full py-2.5 gold-btn rounded-xl text-xs font-bold shadow-gold-glow mt-1"
               >
                 Kirishni tasdiqlash
               </button>
