@@ -145,24 +145,24 @@ html.light .gold-gradient-text {
   background: #190B2B !important;
 }
 
-/* Infinite Category Marquee Animation (Right Direction) */
-@keyframes infinite-marquee-right {
+/* Infinite Category Marquee Animation (Left Direction) */
+@keyframes infinite-marquee {
   0% {
-    transform: translateX(-50%);
-  }
-  100% {
     transform: translateX(0%);
   }
+  100% {
+    transform: translateX(-50%);
+  }
 }
 
-.animate-infinite-marquee-right {
+.animate-infinite-marquee {
   display: flex;
   width: max-content;
-  animation: infinite-marquee-right 22s linear infinite;
+  animation: infinite-marquee 22s linear infinite;
 }
 
-.animate-infinite-marquee-right:hover,
-.animate-infinite-marquee-right:active {
+.animate-infinite-marquee:hover,
+.animate-infinite-marquee:active {
   animation-play-state: paused;
 }
 
