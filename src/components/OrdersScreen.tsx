@@ -1,9 +1,13 @@
 import React from 'react';
 import { useApp } from '../context/AppContext';
-import { Package, Clock, CheckCircle2, Truck, AlertCircle, MapPin } from 'lucide-react';
-import { OrderStatus } from '../types';
+import { Package, Clock, CheckCircle2, Truck, AlertCircle, MapPin, CreditCard } from 'lucide-react';
+import { OrderStatus, Order } from '../types';
 
-export const OrdersScreen: React.FC = () => {
+interface OrdersScreenProps {
+  onOpenPayment?: (order: Order) => void;
+}
+
+export const OrdersScreen: React.FC<OrdersScreenProps> = ({ onOpenPayment }) => {
   const { orders, refreshOrders, t } = useApp();
 
   const getStatusStep = (status: OrderStatus): number => {
@@ -43,11 +47,17 @@ export const OrdersScreen: React.FC = () => {
           {orders.map((order) => {
             const step = getStatusStep(order.status as OrderStatus);
             const isCancelled = step === -1;
+            const isUnpaid = order.status === "To'lov kutilmoqda";
 
             return (
               <div
                 key={order.id}
-                className="p-4 bg-gradient-to-br from-[#1A0E2B] to-[#12081E] rounded-2xl border border-[#D4AF37]/25 space-y-3 shadow-lg"
+                onClick={() => isUnpaid && onOpenPayment?.(order)}
+                className={`p-4 bg-gradient-to-br from-[#1A0E2B] to-[#12081E] rounded-2xl border space-y-3 shadow-lg transition ${
+                  isUnpaid
+                    ? 'border-[#D4AF37] shadow-gold-glow cursor-pointer hover:scale-[1.01]'
+                    : 'border-[#D4AF37]/25'
+                }`}
               >
                 {/* Header info */}
                 <div className="flex items-center justify-between border-b border-white/10 pb-2.5">
@@ -63,12 +73,36 @@ export const OrdersScreen: React.FC = () => {
                   </div>
                 </div>
 
+                {/* Unpaid Warning Banner & Action Button */}
+                {isUnpaid && (
+                  <div className="space-y-2 pt-1">
+                    <div className="p-2.5 bg-amber-500/10 border border-amber-500/30 rounded-xl flex items-center justify-between text-xs text-amber-300">
+                      <div className="flex items-center gap-1.5 font-bold">
+                        <Clock className="w-4 h-4 text-amber-400 animate-pulse" />
+                        <span>To'lov kutilmoqda</span>
+                      </div>
+                      <span className="text-[10px] text-gray-400">Chek yuklanmagan</span>
+                    </div>
+
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onOpenPayment?.(order);
+                      }}
+                      className="w-full py-2.5 bg-gradient-to-r from-[#D4AF37] to-[#AA771C] text-[#0A0510] font-bold rounded-xl text-xs flex items-center justify-center gap-2 shadow-gold-glow active:scale-95 transition"
+                    >
+                      <CreditCard className="w-4 h-4" />
+                      <span>💳 Hozir To'lov Qilish (Chek Yuklash)</span>
+                    </button>
+                  </div>
+                )}
+
                 {/* Progress Status Bar */}
-                {!isCancelled ? (
+                {!isCancelled && !isUnpaid && (
                   <div className="py-2 space-y-2">
                     <div className="flex items-center justify-between text-[10px] font-bold">
                       <span className={step >= 1 ? 'text-[#D4AF37] flex items-center gap-0.5' : 'text-gray-500'}>
-                        {order.status === "To'lov kutilmoqda" ? "Tekshirilmoqda ☑️" : "Qabul qilindi"}
+                        Qabul qilindi
                       </span>
                       <span className={step >= 2 ? 'text-[#D4AF37] font-bold animate-pulse' : 'text-gray-500'}>
                         {step === 2 ? "⚙️ Tayyorlanmoqda" : "Tayyorlanmoqda"}
@@ -91,7 +125,9 @@ export const OrdersScreen: React.FC = () => {
                       />
                     </div>
                   </div>
-                ) : (
+                )}
+
+                {isCancelled && (
                   <div className="p-2 bg-red-500/10 border border-red-500/30 rounded-xl flex items-center gap-2 text-xs text-red-400 font-semibold">
                     <AlertCircle className="w-4 h-4" />
                     <span>Buyurtma bekor qilindi</span>

@@ -1,7 +1,6 @@
-import React from 'react';
-import { useApp } from '../context/AppContext';
+import React, { useState } from 'react';
 import { Order } from '../types';
-import { AlertCircle, CreditCard, X, ChevronRight, Sparkles } from 'lucide-react';
+import { CreditCard, X, ChevronRight } from 'lucide-react';
 
 interface PendingOrderAlertModalProps {
   pendingOrder: Order | null;
@@ -14,64 +13,73 @@ export const PendingOrderAlertModal: React.FC<PendingOrderAlertModalProps> = ({
   onOpenPayment,
   onDismiss,
 }) => {
+  const [touchStartX, setTouchStartX] = useState<number | null>(null);
+  const [swipeOffset, setSwipeOffset] = useState<number>(0);
+
   if (!pendingOrder) return null;
 
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStartX(e.touches[0].clientX);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (touchStartX === null) return;
+    const currentX = e.touches[0].clientX;
+    const diff = currentX - touchStartX;
+    setSwipeOffset(diff);
+  };
+
+  const handleTouchEnd = () => {
+    if (Math.abs(swipeOffset) > 60) {
+      onDismiss();
+    }
+    setTouchStartX(null);
+    setSwipeOffset(0);
+  };
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
-      <div className="relative w-full max-w-sm bg-[#150B21] border border-[#D4AF37]/50 rounded-3xl p-6 text-gray-100 space-y-4 shadow-gold-glow-lg animate-in zoom-in-95 duration-200">
-        
-        {/* Header */}
-        <div className="flex items-center justify-between border-b border-white/10 pb-3">
-          <div className="flex items-center gap-2 text-[#D4AF37]">
-            <AlertCircle className="w-5 h-5 animate-pulse" />
-            <h3 className="text-sm font-serif font-bold text-gray-100 gold-gradient-text">
-              To'lanmagan Buyurtma Mavjud
-            </h3>
+    <div
+      className="fixed top-3 left-3 right-3 z-50 max-w-md mx-auto animate-in slide-in-from-top-5 duration-300"
+      style={{
+        transform: `translateX(${swipeOffset}px)`,
+        opacity: 1 - Math.abs(swipeOffset) / 200,
+        transition: touchStartX === null ? 'all 0.2s ease-out' : 'none',
+      }}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+    >
+      <div
+        onClick={() => onOpenPayment(pendingOrder)}
+        className="relative bg-gradient-to-r from-[#1A0E2B] via-[#150B21] to-[#0D0517] border border-[#D4AF37]/60 rounded-2xl p-3.5 shadow-gold-glow-lg text-gray-100 flex items-center justify-between gap-3 cursor-pointer hover:border-[#D4AF37] transition active:scale-[0.99]"
+      >
+        <div className="flex items-center gap-3 min-w-0">
+          <div className="w-9 h-9 rounded-xl bg-[#D4AF37]/15 border border-[#D4AF37]/40 flex items-center justify-center text-[#D4AF37] shrink-0 animate-pulse">
+            <CreditCard className="w-5 h-5" />
           </div>
-          <button onClick={onDismiss} className="text-gray-400 hover:text-white p-1">
-            <X className="w-4 h-4" />
-          </button>
-        </div>
-
-        {/* Message */}
-        <p className="text-xs text-gray-300 leading-relaxed">
-          Sizda to'lovi tugallanmagan <b>Buyurtma #{pendingOrder.id}</b> mavjud. Uni rasmiylashtirishni (to'lov qilishni) xohlaysizmi?
-        </p>
-
-        {/* Payment Summary Box */}
-        <div className="p-3 bg-[#1E0F30] rounded-2xl border border-[#D4AF37]/30 space-y-2 text-xs">
-          <div className="flex justify-between text-gray-400">
-            <span>Karta raqami:</span>
-            <span className="font-mono font-bold text-[#D4AF37]">9860 1201 0261 5172</span>
-          </div>
-          <div className="flex justify-between text-gray-400">
-            <span>Karta egasi:</span>
-            <span className="font-bold text-gray-200">Azamat Umarqulov</span>
-          </div>
-          <div className="flex justify-between text-gray-200 pt-1 border-t border-white/10 font-bold">
-            <span>Jami summa:</span>
-            <span className="text-[#D4AF37]">{pendingOrder.total_amount.toLocaleString('uz-UZ')} so'm</span>
+          <div className="min-w-0">
+            <h4 className="text-xs font-bold text-[#D4AF37] truncate">
+              Rasmiylashtirilmagan buyurtma bor!
+            </h4>
+            <p className="text-[10px] text-gray-300 truncate">
+              Buyurtma #{pendingOrder.id} • To'lov qilish uchun bosing
+            </p>
           </div>
         </div>
 
-        {/* Action Buttons */}
-        <div className="space-y-2 pt-1">
+        <div className="flex items-center gap-1.5 shrink-0">
+          <ChevronRight className="w-4 h-4 text-[#D4AF37]" />
           <button
-            onClick={() => onOpenPayment(pendingOrder)}
-            className="w-full py-3.5 gold-btn rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-gold-glow"
+            onClick={(e) => {
+              e.stopPropagation();
+              onDismiss();
+            }}
+            className="p-1 rounded-lg bg-white/10 hover:bg-white/20 text-gray-400 hover:text-white transition"
+            title="Yopish"
           >
-            <CreditCard className="w-4 h-4" />
-            <span>💳 Hozir To'lov Qilish (Chek Yuklash)</span>
-          </button>
-
-          <button
-            onClick={onDismiss}
-            className="w-full py-2.5 rounded-xl border border-white/10 text-xs text-gray-400 hover:text-gray-200"
-          >
-            Keyinroq to'lash
+            <X className="w-3.5 h-3.5" />
           </button>
         </div>
-
       </div>
     </div>
   );

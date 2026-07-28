@@ -20,36 +20,40 @@ const MainLayout: React.FC = () => {
   const [pendingOrderAlert, setPendingOrderAlert] = useState<Order | null>(null);
   const [activePaymentOrder, setActivePaymentOrder] = useState<Order | null>(null);
 
-  // Auto-detect pending un-paid order upon app entry
+  // Auto-detect pending un-paid order with 1-second delay upon tab navigation
   useEffect(() => {
-    try {
-      const savedPending = localStorage.getItem('velaris_pending_order');
-      if (savedPending) {
-        const orderData = JSON.parse(savedPending) as Order;
-        const realTimeOrder = orders.find((o) => o.id === orderData.id);
-        
-        if (realTimeOrder) {
-          if (realTimeOrder.status !== 'To\'lov kutilmoqda') {
-            localStorage.removeItem('velaris_pending_order');
-            setPendingOrderAlert(null);
+    const timer = setTimeout(() => {
+      try {
+        const savedPending = localStorage.getItem('velaris_pending_order');
+        if (savedPending) {
+          const orderData = JSON.parse(savedPending) as Order;
+          const realTimeOrder = orders.find((o) => o.id === orderData.id);
+          
+          if (realTimeOrder) {
+            if (realTimeOrder.status !== 'To\'lov kutilmoqda') {
+              localStorage.removeItem('velaris_pending_order');
+              setPendingOrderAlert(null);
+            } else {
+              setPendingOrderAlert(realTimeOrder);
+            }
           } else {
-            setPendingOrderAlert(realTimeOrder);
+            setPendingOrderAlert(orderData);
           }
         } else {
-          setPendingOrderAlert(orderData);
+          const pending = orders.find((o) => o.status === 'To\'lov kutilmoqda');
+          if (pending) {
+            setPendingOrderAlert(pending);
+          } else {
+            setPendingOrderAlert(null);
+          }
         }
-      } else {
-        const pending = orders.find((o) => o.status === 'To\'lov kutilmoqda');
-        if (pending) {
-          setPendingOrderAlert(pending);
-        } else {
-          setPendingOrderAlert(null);
-        }
+      } catch {
+        // ignore
       }
-    } catch {
-      // ignore
-    }
-  }, [orders]);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [orders, activeTab]);
 
   if (isFirstLaunch) {
     return <WelcomeScreen />;
@@ -78,7 +82,7 @@ const MainLayout: React.FC = () => {
         {activeTab === 'home' && <HomeScreen />}
         {activeTab === 'catalog' && <CatalogScreen />}
         {activeTab === 'cart' && <CartScreen />}
-        {activeTab === 'orders' && <OrdersScreen />}
+        {activeTab === 'orders' && <OrdersScreen onOpenPayment={(order) => setActivePaymentOrder(order)} />}
         {activeTab === 'profile' && <ProfileScreen />}
         {activeTab === 'admin' && <AdminPanel />}
       </main>
