@@ -256,6 +256,22 @@ export const AdminPanel: React.FC = () => {
     }
   };
 
+  const handleClearAllOrders = async () => {
+    if (!confirm('⚠️ DIQQAT! Barcha buyurtmalar tarixini to\'liq o\'chirib tashlashga ishonchingiz komilmi?')) return;
+    try {
+      const res = await fetch(getApiUrl('/api/admin/orders'), { method: 'DELETE' });
+      if (res.ok) {
+        setOrders([]);
+        fetchStats();
+        alert('Buyurtmalar tarixi muvaffaqiyatli tozalandi! ✅');
+      } else {
+        alert('Xatolik yuz berdi!');
+      }
+    } catch (err) {
+      console.error('Failed to clear orders:', err);
+    }
+  };
+
   const handleDeleteProduct = async (id: number) => {
     if (!confirm('Ushbu atirni o\'chirishga ishonchingiz komilmi?')) return;
     try {
@@ -747,6 +763,15 @@ export const AdminPanel: React.FC = () => {
       {/* 4. ORDERS TAB */}
       {activeAdminTab === 'orders' && (
         <div className="space-y-3">
+          {orders.length > 0 && (
+            <button
+              onClick={handleClearAllOrders}
+              className="w-full py-2.5 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-400 font-bold rounded-xl text-xs flex items-center justify-center gap-2 transition active:scale-95 mb-2"
+            >
+              <Trash2 className="w-4 h-4" />
+              <span>🗑️ Barcha Buyurtmalar Tarixini Tozalash</span>
+            </button>
+          )}
           {orders.map((o) => (
             <div key={o.id} className="p-4 bg-[#150B21] rounded-2xl border border-[#D4AF37]/30 space-y-3">
               <div className="flex items-center justify-between border-b border-white/10 pb-2">

@@ -494,6 +494,15 @@ app.get('/api/orders', (req, res) => {
 });
 
 // 7. Admin Dashboard Endpoints
+app.delete('/api/admin/orders', (req, res) => {
+  try {
+    db.prepare('DELETE FROM orders').run();
+    res.json({ success: true, message: 'Barcha buyurtmalar tarixi o\'chirildi' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 app.get('/api/admin/orders', (req, res) => {
   try {
     const orders = db.prepare('SELECT * FROM orders ORDER BY id DESC').all();
