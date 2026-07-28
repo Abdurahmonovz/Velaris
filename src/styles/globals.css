@@ -165,3 +165,31 @@ html.light .gold-gradient-text {
 .animate-infinite-marquee:active {
   animation-play-state: paused;
 }
+
+/* Luxury Floating Wave Animation */
+@keyframes category-float-odd {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-7px); }
+}
+
+@keyframes category-float-even {
+  0%, 100% { transform: translateY(-6px); }
+  50% { transform: translateY(2px); }
+}
+
+@keyframes rotate-gold-ring {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.animate-category-wave-odd {
+  animation: category-float-odd 3.6s ease-in-out infinite;
+}
+
+.animate-category-wave-even {
+  animation: category-float-even 4.2s ease-in-out infinite;
+}
+
+.animate-rotate-ring {
+  animation: rotate-gold-ring 12s linear infinite;
+}

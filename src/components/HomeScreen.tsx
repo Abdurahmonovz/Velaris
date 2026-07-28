@@ -106,11 +106,11 @@ export const HomeScreen: React.FC = () => {
         </div>
       )}
 
-      {/* Instagram Stories Style Circular Categories with Infinite Marquee Animation */}
-      <div className="space-y-2 overflow-hidden">
+      {/* 3D Floating Wave & Rotating Gold Ring Category Carousel */}
+      <div className="space-y-2">
         <div className="flex items-center justify-between">
           <h2 className="text-xs font-bold text-[#D4AF37] uppercase tracking-wider flex items-center gap-1.5">
-            <Sparkles className="w-3.5 h-3.5 text-[#D4AF37]" />
+            <Sparkles className="w-3.5 h-3.5 text-[#D4AF37] animate-pulse" />
             <span>{t('categoriesTitle')}</span>
           </h2>
 
@@ -124,47 +124,73 @@ export const HomeScreen: React.FC = () => {
           )}
         </div>
 
-        <div className="w-full overflow-hidden py-2 relative rounded-2xl bg-[#12081E]/40 border border-[#D4AF37]/15">
-          {/* Subtle Side Fades */}
-          <div className="absolute left-0 top-0 bottom-0 w-4 bg-gradient-to-r from-[#0A0510] to-transparent z-10 pointer-events-none" />
-          <div className="absolute right-0 top-0 bottom-0 w-4 bg-gradient-to-l from-[#0A0510] to-transparent z-10 pointer-events-none" />
+        <div className="flex items-center gap-4 overflow-x-auto no-scrollbar py-3 px-1 scroll-smooth">
+          {/* All Category Circle */}
+          <div
+            onClick={() => setSelectedCategory(null)}
+            className="flex flex-col items-center gap-1.5 flex-shrink-0 cursor-pointer group animate-category-wave-odd"
+          >
+            <div className="relative w-16 h-16 rounded-full flex items-center justify-center p-0.5">
+              <div className="absolute inset-0 rounded-full border-2 border-dashed border-[#D4AF37]/50 animate-rotate-ring" />
+              <div
+                className={`w-full h-full rounded-full bg-[#160A26] flex items-center justify-center border transition-all ${
+                  selectedCategory === null
+                    ? 'border-[#D4AF37] shadow-gold-glow scale-105 bg-[#26123D]'
+                    : 'border-white/10 group-hover:border-[#D4AF37]/60'
+                }`}
+              >
+                <span className="text-xs font-bold gold-gradient-text">ALL</span>
+              </div>
+            </div>
+            <span className="text-[10px] font-bold text-[#D4AF37] tracking-tight">
+              {t('seeAll')}
+            </span>
+          </div>
 
-          <div className="animate-infinite-marquee flex items-center gap-4 px-2">
-            {/* Duplicated list for infinite seamless loop */}
-            {[...categories, ...categories].map((cat, idx) => {
-              const isSelected = selectedCategory === cat.slug;
-              return (
-                <div
-                  key={`${cat.id}-${idx}`}
-                  onClick={() => {
-                    setSelectedCategory(isSelected ? null : cat.slug);
-                  }}
-                  className="flex flex-col items-center gap-1.5 flex-shrink-0 cursor-pointer group transition-transform active:scale-95"
-                >
+          {/* Category Floating Items */}
+          {categories.map((cat, idx) => {
+            const isSelected = selectedCategory === cat.slug;
+            const waveClass = idx % 2 === 0 ? 'animate-category-wave-odd' : 'animate-category-wave-even';
+
+            return (
+              <div
+                key={cat.id}
+                onClick={() => setSelectedCategory(isSelected ? null : cat.slug)}
+                className={`flex flex-col items-center gap-1.5 flex-shrink-0 cursor-pointer group transition-all ${waveClass}`}
+              >
+                <div className="relative w-16 h-16 rounded-full flex items-center justify-center p-0.5">
+                  {/* Rotating Gold Ring Accent */}
                   <div
-                    className={`w-16 h-16 rounded-full p-0.5 transition-all ${
+                    className={`absolute inset-0 rounded-full border-2 border-dashed transition-opacity ${
                       isSelected
-                        ? 'bg-gradient-to-tr from-[#FFF0B8] via-[#D4AF37] to-[#AA771C] shadow-gold-glow scale-105'
-                        : 'bg-white/10 group-hover:border-[#D4AF37]/60'
+                        ? 'border-[#D4AF37] animate-rotate-ring opacity-100'
+                        : 'border-[#D4AF37]/40 group-hover:animate-rotate-ring opacity-70'
+                    }`}
+                  />
+                  <div
+                    className={`w-full h-full rounded-full overflow-hidden p-0.5 transition-all ${
+                      isSelected
+                        ? 'bg-gradient-to-tr from-[#FFF0B8] via-[#D4AF37] to-[#AA771C] shadow-gold-glow scale-110'
+                        : 'bg-white/10 group-hover:scale-105'
                     }`}
                   >
                     <img
                       src={cat.image}
                       alt={cat.name_uz}
-                      className="w-full h-full object-cover rounded-full border border-[#D4AF37]/20 group-hover:scale-105 transition duration-300"
+                      className="w-full h-full object-cover rounded-full"
                     />
                   </div>
-                  <span
-                    className={`text-[10px] font-medium tracking-tight max-w-[68px] truncate text-center ${
-                      isSelected ? 'text-[#D4AF37] font-bold' : 'text-gray-300 group-hover:text-[#D4AF37]'
-                    }`}
-                  >
-                    {language === 'uz' ? cat.name_uz : cat.name_ru}
-                  </span>
                 </div>
-              );
-            })}
-          </div>
+                <span
+                  className={`text-[10px] font-medium tracking-tight max-w-[68px] truncate text-center transition-colors ${
+                    isSelected ? 'text-[#D4AF37] font-bold' : 'text-gray-300 group-hover:text-[#D4AF37]'
+                  }`}
+                >
+                  {language === 'uz' ? cat.name_uz : cat.name_ru}
+                </span>
+              </div>
+            );
+          })}
         </div>
       </div>
 
