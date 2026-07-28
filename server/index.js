@@ -474,17 +474,24 @@ app.put('/api/orders/:id/payment', async (req, res) => {
   }
 });
 
-// Get User Orders History (Strictly Isolated Per Customer)
+// Get User Orders History (Airtight Isolation Per Customer)
 app.get('/api/orders', (req, res) => {
   try {
     const { user_id, phone } = req.query;
-    if (!user_id && !phone) return res.json([]);
+    const cleanPhone = (phone || '').trim();
+    const cleanUserId = user_id && String(user_id) !== '1' && String(user_id) !== 'undefined' ? user_id : null;
+
+    if (!cleanUserId && !cleanPhone) {
+      return res.json([]);
+    }
 
     let orders = [];
-    if (phone && phone.trim() !== '') {
-      orders = db.prepare('SELECT * FROM orders WHERE customer_phone = ? OR user_id = ? ORDER BY id DESC').all(phone, user_id || -1);
-    } else {
-      orders = db.prepare('SELECT * FROM orders WHERE user_id = ? ORDER BY id DESC').all(user_id);
+    if (cleanUserId && cleanPhone) {
+      orders = db.prepare('SELECT * FROM orders WHERE user_id = ? OR customer_phone = ? ORDER BY id DESC').all(cleanUserId, cleanPhone);
+    } else if (cleanUserId) {
+      orders = db.prepare('SELECT * FROM orders WHERE user_id = ? ORDER BY id DESC').all(cleanUserId);
+    } else if (cleanPhone) {
+      orders = db.prepare('SELECT * FROM orders WHERE customer_phone = ? ORDER BY id DESC').all(cleanPhone);
     }
 
     const formatted = orders.map((o) => ({
