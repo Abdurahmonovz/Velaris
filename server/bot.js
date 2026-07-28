@@ -17,6 +17,24 @@ export function initBot() {
     bot = new TelegramBot(BOT_TOKEN, { polling: true });
     console.log('✨ Telegram Bot initialized & polling started...');
 
+    const RAW_URL = process.env.MINI_APP_URL || '';
+    const MINI_APP_URL = (RAW_URL.includes('netlify') || !RAW_URL)
+      ? 'https://velaris-virid.vercel.app'
+      : RAW_URL;
+
+    // Automatically update Telegram Bot Menu Button to Vercel URL
+    try {
+      bot.setChatMenuButton({
+        menu_button: JSON.stringify({
+          type: 'web_app',
+          text: '🛍️ Do\'konni Ochish',
+          web_app: { url: MINI_APP_URL }
+        })
+      });
+    } catch (e) {
+      console.warn('Failed to set chat menu button:', e);
+    }
+
     // Handle /start command
     bot.onText(/\/start/, (msg) => {
       const chatId = msg.chat.id;
@@ -34,7 +52,7 @@ export function initBot() {
               [
                 {
                   text: '🛍️ Do\'konni Ochish (Mini App)',
-                  web_app: { url: process.env.MINI_APP_URL || 'https://velaris-virid.vercel.app' }
+                  web_app: { url: MINI_APP_URL }
                 }
               ]
             ]
