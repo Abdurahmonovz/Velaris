@@ -129,6 +129,29 @@ export function initDb() {
     // Column already exists
   }
 
+  // Promo Codes
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS promo_codes (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      code TEXT UNIQUE NOT NULL,
+      discount_percent INTEGER NOT NULL,
+      min_order_amount INTEGER DEFAULT 0,
+      is_active INTEGER DEFAULT 1,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+
+  // Seed default promo codes if empty
+  const promoCount = db.prepare('SELECT COUNT(*) as count FROM promo_codes').get().count;
+  if (promoCount === 0) {
+    const insertPromo = db.prepare(`
+      INSERT INTO promo_codes (code, discount_percent, min_order_amount, is_active)
+      VALUES (?, ?, ?, 1)
+    `);
+    insertPromo.run('VELARIS10', 10, 0);
+    insertPromo.run('LUXURY15', 15, 300000);
+  }
+
   // Seed Categories if empty
   const catCount = db.prepare('SELECT COUNT(*) as count FROM categories').get().count;
   if (catCount === 0) {

@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import { DeliveryType, Order } from '../types';
-import { X, MapPin, Phone, User as UserIcon, Truck, Store, CheckCircle2, Sparkles } from 'lucide-react';
+import { X, MapPin, Phone, User as UserIcon, Truck, Store, CheckCircle2, Sparkles, Tag } from 'lucide-react';
 import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
+import { getApiUrl } from '../config';
 
 // Fix leaflet marker icon path issue in Vite
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -54,11 +55,49 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
 
+  // Promocode state
+  const [promoCodeInput, setPromoCodeInput] = useState('');
+  const [appliedPromo, setAppliedPromo] = useState<{ code: string; discount_percent: number; discount_amount: number } | null>(null);
+  const [promoError, setPromoError] = useState('');
+  const [isValidatingPromo, setIsValidatingPromo] = useState(false);
+
   if (!isOpen) return null;
 
   const subtotal = cart.reduce((sum, item) => sum + item.totalPrice, 0);
   const deliveryFee = deliveryType === 'courier' ? 25000 : 0;
-  const totalAmount = subtotal + deliveryFee;
+  const discountAmount = appliedPromo ? appliedPromo.discount_amount : 0;
+  const totalAmount = Math.max(0, subtotal - discountAmount) + deliveryFee;
+
+  const handleApplyPromo = async () => {
+    if (!promoCodeInput.trim()) return;
+    setPromoError('');
+    setIsValidatingPromo(true);
+
+    try {
+      const res = await fetch(getApiUrl('/api/promo-codes/validate'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          code: promoCodeInput,
+          order_amount: subtotal,
+        }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setAppliedPromo(data);
+        setPromoError('');
+      } else {
+        const err = await res.json();
+        setPromoError(err.error || 'Promokod xato!');
+        setAppliedPromo(null);
+      }
+    } catch {
+      setPromoError('Tarmoq xatoligi!');
+    } finally {
+      setIsValidatingPromo(false);
+    }
+  };
 
   const handleSubmitOrder = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -326,12 +365,58 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
             </div>
           )}
 
+          {/* Promo Code Input Field */}
+          <div className="p-3.5 bg-[#140824] rounded-2xl border border-[#D4AF37]/20 space-y-2">
+            <div className="flex items-center justify-between text-xs font-bold text-[#D4AF37]">
+              <span className="flex items-center gap-1.5">
+                <Tag className="w-3.5 h-3.5" />
+                <span>Promokod bormi?</span>
+              </span>
+              {appliedPromo && (
+                <span className="text-[10px] text-emerald-400 font-semibold bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/30">
+                  ✅ -{appliedPromo.discount_percent}% Chegirma
+                </span>
+              )}
+            </div>
+
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={promoCodeInput}
+                onChange={(e) => {
+                  setPromoCodeInput(e.target.value.toUpperCase());
+                  setPromoError('');
+                }}
+                placeholder="Masalan: VELARIS10"
+                className="flex-1 bg-[#1A0E2B] border border-[#D4AF37]/30 rounded-xl px-3 py-2 text-xs text-gray-100 placeholder-gray-500 font-mono tracking-wider focus:outline-none uppercase"
+              />
+              <button
+                type="button"
+                onClick={handleApplyPromo}
+                disabled={isValidatingPromo || !promoCodeInput.trim()}
+                className="px-4 py-2 bg-[#D4AF37] hover:bg-[#B8952B] disabled:opacity-50 text-black font-bold text-xs rounded-xl transition"
+              >
+                {isValidatingPromo ? '...' : 'Qo\'llash'}
+              </button>
+            </div>
+
+            {promoError && (
+              <p className="text-[10px] text-red-400 font-semibold">{promoError}</p>
+            )}
+          </div>
+
           {/* Price Breakdown */}
           <div className="p-4 bg-[#1A0E2B] rounded-2xl border border-[#D4AF37]/20 space-y-2">
             <div className="flex items-center justify-between text-xs text-gray-300">
               <span>{t('subtotal')}</span>
               <span>{subtotal.toLocaleString('uz-UZ')} {t('som')}</span>
             </div>
+            {appliedPromo && (
+              <div className="flex items-center justify-between text-xs text-emerald-400 font-semibold">
+                <span>Promokod chegirmasi (-{appliedPromo.discount_percent}%)</span>
+                <span>-{appliedPromo.discount_amount.toLocaleString('uz-UZ')} {t('som')}</span>
+              </div>
+            )}
             <div className="flex items-center justify-between text-xs text-gray-300">
               <span>{t('deliveryFee')}</span>
               <span>

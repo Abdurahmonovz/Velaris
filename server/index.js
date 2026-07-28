@@ -582,6 +582,88 @@ app.get('/api/admin/stats', (req, res) => {
   }
 });
 
+// 8. Promo Code Endpoints
+app.get('/api/promo-codes', (req, res) => {
+  try {
+    const promos = db.prepare('SELECT * FROM promo_codes ORDER BY id DESC').all();
+    res.json(promos);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post('/api/promo-codes', (req, res) => {
+  try {
+    const { code, discount_percent, min_order_amount = 0 } = req.body;
+    if (!code || !discount_percent) {
+      return res.status(400).json({ error: 'Promokod va chegirma foizi kiritilishi shart' });
+    }
+
+    const cleanCode = code.trim().toUpperCase();
+    const stmt = db.prepare(`
+      INSERT INTO promo_codes (code, discount_percent, min_order_amount)
+      VALUES (?, ?, ?)
+    `);
+    const info = stmt.run(cleanCode, Number(discount_percent), Number(min_order_amount));
+    res.json({ success: true, id: info.lastInsertRowid });
+  } catch (error) {
+    res.status(400).json({ error: 'Ushbu promokod allaqachon mavjud yoki noto\'g'ri!' });
+  }
+});
+
+app.delete('/api/promo-codes/:id', (req, res) => {
+  try {
+    db.prepare('DELETE FROM promo_codes WHERE id = ?').run(req.params.id);
+    res.json({ success: true });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+app.put('/api/promo-codes/:id/toggle', (req, res) => {
+  try {
+    const promo = db.prepare('SELECT * FROM promo_codes WHERE id = ?').get(req.params.id);
+    if (!promo) return res.status(44).json({ error: 'Mavjud emas' });
+
+    const newStatus = promo.is_active ? 0 : 1;
+    db.prepare('UPDATE promo_codes SET is_active = ? WHERE id = ?').run(newStatus, req.params.id);
+    res.json({ success: true, is_active: newStatus });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+app.post('/api/promo-codes/validate', (req, res) => {
+  try {
+    const { code, order_amount = 0 } = req.body;
+    if (!code) return res.status(400).json({ error: 'Promokod kiritilmadi' });
+
+    const cleanCode = code.trim().toUpperCase();
+    const promo = db.prepare('SELECT * FROM promo_codes WHERE UPPER(code) = ?').get(cleanCode);
+
+    if (!promo || !promo.is_active) {
+      return res.status(400).json({ error: 'Ushbu promokod mavjud emas yoki faol emas!' });
+    }
+
+    if (order_amount < promo.min_order_amount) {
+      return res.status(400).json({
+        error: `Ushbu promokod kamida ${promo.min_order_amount.toLocaleString('uz-UZ')} so'mlik buyurtmalar uchun amal qiladi!`
+      });
+    }
+
+    const discountAmount = Math.round((order_amount * promo.discount_percent) / 100);
+
+    res.json({
+      success: true,
+      code: promo.code,
+      discount_percent: promo.discount_percent,
+      discount_amount: discountAmount,
+    });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
 // Start Server
 app.listen(PORT, () => {
   console.log(`🚀 Velaris Server running on http://localhost:${PORT}`);

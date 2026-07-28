@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import { Product, Order, Category, AdminStats } from '../types';
-import { Shield, Package, DollarSign, Users, Plus, Edit, Trash2, CheckCircle, RefreshCw, X, FolderPlus, Layers, LogOut, Clock, TrendingUp, Award, ShoppingBag } from 'lucide-react';
+import { Shield, Package, DollarSign, Users, Plus, Edit, Trash2, CheckCircle, RefreshCw, X, FolderPlus, Layers, LogOut, Clock, TrendingUp, Award, ShoppingBag, Tag } from 'lucide-react';
 import { getApiUrl } from '../config';
 
 // Fast Canvas Image Compressor (Reduces 10MB camera photo to 50KB for instant 50ms upload)
@@ -40,12 +40,82 @@ const compressImageFile = (file: File, maxWidth = 800, quality = 0.75): Promise<
 export const AdminPanel: React.FC = () => {
   const { products, categories, banners, refreshProducts, refreshCategories, refreshBanners, setActiveTab, t } = useApp();
 
-  const [activeAdminTab, setActiveAdminTab] = useState<'stats' | 'products' | 'categories' | 'banners' | 'orders'>('stats');
+  const [activeAdminTab, setActiveAdminTab] = useState<'stats' | 'products' | 'categories' | 'banners' | 'orders' | 'promos'>('stats');
   const [stats, setStats] = useState<AdminStats | null>(null);
   const [orders, setOrders] = useState<Order[]>([]);
+  const [promos, setPromos] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  // New/Edit Category state
+  // New Promo Code state
+  const [isPromoModalOpen, setIsPromoModalOpen] = useState(false);
+  const [promoForm, setPromoForm] = useState({
+    code: '',
+    discount_percent: 10,
+    min_order_amount: 0,
+  });
+
+  const fetchPromos = async () => {
+    try {
+      const res = await fetch(getApiUrl('/api/promo-codes'));
+      if (res.ok) {
+        const data = await res.json();
+        setPromos(data);
+      }
+    } catch (err) {
+      console.error('Failed to fetch promo codes:', err);
+    }
+  };
+
+  const handleCreatePromo = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!promoForm.code.trim()) {
+      alert('Iltimos, promokod nomini kiriting!');
+      return;
+    }
+    try {
+      const res = await fetch(getApiUrl('/api/promo-codes'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(promoForm),
+      });
+
+      if (res.ok) {
+        setIsPromoModalOpen(false);
+        setPromoForm({ code: '', discount_percent: 10, min_order_amount: 0 });
+        fetchPromos();
+      } else {
+        const errData = await res.json();
+        alert(errData.error || 'Xatolik yuz berdi!');
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleDeletePromo = async (id: number) => {
+    if (!confirm('Promokodni o\'chirishga ishonchingiz komilmi?')) return;
+    try {
+      const res = await fetch(getApiUrl(`/api/promo-codes/${id}`), { method: 'DELETE' });
+      if (res.ok) fetchPromos();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleTogglePromo = async (id: number) => {
+    try {
+      const res = await fetch(getApiUrl(`/api/promo-codes/${id}/toggle`), { method: 'PUT' });
+      if (res.ok) fetchPromos();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  useEffect(() => {
+    fetchStats();
+    fetchAdminOrders();
+    fetchPromos();
+  }, []);
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
   const [editingCategoryId, setEditingCategoryId] = useState<number | null>(null);
   const [categoryForm, setCategoryForm] = useState({
@@ -458,7 +528,7 @@ export const AdminPanel: React.FC = () => {
       </div>
 
       {/* Admin View Navigation Tabs */}
-      <div className="grid grid-cols-5 gap-1 bg-[#12081E] p-1 rounded-xl border border-white/10 text-[9px] font-semibold">
+      <div className="grid grid-cols-6 gap-1 bg-[#12081E] p-1 rounded-xl border border-white/10 text-[9px] font-semibold">
         <button
           onClick={() => setActiveAdminTab('stats')}
           className={`py-2 rounded-lg transition ${
@@ -498,6 +568,14 @@ export const AdminPanel: React.FC = () => {
           }`}
         >
           Orders ({orders.length})
+        </button>
+        <button
+          onClick={() => setActiveAdminTab('promos')}
+          className={`py-2 rounded-lg transition ${
+            activeAdminTab === 'promos' ? 'bg-[#D4AF37] text-black font-bold' : 'text-gray-400'
+          }`}
+        >
+          Promokod ({promos.length})
         </button>
       </div>
 
@@ -816,6 +894,61 @@ export const AdminPanel: React.FC = () => {
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* 5. PROMO CODES TAB */}
+      {activeAdminTab === 'promos' && (
+        <div className="space-y-3">
+          <button
+            onClick={() => setIsPromoModalOpen(true)}
+            className="w-full py-3 gold-btn rounded-xl text-xs font-bold flex items-center justify-center gap-2"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Yangi Promokod Yaratish</span>
+          </button>
+
+          {promos.length === 0 ? (
+            <div className="text-center py-10 bg-[#150B21] rounded-2xl border border-white/5 space-y-2">
+              <Tag className="w-8 h-8 text-gray-500 mx-auto" />
+              <p className="text-xs text-gray-400">Hali promokodlar yaratilmagan</p>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {promos.map((p) => (
+                <div key={p.id} className="p-3.5 bg-[#150B21] rounded-2xl border border-[#D4AF37]/30 flex items-center justify-between shadow-lg">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-bold text-[#D4AF37] font-mono tracking-wider">{p.code}</span>
+                      <span className="px-2 py-0.5 rounded-md bg-[#D4AF37]/20 border border-[#D4AF37]/40 text-[10px] font-bold text-[#D4AF37]">
+                        -{p.discount_percent}% Chegirma
+                      </span>
+                    </div>
+                    <span className="text-[10px] text-gray-400 block mt-1">
+                      Minimal buyurtma: {p.min_order_amount > 0 ? `${p.min_order_amount.toLocaleString('uz-UZ')} so'm` : "Cheklovsiz (0 so'm)"}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => handleTogglePromo(p.id)}
+                      className={`px-2.5 py-1 rounded-xl text-[10px] font-bold transition ${
+                        p.is_active ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-gray-500/20 text-gray-400 border border-gray-500/30'
+                      }`}
+                    >
+                      {p.is_active ? 'Faol' : 'O\'chirilgan'}
+                    </button>
+                    <button
+                      onClick={() => handleDeletePromo(p.id)}
+                      className="p-2 rounded-xl bg-red-500/20 text-red-400 hover:bg-red-500/30 border border-red-500/30"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
 
@@ -1210,6 +1343,72 @@ export const AdminPanel: React.FC = () => {
                 className="w-full py-3 gold-btn rounded-xl text-xs font-bold shadow-gold-glow disabled:opacity-50"
               >
                 {isSavingCategory ? 'Saqlanmoqda...' : (editingCategoryId ? "Saqlash" : "Toifa Qo'shish")}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Promo Code Add Modal */}
+      {isPromoModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+          <div className="w-full max-w-sm bg-[#12081E] border border-[#D4AF37]/40 rounded-2xl p-5 text-gray-100 space-y-4">
+            <div className="flex items-center justify-between border-b border-white/10 pb-2">
+              <h3 className="text-sm font-bold text-[#D4AF37] flex items-center gap-1.5">
+                <Tag className="w-4 h-4" />
+                <span>Yangi Promokod Yaratish</span>
+              </h3>
+              <button onClick={() => setIsPromoModalOpen(false)}>
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreatePromo} className="space-y-3 text-xs">
+              <div>
+                <label className="text-[10px] text-gray-400 font-semibold block mb-1">Promokod Nomi (Kodi)</label>
+                <input
+                  type="text"
+                  value={promoForm.code}
+                  onChange={(e) => setPromoForm({ ...promoForm, code: e.target.value.toUpperCase() })}
+                  placeholder="Masalan: VELARIS20"
+                  required
+                  className="w-full bg-[#1A0E2B] border border-[#D4AF37]/30 rounded-xl p-2.5 text-xs text-gray-100 font-mono uppercase tracking-wider focus:outline-none focus:border-[#D4AF37]"
+                />
+              </div>
+
+              <div>
+                <label className="text-[10px] text-gray-400 font-semibold block mb-1">Chegirma Foizi (%)</label>
+                <input
+                  type="number"
+                  min="1"
+                  max="90"
+                  value={promoForm.discount_percent}
+                  onChange={(e) => setPromoForm({ ...promoForm, discount_percent: Number(e.target.value) })}
+                  required
+                  className="w-full bg-[#1A0E2B] border border-[#D4AF37]/30 rounded-xl p-2.5 text-xs text-gray-100 focus:outline-none focus:border-[#D4AF37]"
+                />
+              </div>
+
+              <div>
+                <label className="text-[10px] text-gray-400 font-semibold block mb-1">Minimal Buyurtma Summasi (So'mda, ixtiyoriy)</label>
+                <input
+                  type="number"
+                  min="0"
+                  step="10000"
+                  value={promoForm.min_order_amount}
+                  onChange={(e) => setPromoForm({ ...promoForm, min_order_amount: Number(e.target.value) })}
+                  placeholder="0 = cheklov yo'q"
+                  className="w-full bg-[#1A0E2B] border border-[#D4AF37]/30 rounded-xl p-2.5 text-xs text-gray-100 focus:outline-none focus:border-[#D4AF37]"
+                />
+                <span className="text-[9px] text-gray-400 mt-0.5 block">0 yozilsa, barcha summadagi buyurtmalarga o'tadi.</span>
+              </div>
+
+              <button
+                type="submit"
+                className="w-full py-3 gold-btn rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 mt-4"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Promokodni Saqlash</span>
               </button>
             </form>
           </div>
