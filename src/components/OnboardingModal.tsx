@@ -16,16 +16,38 @@ export const OnboardingModal: React.FC = () => {
   if (!isOnboardingOpen) return null;
 
   const handleShareContact = () => {
-    if (window.Telegram?.WebApp?.requestContact) {
-      window.Telegram.WebApp.requestContact((sent: boolean, response: any) => {
-        if (sent && response?.responseUnsafe?.contact?.phone_number) {
-          const num = response.responseUnsafe.contact.phone_number;
-          setPhone(num.startsWith('+') ? num : `+${num}`);
-        }
-      });
+    const tg = (window as any).Telegram?.WebApp;
+
+    if (tg && typeof tg.requestContact === 'function') {
+      try {
+        tg.requestContact((sent: boolean, response: any) => {
+          if (sent) {
+            const phoneNum = response?.responseUnsafe?.contact?.phone_number || response?.contact?.phone_number;
+            if (phoneNum) {
+              const formatted = phoneNum.startsWith('+') ? phoneNum : `+${phoneNum}`;
+              setPhone(formatted);
+              setErrorMsg('');
+              return;
+            }
+          }
+        });
+      } catch (err) {
+        console.warn('Telegram requestContact failed:', err);
+      }
+    }
+
+    // Fallback: check initDataUnsafe user phone or format +998
+    const tgUser = (window as any).Telegram?.WebApp?.initDataUnsafe?.user;
+    if (tgUser?.phone_number) {
+      const num = tgUser.phone_number;
+      setPhone(num.startsWith('+') ? num : `+${num}`);
+      setErrorMsg('');
     } else {
-      // Fallback demo phone
-      setPhone('+998901234567');
+      if (!phone || phone === '') {
+        setPhone('+998 ');
+      }
+      const el = document.getElementById('onboarding-phone-input');
+      if (el) el.focus();
     }
   };
 
@@ -104,6 +126,7 @@ export const OnboardingModal: React.FC = () => {
             </label>
             <div className="flex gap-2">
               <input
+                id="onboarding-phone-input"
                 type="tel"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
