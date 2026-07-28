@@ -607,7 +607,7 @@ app.post('/api/promo-codes', (req, res) => {
     const info = stmt.run(cleanCode, Number(discount_percent), Number(min_order_amount));
     res.json({ success: true, id: info.lastInsertRowid });
   } catch (error) {
-    res.status(400).json({ error: 'Ushbu promokod allaqachon mavjud yoki noto\'g'ri!' });
+    res.status(400).json({ error: "Ushbu promokod allaqachon mavjud yoki noto'g'ri!" });
   }
 });
 
