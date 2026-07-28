@@ -18,37 +18,45 @@ export const OnboardingModal: React.FC = () => {
   const handleShareContact = () => {
     const tg = (window as any).Telegram?.WebApp;
 
+    // Check Telegram WebApp initDataUnsafe user phone
+    const tgUser = tg?.initDataUnsafe?.user;
+    if (tgUser?.phone_number) {
+      const num = tgUser.phone_number;
+      const formatted = num.startsWith('+') ? num : `+${num}`;
+      setPhone(formatted);
+      setErrorMsg('');
+      return;
+    }
+
     if (tg && typeof tg.requestContact === 'function') {
       try {
         tg.requestContact((sent: boolean, response: any) => {
-          if (sent) {
-            const phoneNum = response?.responseUnsafe?.contact?.phone_number || response?.contact?.phone_number;
-            if (phoneNum) {
-              const formatted = phoneNum.startsWith('+') ? phoneNum : `+${phoneNum}`;
-              setPhone(formatted);
-              setErrorMsg('');
-              return;
+          if (sent && (response?.responseUnsafe?.contact?.phone_number || response?.contact?.phone_number)) {
+            const num = response?.responseUnsafe?.contact?.phone_number || response?.contact?.phone_number;
+            const formatted = num.startsWith('+') ? num : `+${num}`;
+            setPhone(formatted);
+            setErrorMsg('');
+          } else {
+            // If contact sharing was denied or unavailable, set +998 prefix & focus
+            if (!phone || phone === '') {
+              setPhone('+998 ');
             }
+            const el = document.getElementById('onboarding-phone-input');
+            if (el) el.focus();
           }
         });
+        return;
       } catch (err) {
         console.warn('Telegram requestContact failed:', err);
       }
     }
 
-    // Fallback: check initDataUnsafe user phone or format +998
-    const tgUser = (window as any).Telegram?.WebApp?.initDataUnsafe?.user;
-    if (tgUser?.phone_number) {
-      const num = tgUser.phone_number;
-      setPhone(num.startsWith('+') ? num : `+${num}`);
-      setErrorMsg('');
-    } else {
-      if (!phone || phone === '') {
-        setPhone('+998 ');
-      }
-      const el = document.getElementById('onboarding-phone-input');
-      if (el) el.focus();
+    // Fallback if not inside Telegram or requestContact fails
+    if (!phone || phone === '') {
+      setPhone('+998 ');
     }
+    const el = document.getElementById('onboarding-phone-input');
+    if (el) el.focus();
   };
 
   const handleGetLocation = () => {
