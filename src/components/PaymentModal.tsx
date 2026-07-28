@@ -124,9 +124,35 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
-      reader.onloadend = () => {
-        setReceiptImage(reader.result as string);
-        setError('');
+      reader.onload = (evt) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+          const maxWidth = 800;
+
+          if (width > maxWidth) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          if (ctx) {
+            ctx.drawImage(img, 0, 0, width, height);
+            setReceiptImage(canvas.toDataURL('image/jpeg', 0.8));
+          } else {
+            setReceiptImage(evt.target?.result as string);
+          }
+          setError('');
+        };
+        img.onerror = () => {
+          setReceiptImage(evt.target?.result as string);
+          setError('');
+        };
+        img.src = evt.target?.result as string;
       };
       reader.readAsDataURL(file);
     }
