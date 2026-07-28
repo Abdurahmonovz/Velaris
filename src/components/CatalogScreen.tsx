@@ -126,7 +126,7 @@ export const CatalogScreen: React.FC = () => {
           <div className="absolute left-0 top-0 bottom-0 w-4 bg-gradient-to-r from-[#0A0510] to-transparent z-10 pointer-events-none" />
           <div className="absolute right-0 top-0 bottom-0 w-4 bg-gradient-to-l from-[#0A0510] to-transparent z-10 pointer-events-none" />
 
-          <div className="animate-infinite-marquee flex items-center gap-3 px-2">
+          <div className="animate-infinite-marquee-right flex items-center gap-3 px-2">
             {/* Duplicated array for seamless continuous loop */}
             {[...categories, ...categories].map((cat, idx) => {
               const isSelected = selectedCategory === cat.slug;
