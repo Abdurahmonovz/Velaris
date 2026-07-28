@@ -106,80 +106,65 @@ export const HomeScreen: React.FC = () => {
         </div>
       )}
 
-      {/* Instagram Stories Style Circular Categories */}
-      <div className="space-y-2">
+      {/* Instagram Stories Style Circular Categories with Infinite Marquee Animation */}
+      <div className="space-y-2 overflow-hidden">
         <div className="flex items-center justify-between">
           <h2 className="text-xs font-bold text-[#D4AF37] uppercase tracking-wider flex items-center gap-1.5">
-            <Sparkles className="w-3.5 h-3.5" />
+            <Sparkles className="w-3.5 h-3.5 text-[#D4AF37]" />
             <span>{t('categoriesTitle')}</span>
           </h2>
 
           {selectedCategory && (
             <button
               onClick={() => setSelectedCategory(null)}
-              className="text-[10px] text-[#D4AF37] hover:underline"
+              className="text-[10px] text-[#D4AF37] hover:underline font-bold"
             >
               {t('seeAll')}
             </button>
           )}
         </div>
 
-        <div className="flex items-center gap-3 overflow-x-auto no-scrollbar py-2">
-          {/* All Category Circle */}
-          <div
-            onClick={() => setSelectedCategory(null)}
-            className="flex flex-col items-center gap-1.5 flex-shrink-0 cursor-pointer group"
-          >
-            <div
-              className={`w-16 h-16 rounded-full p-0.5 transition-all ${
-                selectedCategory === null
-                  ? 'bg-gradient-to-tr from-[#FFF0B8] via-[#D4AF37] to-[#AA771C] shadow-gold-glow scale-105'
-                  : 'bg-white/10 hover:bg-[#D4AF37]/40'
-              }`}
-            >
-              <div className="w-full h-full rounded-full bg-[#12081E] flex items-center justify-center border border-[#D4AF37]/30 text-xs font-bold text-[#D4AF37]">
-                ALL
-              </div>
-            </div>
-            <span className="text-[10px] text-gray-300 font-medium tracking-tight">
-              {t('seeAll')}
-            </span>
-          </div>
+        <div className="w-full overflow-hidden py-2 relative rounded-2xl bg-[#12081E]/40 border border-[#D4AF37]/15">
+          {/* Subtle Side Fades */}
+          <div className="absolute left-0 top-0 bottom-0 w-4 bg-gradient-to-r from-[#0A0510] to-transparent z-10 pointer-events-none" />
+          <div className="absolute right-0 top-0 bottom-0 w-4 bg-gradient-to-l from-[#0A0510] to-transparent z-10 pointer-events-none" />
 
-          {/* Category List */}
-          {categories.map((cat) => {
-            const isSelected = selectedCategory === cat.slug;
-            return (
-              <div
-                key={cat.id}
-                onClick={() => {
-                  setSelectedCategory(isSelected ? null : cat.slug);
-                }}
-                className="flex flex-col items-center gap-1.5 flex-shrink-0 cursor-pointer group"
-              >
+          <div className="animate-infinite-marquee flex items-center gap-4 px-2">
+            {/* Duplicated list for infinite seamless loop */}
+            {[...categories, ...categories].map((cat, idx) => {
+              const isSelected = selectedCategory === cat.slug;
+              return (
                 <div
-                  className={`w-16 h-16 rounded-full p-0.5 transition-all ${
-                    isSelected
-                      ? 'bg-gradient-to-tr from-[#FFF0B8] via-[#D4AF37] to-[#AA771C] shadow-gold-glow scale-105'
-                      : 'bg-white/10 hover:bg-[#D4AF37]/40'
-                  }`}
+                  key={`${cat.id}-${idx}`}
+                  onClick={() => {
+                    setSelectedCategory(isSelected ? null : cat.slug);
+                  }}
+                  className="flex flex-col items-center gap-1.5 flex-shrink-0 cursor-pointer group transition-transform active:scale-95"
                 >
-                  <img
-                    src={cat.image}
-                    alt={cat.name_uz}
-                    className="w-full h-full object-cover rounded-full border border-[#D4AF37]/20"
-                  />
+                  <div
+                    className={`w-16 h-16 rounded-full p-0.5 transition-all ${
+                      isSelected
+                        ? 'bg-gradient-to-tr from-[#FFF0B8] via-[#D4AF37] to-[#AA771C] shadow-gold-glow scale-105'
+                        : 'bg-white/10 group-hover:border-[#D4AF37]/60'
+                    }`}
+                  >
+                    <img
+                      src={cat.image}
+                      alt={cat.name_uz}
+                      className="w-full h-full object-cover rounded-full border border-[#D4AF37]/20 group-hover:scale-105 transition duration-300"
+                    />
+                  </div>
+                  <span
+                    className={`text-[10px] font-medium tracking-tight max-w-[68px] truncate text-center ${
+                      isSelected ? 'text-[#D4AF37] font-bold' : 'text-gray-300 group-hover:text-[#D4AF37]'
+                    }`}
+                  >
+                    {language === 'uz' ? cat.name_uz : cat.name_ru}
+                  </span>
                 </div>
-                <span
-                  className={`text-[10px] font-medium tracking-tight max-w-[64px] truncate text-center ${
-                    isSelected ? 'text-[#D4AF37] font-bold' : 'text-gray-300'
-                  }`}
-                >
-                  {language === 'uz' ? cat.name_uz : cat.name_ru}
-                </span>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
       </div>
 

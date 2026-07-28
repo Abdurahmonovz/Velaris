@@ -144,3 +144,24 @@ html.light .gold-gradient-text {
 .leaflet-popup-tip {
   background: #190B2B !important;
 }
+
+/* Infinite Category Marquee Animation */
+@keyframes infinite-marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-infinite-marquee {
+  display: flex;
+  width: max-content;
+  animation: infinite-marquee 22s linear infinite;
+}
+
+.animate-infinite-marquee:hover,
+.animate-infinite-marquee:active {
+  animation-play-state: paused;
+}

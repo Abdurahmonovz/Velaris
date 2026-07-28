@@ -104,73 +104,64 @@ export const CatalogScreen: React.FC = () => {
         </button>
       </div>
 
-      {/* Visual Category Cards Carousel */}
-      <div className="space-y-2">
+      {/* Visual Category Cards Carousel with Infinite Marquee Animation */}
+      <div className="space-y-2 overflow-hidden">
         <div className="flex items-center justify-between text-xs text-gray-400">
           <span className="font-bold text-[#D4AF37] uppercase tracking-wider flex items-center gap-1.5">
-            <Sparkles className="w-3.5 h-3.5" />
+            <Sparkles className="w-3.5 h-3.5 text-[#D4AF37]" />
             <span>Katalog Bo'limlari</span>
           </span>
           {selectedCategory && (
             <button
               onClick={() => setSelectedCategory(null)}
-              className="text-[10px] text-[#D4AF37] hover:underline"
+              className="text-[10px] text-[#D4AF37] hover:underline font-bold"
             >
               Barcha toifalar
             </button>
           )}
         </div>
 
-        <div className="flex gap-2.5 overflow-x-auto no-scrollbar py-1">
-          {/* All Category Card */}
-          <div
-            onClick={() => setSelectedCategory(null)}
-            className={`flex-shrink-0 w-24 p-2 rounded-2xl border transition-all cursor-pointer text-center space-y-1.5 ${
-              selectedCategory === null
-                ? 'border-[#D4AF37] bg-gradient-to-b from-[#26123D] to-[#160A26] shadow-gold-glow scale-105'
-                : 'border-white/10 bg-[#12081E] hover:border-[#D4AF37]/40'
-            }`}
-          >
-            <div className="w-12 h-12 rounded-xl bg-[#D4AF37]/20 border border-[#D4AF37]/40 mx-auto flex items-center justify-center text-xs font-bold text-[#D4AF37]">
-              ALL
-            </div>
-            <span className="text-[10px] font-bold text-gray-200 block truncate">Barchasi</span>
-          </div>
+        <div className="w-full overflow-hidden py-1 relative rounded-2xl bg-[#12081E]/40 border border-[#D4AF37]/15">
+          {/* Side Fades */}
+          <div className="absolute left-0 top-0 bottom-0 w-4 bg-gradient-to-r from-[#0A0510] to-transparent z-10 pointer-events-none" />
+          <div className="absolute right-0 top-0 bottom-0 w-4 bg-gradient-to-l from-[#0A0510] to-transparent z-10 pointer-events-none" />
 
-          {/* Category Cards with Admin Images */}
-          {categories.map((cat) => {
-            const isSelected = selectedCategory === cat.slug;
-            const catProductCount = products.filter((p) => p.category_slug === cat.slug).length;
+          <div className="animate-infinite-marquee flex items-center gap-3 px-2">
+            {/* Duplicated array for seamless continuous loop */}
+            {[...categories, ...categories].map((cat, idx) => {
+              const isSelected = selectedCategory === cat.slug;
+              const catProductCount = products.filter((p) => p.category_slug === cat.slug).length;
 
-            return (
-              <div
-                key={cat.id}
-                onClick={() => setSelectedCategory(isSelected ? null : cat.slug)}
-                className={`flex-shrink-0 w-28 p-2 rounded-2xl border transition-all cursor-pointer text-center space-y-1.5 relative overflow-hidden ${
-                  isSelected
-                    ? 'border-[#D4AF37] bg-gradient-to-b from-[#26123D] to-[#160A26] shadow-gold-glow scale-105'
-                    : 'border-white/10 bg-[#12081E] hover:border-[#D4AF37]/40'
-                }`}
-              >
-                <div className="w-full h-14 rounded-xl overflow-hidden border border-[#D4AF37]/30 bg-black relative">
-                  <img
-                    src={cat.image}
-                    alt={cat.name_uz}
-                    className="w-full h-full object-cover group-hover:scale-110 transition duration-300"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=400&q=80';
-                    }}
-                  />
-                  <span className="absolute bottom-1 right-1 px-1.5 py-0.5 rounded-md bg-black/80 text-[8px] font-bold text-[#D4AF37] border border-[#D4AF37]/30">
-                    {catProductCount}
+              return (
+                <div
+                  key={`${cat.id}-${idx}`}
+                  onClick={() => setSelectedCategory(isSelected ? null : cat.slug)}
+                  className={`flex-shrink-0 w-28 p-2 rounded-2xl border transition-all cursor-pointer text-center space-y-1.5 relative overflow-hidden group active:scale-95 ${
+                    isSelected
+                      ? 'border-[#D4AF37] bg-gradient-to-b from-[#26123D] to-[#160A26] shadow-gold-glow scale-105'
+                      : 'border-white/10 bg-[#12081E] hover:border-[#D4AF37]/50'
+                  }`}
+                >
+                  <div className="w-full h-14 rounded-xl overflow-hidden border border-[#D4AF37]/30 bg-black relative">
+                    <img
+                      src={cat.image}
+                      alt={cat.name_uz}
+                      className="w-full h-full object-cover group-hover:scale-110 transition duration-300"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=400&q=80';
+                      }}
+                    />
+                    <span className="absolute bottom-1 right-1 px-1.5 py-0.5 rounded-md bg-black/80 text-[8px] font-bold text-[#D4AF37] border border-[#D4AF37]/30">
+                      {catProductCount}
+                    </span>
+                  </div>
+                  <span className={`text-[10px] font-bold block truncate ${isSelected ? 'text-[#D4AF37]' : 'text-gray-200 group-hover:text-[#D4AF37]'}`}>
+                    {language === 'uz' ? cat.name_uz : cat.name_ru}
                   </span>
                 </div>
-                <span className="text-[10px] font-bold text-gray-200 block truncate">
-                  {language === 'uz' ? cat.name_uz : cat.name_ru}
-                </span>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
       </div>
 
