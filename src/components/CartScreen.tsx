@@ -5,16 +5,21 @@ import { PaymentModal } from './PaymentModal';
 import { Order } from '../types';
 import { Trash2, Plus, Minus, ShoppingBag, ArrowRight, CheckCircle, Sparkles } from 'lucide-react';
 
-export const CartScreen: React.FC = () => {
+interface CartScreenProps {
+  onOpenPayment?: (order: Order) => void;
+}
+
+export const CartScreen: React.FC<CartScreenProps> = ({ onOpenPayment }) => {
   const { cart, updateCartQuantity, removeFromCart, setActiveTab, t } = useApp();
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
-  const [activePaymentOrder, setActivePaymentOrder] = useState<Order | null>(null);
 
   const subtotal = cart.reduce((sum, item) => sum + item.totalPrice, 0);
 
   const handleOrderSuccess = (order: Order) => {
     setIsCheckoutOpen(false);
-    setActivePaymentOrder(order);
+    if (onOpenPayment) {
+      onOpenPayment(order);
+    }
   };
 
   if (cart.length === 0) {
@@ -156,17 +161,6 @@ export const CartScreen: React.FC = () => {
         onClose={() => setIsCheckoutOpen(false)}
         onSuccess={handleOrderSuccess}
       />
-
-      {/* Payment Modal (Card Number & Receipt Screenshot Upload) */}
-      {activePaymentOrder && (
-        <PaymentModal
-          isOpen={!!activePaymentOrder}
-          orderId={activePaymentOrder.id}
-          totalAmount={activePaymentOrder.total_amount}
-          onClose={() => setActivePaymentOrder(null)}
-          onSuccess={() => setActivePaymentOrder(null)}
-        />
-      )}
     </div>
   );
 };

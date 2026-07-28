@@ -474,13 +474,19 @@ app.put('/api/orders/:id/payment', async (req, res) => {
   }
 });
 
-// Get User Orders History
+// Get User Orders History (Strictly Isolated Per Customer)
 app.get('/api/orders', (req, res) => {
   try {
-    const { user_id } = req.query;
-    if (!user_id) return res.json([]);
+    const { user_id, phone } = req.query;
+    if (!user_id && !phone) return res.json([]);
 
-    const orders = db.prepare('SELECT * FROM orders WHERE user_id = ? ORDER BY id DESC').all(user_id);
+    let orders = [];
+    if (phone && phone.trim() !== '') {
+      orders = db.prepare('SELECT * FROM orders WHERE customer_phone = ? OR user_id = ? ORDER BY id DESC').all(phone, user_id || -1);
+    } else {
+      orders = db.prepare('SELECT * FROM orders WHERE user_id = ? ORDER BY id DESC').all(user_id);
+    }
+
     const formatted = orders.map((o) => ({
       ...o,
       items: JSON.parse(o.items_json || '[]'),

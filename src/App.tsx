@@ -81,7 +81,7 @@ const MainLayout: React.FC = () => {
       <main className="animate-in fade-in duration-200">
         {activeTab === 'home' && <HomeScreen />}
         {activeTab === 'catalog' && <CatalogScreen />}
-        {activeTab === 'cart' && <CartScreen />}
+        {activeTab === 'cart' && <CartScreen onOpenPayment={(order) => setActivePaymentOrder(order)} />}
         {activeTab === 'orders' && <OrdersScreen onOpenPayment={(order) => setActivePaymentOrder(order)} />}
         {activeTab === 'profile' && <ProfileScreen />}
         {activeTab === 'admin' && <AdminPanel />}
@@ -96,15 +96,17 @@ const MainLayout: React.FC = () => {
       {/* Mandatory Gating Onboarding Modal (Phone & Location) */}
       <OnboardingModal />
 
-      {/* Pending Unpaid Order Alert Modal */}
-      <PendingOrderAlertModal
-        pendingOrder={pendingOrderAlert}
-        onOpenPayment={(order) => {
-          setPendingOrderAlert(null);
-          setActivePaymentOrder(order);
-        }}
-        onDismiss={() => setPendingOrderAlert(null)}
-      />
+      {/* Pending Unpaid Order Alert Modal (Suppressed while Payment Modal is active) */}
+      {!activePaymentOrder && (
+        <PendingOrderAlertModal
+          pendingOrder={pendingOrderAlert}
+          onOpenPayment={(order) => {
+            setPendingOrderAlert(null);
+            setActivePaymentOrder(order);
+          }}
+          onDismiss={() => setPendingOrderAlert(null)}
+        />
+      )}
 
       {/* Payment Modal for Pending Order */}
       {activePaymentOrder && (
