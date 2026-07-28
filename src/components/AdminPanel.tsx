@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import { Product, Order, Category, AdminStats } from '../types';
-import { Shield, Package, DollarSign, Users, Plus, Edit, Trash2, CheckCircle, RefreshCw, X, FolderPlus, Layers } from 'lucide-react';
+import { Shield, Package, DollarSign, Users, Plus, Edit, Trash2, CheckCircle, RefreshCw, X, FolderPlus, Layers, LogOut, Clock, TrendingUp, Award, ShoppingBag } from 'lucide-react';
 import { getApiUrl } from '../config';
 
 // Fast Canvas Image Compressor (Reduces 10MB camera photo to 50KB for instant 50ms upload)
@@ -368,38 +368,86 @@ export const AdminPanel: React.FC = () => {
     setIsProductModalOpen(true);
   };
 
+  // Analytics calculations
+  const uniqueCustomersCount = new Set(orders.map((o) => o.customer_phone || (o as any).phone || o.user_id)).size;
+  const unpaidOrders = orders.filter((o) => o.status === 'To\'lov kutilmoqda');
+  const processingOrders = orders.filter((o) => o.status === 'Tayyorlanmoqda' || o.status === 'Jo\'natildi');
+  const totalRevenue = orders
+    .filter((o) => o.status !== 'Bekor qilindi')
+    .reduce((sum, o) => sum + (o.total_amount || (o as any).total_price || 0), 0);
+
+  // Calculate Top Selling Perfumes
+  const perfumeSalesMap: { [key: string]: { name: string; count: number; totalSum: number; image?: string } } = {};
+
+  orders.forEach((o) => {
+    if (o.status === 'Bekor qilindi') return;
+    try {
+      const items = Array.isArray(o.items)
+        ? o.items
+        : typeof o.items === 'string'
+        ? JSON.parse(o.items)
+        : [];
+
+      items.forEach((item: any) => {
+        const key = item.name || 'Parfyum';
+        if (!perfumeSalesMap[key]) {
+          perfumeSalesMap[key] = {
+            name: key,
+            count: 0,
+            totalSum: 0,
+            image: item.image || (item.images && item.images[0]) || '',
+          };
+        }
+        const qty = item.quantity || 1;
+        perfumeSalesMap[key].count += qty;
+        perfumeSalesMap[key].totalSum += (item.item_price || item.price || 0) * qty;
+      });
+    } catch {
+      // ignore
+    }
+  });
+
+  const topSellingPerfumesList = Object.values(perfumeSalesMap).sort((a, b) => b.count - a.count);
+
   return (
     <div className="space-y-5 pb-28 pt-2 px-4 max-w-md mx-auto">
-      {/* Top Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Shield className="w-5 h-5 text-[#D4AF37]" />
-          <h1 className="text-xl font-serif font-bold text-gray-100 gold-gradient-text">
-            Admin Panel
-          </h1>
+      {/* Dedicated Admin Portal Header */}
+      <div className="p-4 bg-gradient-to-r from-[#1A0E2B] via-[#150B21] to-[#0A0510] rounded-2xl border border-[#D4AF37]/50 shadow-gold-glow flex items-center justify-between">
+        <div className="flex items-center gap-2.5">
+          <div className="w-9 h-9 rounded-xl bg-[#D4AF37]/10 border border-[#D4AF37]/50 flex items-center justify-center text-[#D4AF37]">
+            <Shield className="w-5 h-5" />
+          </div>
+          <div>
+            <h1 className="text-sm font-serif font-bold text-gray-100 gold-gradient-text tracking-wider">
+              VELARIS ADMIN PORTAL
+            </h1>
+            <p className="text-[9px] text-gray-400">Boshqaruv va Tahlillar Paneli</p>
+          </div>
         </div>
+
         <button
-          onClick={() => setActiveTab('home')}
-          className="text-xs text-[#D4AF37] hover:underline"
+          onClick={() => setActiveTab('profile')}
+          className="flex items-center gap-1 px-3 py-1.5 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 rounded-xl text-[10px] text-red-400 font-semibold transition active:scale-95"
         >
-          Do'konga qaytish
+          <LogOut className="w-3.5 h-3.5" />
+          <span>Chiqish</span>
         </button>
       </div>
 
-      {/* Tabs */}
+      {/* Admin View Navigation Tabs */}
       <div className="grid grid-cols-5 gap-1 bg-[#12081E] p-1 rounded-xl border border-white/10 text-[9px] font-semibold">
         <button
           onClick={() => setActiveAdminTab('stats')}
           className={`py-2 rounded-lg transition ${
-            activeAdminTab === 'stats' ? 'bg-[#D4AF37] text-black' : 'text-gray-400'
+            activeAdminTab === 'stats' ? 'bg-[#D4AF37] text-black font-bold' : 'text-gray-400'
           }`}
         >
-          Stats
+          Statistika
         </button>
         <button
           onClick={() => setActiveAdminTab('products')}
           className={`py-2 rounded-lg transition ${
-            activeAdminTab === 'products' ? 'bg-[#D4AF37] text-black' : 'text-gray-400'
+            activeAdminTab === 'products' ? 'bg-[#D4AF37] text-black font-bold' : 'text-gray-400'
           }`}
         >
           Atirlar ({products.length})
@@ -407,7 +455,7 @@ export const AdminPanel: React.FC = () => {
         <button
           onClick={() => setActiveAdminTab('categories')}
           className={`py-2 rounded-lg transition ${
-            activeAdminTab === 'categories' ? 'bg-[#D4AF37] text-black' : 'text-gray-400'
+            activeAdminTab === 'categories' ? 'bg-[#D4AF37] text-black font-bold' : 'text-gray-400'
           }`}
         >
           Toifalar ({categories.length})
@@ -415,51 +463,146 @@ export const AdminPanel: React.FC = () => {
         <button
           onClick={() => setActiveAdminTab('banners')}
           className={`py-2 rounded-lg transition ${
-            activeAdminTab === 'banners' ? 'bg-[#D4AF37] text-black' : 'text-gray-400'
+            activeAdminTab === 'banners' ? 'bg-[#D4AF37] text-black font-bold' : 'text-gray-400'
           }`}
         >
-          Reklama ({banners.length})
+          Banner ({banners.length})
         </button>
         <button
           onClick={() => setActiveAdminTab('orders')}
           className={`py-2 rounded-lg transition ${
-            activeAdminTab === 'orders' ? 'bg-[#D4AF37] text-black' : 'text-gray-400'
+            activeAdminTab === 'orders' ? 'bg-[#D4AF37] text-black font-bold' : 'text-gray-400'
           }`}
         >
           Orders ({orders.length})
         </button>
       </div>
 
-      {/* 1. STATS TAB */}
+      {/* 1. STATISTIKA TAB */}
       {activeAdminTab === 'stats' && (
         <div className="space-y-4">
+          {/* Main Stat Cards Grid */}
           <div className="grid grid-cols-2 gap-3">
-            <div className="p-4 bg-gradient-to-br from-[#1A0E2B] to-[#12081E] rounded-2xl border border-[#D4AF37]/30 space-y-1">
-              <span className="text-[10px] text-gray-400 font-semibold uppercase">Jami Tushum</span>
-              <p className="text-lg font-bold text-[#D4AF37]">
-                {(stats?.totalRevenue || 0).toLocaleString('uz-UZ')} <span className="text-xs font-normal">so'm</span>
+            {/* Unique Customers Card */}
+            <div className="p-3.5 bg-gradient-to-br from-[#1A0E2B] to-[#12081E] rounded-2xl border border-[#D4AF37]/30 space-y-1">
+              <div className="flex items-center justify-between text-gray-400">
+                <span className="text-[9px] font-semibold uppercase tracking-wider">Xaridorlar</span>
+                <Users className="w-3.5 h-3.5 text-[#D4AF37]" />
+              </div>
+              <p className="text-lg font-bold text-gray-100">
+                {uniqueCustomersCount} <span className="text-xs font-normal text-gray-400">kishi</span>
               </p>
+              <span className="text-[9px] text-gray-400 block">Buyurtma qilgan mijozlar</span>
             </div>
-            <div className="p-4 bg-gradient-to-br from-[#1A0E2B] to-[#12081E] rounded-2xl border border-[#D4AF37]/30 space-y-1">
-              <span className="text-[10px] text-gray-400 font-semibold uppercase">Buyurtmalar</span>
-              <p className="text-lg font-bold text-gray-100">{stats?.totalOrders || 0} dona</p>
+
+            {/* Total Revenue Card */}
+            <div className="p-3.5 bg-gradient-to-br from-[#1A0E2B] to-[#12081E] rounded-2xl border border-[#D4AF37]/30 space-y-1">
+              <div className="flex items-center justify-between text-gray-400">
+                <span className="text-[9px] font-semibold uppercase tracking-wider">Jami Tushum</span>
+                <DollarSign className="w-3.5 h-3.5 text-[#D4AF37]" />
+              </div>
+              <p className="text-sm font-bold text-[#D4AF37] truncate">
+                {totalRevenue.toLocaleString('uz-UZ')} <span className="text-[10px] font-normal">so'm</span>
+              </p>
+              <span className="text-[9px] text-gray-400 block">{orders.length} ta buyurtmadan</span>
+            </div>
+
+            {/* Unpaid Pending Orders Card */}
+            <div className="p-3.5 bg-gradient-to-br from-[#26123D] to-[#170928] rounded-2xl border border-amber-500/40 space-y-1">
+              <div className="flex items-center justify-between text-amber-400">
+                <span className="text-[9px] font-semibold uppercase tracking-wider">To'lov Kutilmoqda</span>
+                <Clock className="w-3.5 h-3.5 text-amber-400" />
+              </div>
+              <p className="text-lg font-bold text-amber-300">{unpaidOrders.length} ta</p>
+              <span className="text-[9px] text-amber-400/80 block">To'lov cheki kutilayotganlar</span>
+            </div>
+
+            {/* Processing Orders Card */}
+            <div className="p-3.5 bg-gradient-to-br from-[#121A2B] to-[#0A101E] rounded-2xl border border-blue-500/40 space-y-1">
+              <div className="flex items-center justify-between text-blue-400">
+                <span className="text-[9px] font-semibold uppercase tracking-wider">Jarayonda</span>
+                <RefreshCw className="w-3.5 h-3.5 text-blue-400" />
+              </div>
+              <p className="text-lg font-bold text-blue-300">{processingOrders.length} ta</p>
+              <span className="text-[9px] text-blue-400/80 block">Tayyorlanmoqda / Jo'natildi</span>
             </div>
           </div>
 
-          <div className="p-4 bg-[#150B21] rounded-2xl border border-[#D4AF37]/20 space-y-3">
-            <h3 className="text-xs font-bold text-[#D4AF37] uppercase">Top Sotilgan Parfyumlar</h3>
-            <div className="space-y-2">
-              {stats?.topProducts.map((tp) => (
-                <div key={tp.id} className="flex items-center justify-between text-xs text-gray-200 border-b border-white/5 pb-2">
-                  <div>
-                    <span className="font-bold block">{tp.name}</span>
-                    <span className="text-[10px] text-gray-400">{tp.brand}</span>
-                  </div>
-                  <span className="text-xs font-bold text-[#D4AF37]">{tp.order_count} ta buyurtma</span>
-                </div>
-              ))}
+          {/* Top Selling Perfumes Section */}
+          <div className="p-4 bg-[#150B21] rounded-2xl border border-[#D4AF37]/30 space-y-3 shadow-gold-glow">
+            <div className="flex items-center justify-between border-b border-white/10 pb-2">
+              <h3 className="text-xs font-bold text-[#D4AF37] uppercase flex items-center gap-1.5">
+                <Award className="w-4 h-4 text-[#D4AF37]" />
+                <span>Qaysi Parfyumlar Ko'p Sotilmoqda</span>
+              </h3>
+              <span className="text-[10px] text-gray-400 font-mono">Reyting</span>
             </div>
+
+            {topSellingPerfumesList.length === 0 ? (
+              <p className="text-xs text-gray-400 text-center py-3">Hali sotuv ma'lumotlari yo'q</p>
+            ) : (
+              <div className="space-y-2.5 divide-y divide-white/5">
+                {topSellingPerfumesList.map((perfume, idx) => (
+                  <div key={idx} className="flex items-center justify-between pt-2">
+                    <div className="flex items-center gap-2.5">
+                      <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${
+                        idx === 0 ? 'bg-[#D4AF37] text-black' : idx === 1 ? 'bg-gray-300 text-black' : idx === 2 ? 'bg-amber-700 text-white' : 'bg-white/10 text-gray-300'
+                      }`}>
+                        {idx + 1}
+                      </span>
+                      {perfume.image && (
+                        <img src={perfume.image} alt={perfume.name} className="w-8 h-8 object-cover rounded-lg border border-white/10" />
+                      )}
+                      <div>
+                        <span className="text-xs font-bold text-gray-100 block">{perfume.name}</span>
+                        <span className="text-[9px] text-gray-400">Jami tushum: {perfume.totalSum.toLocaleString('uz-UZ')} so'm</span>
+                      </div>
+                    </div>
+                    <span className="text-xs font-bold text-[#D4AF37] bg-[#D4AF37]/10 px-2 py-1 rounded-lg border border-[#D4AF37]/20">
+                      {perfume.count} ta sotildi
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
+
+          {/* Pending Unpaid Orders Quick Action Section */}
+          {unpaidOrders.length > 0 && (
+            <div className="p-4 bg-amber-500/10 border border-amber-500/30 rounded-2xl space-y-3">
+              <h3 className="text-xs font-bold text-amber-400 uppercase flex items-center gap-1.5">
+                <Clock className="w-4 h-4" />
+                <span>To'lovi Kutilayotgan Buyurtmalar ({unpaidOrders.length})</span>
+              </h3>
+
+              <div className="space-y-2">
+                {unpaidOrders.map((o) => (
+                  <div key={o.id} className="p-3 bg-[#12081E] border border-amber-500/20 rounded-xl space-y-2 text-xs">
+                    <div className="flex justify-between items-center text-gray-300">
+                      <span className="font-bold text-white">Buyurtma #{o.id} ({o.customer_name || (o as any).user_name || 'Mijoz'})</span>
+                      <span className="text-[#D4AF37] font-bold">{(o.total_amount || (o as any).total_price || 0).toLocaleString('uz-UZ')} so'm</span>
+                    </div>
+                    <p className="text-[10px] text-gray-400">Tel: {o.customer_phone || (o as any).phone || 'Noma\'lum'}</p>
+
+                    <div className="flex gap-2 pt-1">
+                      <button
+                        onClick={() => handleUpdateOrderStatus(o.id, 'Tayyorlanmoqda')}
+                        className="flex-1 py-1.5 bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 text-emerald-400 rounded-lg text-[10px] font-bold transition"
+                      >
+                        ✅ To'lovni Tasdiqlash
+                      </button>
+                      <button
+                        onClick={() => handleUpdateOrderStatus(o.id, 'Bekor qilindi')}
+                        className="px-3 py-1.5 bg-red-500/20 hover:bg-red-500/30 border border-red-500/40 text-red-400 rounded-lg text-[10px] font-bold transition"
+                      >
+                        ❌ Rad etish
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       )}
 

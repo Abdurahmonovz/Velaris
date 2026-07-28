@@ -5,6 +5,8 @@ import { Home, Grid, ShoppingBag, Package, User } from 'lucide-react';
 export const BottomNav: React.FC = () => {
   const { activeTab, setActiveTab, cart, orders, t } = useApp();
 
+  if (activeTab === 'admin') return null;
+
   const totalCartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
   const activeOrdersCount = orders.filter(o => o.status !== 'Yetkazildi' && o.status !== 'Bekor qilindi').length;
 

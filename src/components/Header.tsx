@@ -3,7 +3,9 @@ import { useApp } from '../context/AppContext';
 import { Search, Globe, Shield, Sun, Moon } from 'lucide-react';
 
 export const Header: React.FC = () => {
-  const { language, setLanguage, theme, toggleTheme, user, setActiveTab, t } = useApp();
+  const { language, setLanguage, theme, toggleTheme, user, activeTab, setActiveTab, t } = useApp();
+
+  if (activeTab === 'admin') return null;
 
   const toggleLang = () => {
     setLanguage(language === 'uz' ? 'ru' : 'uz');

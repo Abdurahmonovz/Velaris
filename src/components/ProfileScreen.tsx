@@ -19,12 +19,11 @@ const AdminLoginButton: React.FC = () => {
       return;
     }
 
-    // Check if phone matches admin numbers
+    // Check if phone matches the 2 authorized admin numbers exactly
     const clean = adminPhone.replace(/\D/g, '');
-    const isAdmin = ['998937188885', '937188885', '998955805852', '955805852', '998921983377', '921983377', '998901234567'].includes(clean);
+    const isAdmin = ['998937188885', '937188885', '998921983377', '921983377'].includes(clean);
 
     if (isAdmin) {
-      await updateUserProfile({ phone: adminPhone });
       setErrorMsg('');
       setIsOpen(false);
       setActiveTab('admin');
