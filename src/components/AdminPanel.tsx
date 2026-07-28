@@ -388,15 +388,21 @@ export const AdminPanel: React.FC = () => {
   const uniqueCustomersCount = new Set(orders.map((o) => o.customer_phone || (o as any).phone || o.user_id)).size;
   const unpaidOrders = orders.filter((o) => o.status === 'To\'lov kutilmoqda');
   const processingOrders = orders.filter((o) => o.status === 'Tayyorlanmoqda' || o.status === 'Jo\'natildi');
-  const totalRevenue = orders
-    .filter((o) => o.status !== 'Bekor qilindi')
-    .reduce((sum, o) => sum + (o.total_amount || (o as any).total_price || 0), 0);
 
-  // Calculate Top Selling Perfumes
+  // Total Revenue ONLY includes admin-confirmed paid orders
+  const confirmedOrders = orders.filter((o) =>
+    ['Qabul qilindi', 'Tayyorlanmoqda', 'Jo\'natildi', 'Yetkazildi'].includes(o.status)
+  );
+
+  const totalRevenue = confirmedOrders.reduce(
+    (sum, o) => sum + (o.total_amount || (o as any).total_price || 0),
+    0
+  );
+
+  // Calculate Top Selling Perfumes (Only from confirmed orders)
   const perfumeSalesMap: { [key: string]: { name: string; count: number; totalSum: number; image?: string } } = {};
 
-  orders.forEach((o) => {
-    if (o.status === 'Bekor qilindi') return;
+  confirmedOrders.forEach((o) => {
     try {
       const items = Array.isArray(o.items)
         ? o.items
@@ -415,8 +421,9 @@ export const AdminPanel: React.FC = () => {
           };
         }
         const qty = item.quantity || 1;
+        const itemPrice = item.unitPrice || item.item_price || item.price || 0;
         perfumeSalesMap[key].count += qty;
-        perfumeSalesMap[key].totalSum += (item.item_price || item.price || 0) * qty;
+        perfumeSalesMap[key].totalSum += itemPrice * qty;
       });
     } catch {
       // ignore

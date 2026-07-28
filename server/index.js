@@ -549,13 +549,16 @@ app.get('/api/admin/stats', (req, res) => {
     const totalOrders = db.prepare('SELECT COUNT(*) as count FROM orders').get().count;
     const totalUsers = db.prepare('SELECT COUNT(*) as count FROM users').get().count;
 
-    const totalRevenueRow = db.prepare('SELECT SUM(total_amount) as total FROM orders WHERE status != "Bekor qilindi"').get();
+    const totalRevenueRow = db.prepare(`
+      SELECT SUM(total_amount) as total FROM orders 
+      WHERE status IN ('Qabul qilindi', 'Tayyorlanmoqda', 'Jo\'natildi', 'Yetkazildi')
+    `).get();
     const totalRevenue = totalRevenueRow?.total || 0;
 
     const topProducts = db.prepare(`
       SELECT p.id, p.name, p.brand, p.price_10g, p.rating, COUNT(o.id) as order_count
       FROM products p
-      LEFT JOIN orders o ON o.items_json LIKE ('%' || p.name || '%')
+      LEFT JOIN orders o ON o.items_json LIKE ('%' || p.name || '%') AND o.status IN ('Qabul qilindi', 'Tayyorlanmoqda', 'Jo\'natildi', 'Yetkazildi')
       GROUP BY p.id
       ORDER BY order_count DESC
       LIMIT 5

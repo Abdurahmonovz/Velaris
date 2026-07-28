@@ -16,12 +16,18 @@ import { PendingOrderAlertModal } from './components/PendingOrderAlertModal';
 import { Order } from './types';
 
 const MainLayout: React.FC = () => {
-  const { isFirstLaunch, activeTab, isLoading, orders } = useApp();
+  const { isFirstLaunch, activeTab, isLoading, orders, user } = useApp();
   const [pendingOrderAlert, setPendingOrderAlert] = useState<Order | null>(null);
   const [activePaymentOrder, setActivePaymentOrder] = useState<Order | null>(null);
 
-  // Auto-detect pending un-paid order with 1-second delay upon tab navigation
+  // Auto-detect pending un-paid order with 1-second delay for current customer only
   useEffect(() => {
+    // Never show top alert banner to admins
+    if (user?.role === 'admin') {
+      setPendingOrderAlert(null);
+      return;
+    }
+
     const timer = setTimeout(() => {
       try {
         const savedPending = localStorage.getItem('velaris_pending_order');
@@ -39,13 +45,17 @@ const MainLayout: React.FC = () => {
           } else {
             setPendingOrderAlert(orderData);
           }
-        } else {
-          const pending = orders.find((o) => o.status === 'To\'lov kutilmoqda');
+        } else if (user) {
+          const pending = orders.find(
+            (o) => o.status === 'To\'lov kutilmoqda' && (o.user_id === user.id || o.customer_phone === user.phone)
+          );
           if (pending) {
             setPendingOrderAlert(pending);
           } else {
             setPendingOrderAlert(null);
           }
+        } else {
+          setPendingOrderAlert(null);
         }
       } catch {
         // ignore
@@ -53,7 +63,7 @@ const MainLayout: React.FC = () => {
     }, 1000);
 
     return () => clearTimeout(timer);
-  }, [orders, activeTab]);
+  }, [orders, activeTab, user]);
 
   if (isFirstLaunch) {
     return <WelcomeScreen />;
