@@ -34,7 +34,7 @@ export function initBot() {
               [
                 {
                   text: '🛍️ Do\'konni Ochish (Mini App)',
-                  web_app: { url: process.env.MINI_APP_URL || 'https://velaris-parfume.vercel.app' }
+                  web_app: { url: process.env.MINI_APP_URL || 'https://velaris-virid.vercel.app' }
                 }
               ]
             ]
