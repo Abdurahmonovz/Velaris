@@ -46,8 +46,9 @@ export const AdminPanel: React.FC = () => {
   const [promos, setPromos] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  // New Promo Code state
+  // New / Edit Promo Code state
   const [isPromoModalOpen, setIsPromoModalOpen] = useState(false);
+  const [editingPromoId, setEditingPromoId] = useState<number | null>(null);
   const [promoForm, setPromoForm] = useState({
     code: '',
     discount_percent: 10,
@@ -66,21 +67,41 @@ export const AdminPanel: React.FC = () => {
     }
   };
 
-  const handleCreatePromo = async (e: React.FormEvent) => {
+  const openAddPromoModal = () => {
+    setEditingPromoId(null);
+    setPromoForm({ code: '', discount_percent: 10, min_order_amount: 0 });
+    setIsPromoModalOpen(true);
+  };
+
+  const openEditPromoModal = (promo: any) => {
+    setEditingPromoId(promo.id);
+    setPromoForm({
+      code: promo.code,
+      discount_percent: promo.discount_percent,
+      min_order_amount: promo.min_order_amount,
+    });
+    setIsPromoModalOpen(true);
+  };
+
+  const handleSavePromo = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!promoForm.code.trim()) {
       alert('Iltimos, promokod nomini kiriting!');
       return;
     }
     try {
-      const res = await fetch(getApiUrl('/api/promo-codes'), {
-        method: 'POST',
+      const url = editingPromoId ? `/api/promo-codes/${editingPromoId}` : '/api/promo-codes';
+      const method = editingPromoId ? 'PUT' : 'POST';
+
+      const res = await fetch(getApiUrl(url), {
+        method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(promoForm),
       });
 
       if (res.ok) {
         setIsPromoModalOpen(false);
+        setEditingPromoId(null);
         setPromoForm({ code: '', discount_percent: 10, min_order_amount: 0 });
         fetchPromos();
       } else {
@@ -901,8 +922,8 @@ export const AdminPanel: React.FC = () => {
       {activeAdminTab === 'promos' && (
         <div className="space-y-3">
           <button
-            onClick={() => setIsPromoModalOpen(true)}
-            className="w-full py-3 gold-btn rounded-xl text-xs font-bold flex items-center justify-center gap-2"
+            onClick={openAddPromoModal}
+            className="w-full py-3 gold-btn rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-gold-glow"
           >
             <Plus className="w-4 h-4" />
             <span>Yangi Promokod Yaratish</span>
@@ -929,10 +950,17 @@ export const AdminPanel: React.FC = () => {
                     </span>
                   </div>
 
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      onClick={() => openEditPromoModal(p)}
+                      className="p-2 rounded-xl bg-[#D4AF37]/20 text-[#D4AF37] hover:bg-[#D4AF37]/30 border border-[#D4AF37]/30 transition"
+                      title="Tahrirlash"
+                    >
+                      <Edit className="w-3.5 h-3.5" />
+                    </button>
                     <button
                       onClick={() => handleTogglePromo(p.id)}
-                      className={`px-2.5 py-1 rounded-xl text-[10px] font-bold transition ${
+                      className={`px-2 py-1.5 rounded-xl text-[10px] font-bold transition ${
                         p.is_active ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-gray-500/20 text-gray-400 border border-gray-500/30'
                       }`}
                     >
@@ -940,7 +968,7 @@ export const AdminPanel: React.FC = () => {
                     </button>
                     <button
                       onClick={() => handleDeletePromo(p.id)}
-                      className="p-2 rounded-xl bg-red-500/20 text-red-400 hover:bg-red-500/30 border border-red-500/30"
+                      className="p-2 rounded-xl bg-red-500/20 text-red-400 hover:bg-red-500/30 border border-red-500/30 transition"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
@@ -1349,21 +1377,21 @@ export const AdminPanel: React.FC = () => {
         </div>
       )}
 
-      {/* Promo Code Add Modal */}
+      {/* Promo Code Add / Edit Modal */}
       {isPromoModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
-          <div className="w-full max-w-sm bg-[#12081E] border border-[#D4AF37]/40 rounded-2xl p-5 text-gray-100 space-y-4">
+          <div className="w-full max-w-sm bg-[#12081E] border border-[#D4AF37]/40 rounded-2xl p-5 text-gray-100 space-y-4 shadow-gold-glow">
             <div className="flex items-center justify-between border-b border-white/10 pb-2">
               <h3 className="text-sm font-bold text-[#D4AF37] flex items-center gap-1.5">
                 <Tag className="w-4 h-4" />
-                <span>Yangi Promokod Yaratish</span>
+                <span>{editingPromoId ? 'Promokodni Tahrirlash' : 'Yangi Promokod Yaratish'}</span>
               </h3>
               <button onClick={() => setIsPromoModalOpen(false)}>
-                <X className="w-4 h-4" />
+                <X className="w-4 h-4 text-gray-400 hover:text-white" />
               </button>
             </div>
 
-            <form onSubmit={handleCreatePromo} className="space-y-3 text-xs">
+            <form onSubmit={handleSavePromo} className="space-y-3 text-xs">
               <div>
                 <label className="text-[10px] text-gray-400 font-semibold block mb-1">Promokod Nomi (Kodi)</label>
                 <input
@@ -1405,10 +1433,10 @@ export const AdminPanel: React.FC = () => {
 
               <button
                 type="submit"
-                className="w-full py-3 gold-btn rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 mt-4"
+                className="w-full py-3 gold-btn rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 mt-4 shadow-gold-glow"
               >
-                <Plus className="w-4 h-4" />
-                <span>Promokodni Saqlash</span>
+                {editingPromoId ? <Edit className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
+                <span>{editingPromoId ? 'O\'zgarishlarni Saqlash' : 'Promokodni Saqlash'}</span>
               </button>
             </form>
           </div>

@@ -611,6 +611,26 @@ app.post('/api/promo-codes', (req, res) => {
   }
 });
 
+app.put('/api/promo-codes/:id', (req, res) => {
+  try {
+    const { code, discount_percent, min_order_amount = 0 } = req.body;
+    if (!code || !discount_percent) {
+      return res.status(400).json({ error: 'Promokod va chegirma foizi kiritilishi shart' });
+    }
+
+    const cleanCode = code.trim().toUpperCase();
+    db.prepare(`
+      UPDATE promo_codes
+      SET code = ?, discount_percent = ?, min_order_amount = ?
+      WHERE id = ?
+    `).run(cleanCode, Number(discount_percent), Number(min_order_amount), req.params.id);
+
+    res.json({ success: true });
+  } catch (error) {
+    res.status(400).json({ error: 'Xatolik yuz berdi yoki ushbu promokod nomi allaqachon mavjud!' });
+  }
+});
+
 app.delete('/api/promo-codes/:id', (req, res) => {
   try {
     db.prepare('DELETE FROM promo_codes WHERE id = ?').run(req.params.id);
