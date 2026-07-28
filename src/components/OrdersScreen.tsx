@@ -1,7 +1,8 @@
 import React from 'react';
 import { useApp } from '../context/AppContext';
-import { Package, Clock, CheckCircle2, Truck, AlertCircle, MapPin, CreditCard } from 'lucide-react';
+import { Package, Clock, CheckCircle2, Truck, AlertCircle, MapPin, CreditCard, Trash2 } from 'lucide-react';
 import { OrderStatus, Order } from '../types';
+import { getApiUrl } from '../config';
 
 interface OrdersScreenProps {
   onOpenPayment?: (order: Order) => void;
@@ -9,6 +10,28 @@ interface OrdersScreenProps {
 
 export const OrdersScreen: React.FC<OrdersScreenProps> = ({ onOpenPayment }) => {
   const { orders, refreshOrders, t } = useApp();
+
+  const handleDeleteOrder = async (orderId: number, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!confirm(`Ushbu buyurtmani (#${orderId}) bekor qilishni va o'chirishni istaysizmi?`)) return;
+
+    try {
+      const res = await fetch(getApiUrl(`/api/orders/${orderId}`), { method: 'DELETE' });
+      if (res.ok) {
+        try {
+          const saved = localStorage.getItem('velaris_pending_order');
+          if (saved && JSON.parse(saved).id === orderId) {
+            localStorage.removeItem('velaris_pending_order');
+          }
+        } catch {
+          // ignore
+        }
+        refreshOrders();
+      }
+    } catch (err) {
+      console.error('Failed to delete order:', err);
+    }
+  };
 
   const getStatusStep = (status: OrderStatus): number => {
     switch (status) {
@@ -61,15 +84,28 @@ export const OrdersScreen: React.FC<OrdersScreenProps> = ({ onOpenPayment }) => 
               >
                 {/* Header info */}
                 <div className="flex items-center justify-between border-b border-white/10 pb-2.5">
-                  <div>
-                    <span className="text-[10px] text-gray-400 block">{t('orderId')}</span>
-                    <span className="text-sm font-bold text-[#D4AF37]">#{order.id}</span>
+                  <div className="flex items-center gap-2">
+                    <div>
+                      <span className="text-[10px] text-gray-400 block">{t('orderId')}</span>
+                      <span className="text-sm font-bold text-[#D4AF37]">#{order.id}</span>
+                    </div>
                   </div>
-                  <div className="text-right">
-                    <span className="text-[10px] text-gray-400 block">{order.created_at?.slice(0, 10)}</span>
-                    <span className="text-xs font-semibold text-gray-200">
-                      {order.total_amount.toLocaleString('uz-UZ')} {t('som')}
-                    </span>
+
+                  <div className="flex items-center gap-3">
+                    <div className="text-right">
+                      <span className="text-[10px] text-gray-400 block">{order.created_at?.slice(0, 10)}</span>
+                      <span className="text-xs font-semibold text-gray-200">
+                        {order.total_amount.toLocaleString('uz-UZ')} {t('som')}
+                      </span>
+                    </div>
+
+                    <button
+                      onClick={(e) => handleDeleteOrder(order.id, e)}
+                      className="p-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-400 transition active:scale-95 shrink-0"
+                      title="Buyurtmani bekor qilish / o'chirish"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
                   </div>
                 </div>
 

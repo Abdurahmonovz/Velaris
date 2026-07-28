@@ -499,6 +499,17 @@ app.get('/api/orders', (req, res) => {
   }
 });
 
+// Customer Delete/Cancel Order Endpoint
+app.delete('/api/orders/:id', (req, res) => {
+  try {
+    const { id } = req.params;
+    db.prepare('DELETE FROM orders WHERE id = ?').run(id);
+    res.json({ success: true, message: 'Buyurtma bekor qilindi va o\'chirildi' });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
 // 7. Admin Dashboard Endpoints
 app.delete('/api/admin/orders', (req, res) => {
   try {
