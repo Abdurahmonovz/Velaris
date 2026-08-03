@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { DecantSize } from '../types';
 import { X, Star, Heart, Plus, Minus, ShoppingBag, Zap, Sparkles, Droplets, Wind, ShieldCheck } from 'lucide-react';
+import { getCleanImageUrl } from '../utils/imageUtils';
 
 export const ProductDetailModal: React.FC = () => {
   const {
@@ -24,7 +25,8 @@ export const ProductDetailModal: React.FC = () => {
 
   const product = selectedProductModal;
   const isFav = favorites.includes(product.id);
-  const images = product.images.length > 0 ? product.images : ['https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=800&q=80'];
+  const rawImages = product.images.length > 0 ? product.images : ['https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=800&q=80'];
+  const images = rawImages.map(getCleanImageUrl);
 
   const decantPrices: { size: DecantSize; price: number }[] = [
     { size: '10g', price: product.price_10g },

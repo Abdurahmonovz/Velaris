@@ -2,6 +2,7 @@ import React from 'react';
 import { Product } from '../types';
 import { useApp } from '../context/AppContext';
 import { Heart, Star, ShoppingBag, Sparkles } from 'lucide-react';
+import { getCleanImageUrl } from '../utils/imageUtils';
 
 interface ProductCardProps {
   product: Product;
@@ -11,7 +12,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const { language, favorites, toggleFavorite, setSelectedProductModal, addToCart, t } = useApp();
 
   const isFav = favorites.includes(product.id);
-  const mainImage = product.images?.[0] || 'https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=400&q=80';
+  const rawImage = product.images?.[0];
+  const mainImage = getCleanImageUrl(rawImage);
 
   const handleCardClick = () => {
     setSelectedProductModal(product);
