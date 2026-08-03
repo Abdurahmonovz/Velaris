@@ -7,7 +7,7 @@
       "destination": "https://velaris-production.up.railway.app/api/:path*"
     },
     {
-      "source": "/(.*)",
+      "source": "/((?!assets/|perfumes/|.*\\.(?:js|css|jpg|jpeg|png|gif|svg|ico|json|woff|woff2)).*)",
       "destination": "/index.html"
     }
   ]
