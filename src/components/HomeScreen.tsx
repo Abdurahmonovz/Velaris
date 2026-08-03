@@ -38,7 +38,32 @@ export const HomeScreen: React.FC = () => {
     return matchesCategory && matchesSearch;
   });
 
-  const bestsellers = products.filter((p) => p.is_bestseller);
+  // Auto rotate 8 famous perfumes every 20 seconds
+  const [popularOffset, setPopularOffset] = useState(0);
+
+  useEffect(() => {
+    if (products.length === 0) return;
+    const interval = setInterval(() => {
+      setPopularOffset((prev) => (prev + 8) % Math.max(1, products.length));
+    }, 20000); // 20,000 ms = 20 seconds
+
+    return () => clearInterval(interval);
+  }, [products.length]);
+
+  const getFamous8 = () => {
+    const famousPool = products.filter((p) => p.is_bestseller || p.is_featured || p.rating >= 4.7);
+    const pool = famousPool.length >= 8 ? famousPool : products;
+    if (pool.length === 0) return [];
+
+    const result = [];
+    for (let i = 0; i < 8; i++) {
+      const idx = (popularOffset + i) % pool.length;
+      result.push(pool[idx]);
+    }
+    return result;
+  };
+
+  const famous8 = getFamous8();
 
   return (
     <div className="space-y-6 pb-24 pt-2 px-4 max-w-md mx-auto">
@@ -168,56 +193,70 @@ export const HomeScreen: React.FC = () => {
         </div>
       </div>
 
-      {/* Bestsellers Section Horizontal */}
-      {bestsellers.length > 0 && !selectedCategory && !searchQuery && (
+      {/* Famous Perfumes Section (8 items, auto-refreshes every 1 min) */}
+      {!selectedCategory && !searchQuery && (
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <h2 className="text-xs font-bold text-[#D4AF37] uppercase tracking-wider flex items-center gap-1.5">
-              <Flame className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
+              <Flame className="w-3.5 h-3.5 text-amber-500 fill-amber-500 animate-pulse" />
               <span>{t('bestsellersTitle')}</span>
             </h2>
             <button
-              onClick={() => setActiveTab('catalog')}
-              className="text-[10px] text-gray-400 hover:text-[#D4AF37] flex items-center gap-0.5"
+              onClick={() => setPopularOffset((prev) => (prev + 8) % Math.max(1, products.length))}
+              className="text-[10px] text-gray-400 hover:text-[#D4AF37] flex items-center gap-1 font-medium"
             >
               <span>{t('seeAll')}</span>
               <ChevronRight className="w-3 h-3" />
             </button>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
-            {bestsellers.slice(0, 2).map((product) => (
+          {/* 8 Famous Perfumes Grid */}
+          <div className="grid grid-cols-2 gap-3 transition-all duration-500">
+            {famous8.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
+          </div>
+
+          {/* Button to view all in Catalog */}
+          <div className="pt-2">
+            <button
+              onClick={() => setActiveTab('catalog')}
+              className="w-full py-3.5 px-4 bg-gradient-to-r from-[#1E0F33] via-[#2A1547] to-[#1E0F33] hover:from-[#2A1547] hover:to-[#2A1547] border border-[#D4AF37]/40 hover:border-[#D4AF37] text-[#D4AF37] font-bold text-xs rounded-2xl flex items-center justify-center gap-2 shadow-gold-glow transition-all active:scale-98"
+            >
+              <span>Barcha atirlarni ko'rish (Katalog)</span>
+              <ChevronRight className="w-4 h-4" />
+            </button>
           </div>
         </div>
       )}
 
-      {/* Main Perfume Grid */}
-      <div className="space-y-3">
-        <div className="flex items-center justify-between">
-          <h2 className="text-xs font-bold text-gray-200 uppercase tracking-wider">
-            {selectedCategory
-              ? categories.find((c) => c.slug === selectedCategory)?.[`name_${language}`]
-              : t('allProductsTitle')}
-          </h2>
-          <span className="text-[10px] text-gray-400">
-            {filteredProducts.length} mahsulot
-          </span>
-        </div>
+      {/* Filtered Search or Category Results Grid */}
+      {(selectedCategory || searchQuery) && (
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xs font-bold text-gray-200 uppercase tracking-wider">
+              {selectedCategory
+                ? categories.find((c) => c.slug === selectedCategory)?.[`name_${language}`]
+                : t('allProductsTitle')}
+            </h2>
+            <span className="text-[10px] text-gray-400">
+              {filteredProducts.length} mahsulot
+            </span>
+          </div>
 
-        {filteredProducts.length === 0 ? (
-          <div className="text-center py-12 bg-[#140921] rounded-2xl border border-white/5 space-y-2">
-            <p className="text-xs text-gray-400">Mahsulotlar topilmadi</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-2 gap-3">
-            {filteredProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-        )}
-      </div>
+          {filteredProducts.length === 0 ? (
+            <div className="text-center py-12 bg-[#140921] rounded-2xl border border-white/5 space-y-2">
+              <p className="text-xs text-gray-400">Mahsulotlar topilmadi</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 gap-3">
+              {filteredProducts.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };

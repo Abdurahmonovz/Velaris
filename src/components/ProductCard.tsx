@@ -33,16 +33,19 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       className="group relative bg-gradient-to-b from-[#1A0E2B]/80 to-[#10071C]/90 rounded-2xl border border-[#D4AF37]/20 hover:border-[#D4AF37]/60 overflow-hidden shadow-lg hover:shadow-gold-glow transition-all duration-300 flex flex-col justify-between cursor-pointer"
     >
       {/* Top Badges & Like Button */}
-      <div className="relative aspect-square w-full bg-[#12081E] overflow-hidden">
+      <div className="relative aspect-square w-full bg-[#12081E] overflow-hidden p-2 flex items-center justify-center">
         <img
           src={mainImage}
           alt={product.name}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          onError={(e) => {
+            (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=400&q=80';
+          }}
+          className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105 drop-shadow-md"
           loading="lazy"
         />
 
-        {/* Gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#10071C] via-transparent to-black/30" />
+        {/* Subtle background glow */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#10071C]/80 via-transparent to-black/20 pointer-events-none" />
 
         {/* Favorite Heart Button */}
         <button
@@ -94,7 +97,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         {/* Price & Quick Add */}
         <div className="pt-1 flex items-center justify-between border-t border-[#D4AF37]/15">
           <div>
-            <span className="text-[9px] text-gray-400 block">{t('fromPrice')} 10g</span>
+            <span className="text-[9px] text-gray-400 block">{t('fromPrice')} 10 ml</span>
             <span className="text-sm font-bold text-[#D4AF37]">
               {product.price_10g.toLocaleString('uz-UZ')} <span className="text-[10px] font-normal text-gray-300">{t('som')}</span>
             </span>

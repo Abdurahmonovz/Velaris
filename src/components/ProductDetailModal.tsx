@@ -84,7 +84,7 @@ export const ProductDetailModal: React.FC = () => {
               src={images[activeImageIdx]}
               alt={product.name}
               onClick={() => setIsZoomed(!isZoomed)}
-              className={`w-full h-full object-cover transition-transform duration-300 cursor-zoom-in ${
+              className={`w-full h-full object-contain p-4 transition-transform duration-300 cursor-zoom-in ${
                 isZoomed ? 'scale-150 cursor-zoom-out' : ''
               }`}
             />
@@ -187,7 +187,7 @@ export const ProductDetailModal: React.FC = () => {
                       }`}
                     >
                       <span className={`text-xs font-bold ${isActive ? 'text-[#D4AF37]' : 'text-gray-200'}`}>
-                        {item.size}
+                        {item.size.replace('g', ' ml')}
                       </span>
                       <span className="text-[9px] text-gray-400 mt-1">
                         {(item.price / 1000).toFixed(0)}k

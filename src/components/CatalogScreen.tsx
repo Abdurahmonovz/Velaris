@@ -19,9 +19,28 @@ export const CatalogScreen: React.FC = () => {
   const [selectedGender, setSelectedGender] = useState<Gender>('all');
   const [sortBy, setSortBy] = useState<'default' | 'price_asc' | 'price_desc' | 'rating'>('default');
 
+  const getCategoryProductCount = (catSlug: string) => {
+    return products.filter((p) => {
+      if (catSlug === 'erkaklar') return p.category_slug === 'erkaklar' || p.gender === 'men';
+      if (catSlug === 'ayollar') return p.category_slug === 'ayollar' || p.gender === 'women';
+      if (catSlug === 'unisex') return p.category_slug === 'unisex' || p.gender === 'unisex';
+      if (catSlug === 'yangi') return p.is_new;
+      if (catSlug === 'bestseller') return p.is_bestseller;
+      return p.category_slug === catSlug;
+    }).length;
+  };
+
   const filteredProducts = products
     .filter((p) => {
-      const matchesCategory = !selectedCategory || p.category_slug === selectedCategory;
+      const matchesCategory =
+        !selectedCategory ||
+        p.category_slug === selectedCategory ||
+        (selectedCategory === 'erkaklar' && (p.category_slug === 'erkaklar' || p.gender === 'men')) ||
+        (selectedCategory === 'ayollar' && (p.category_slug === 'ayollar' || p.gender === 'women')) ||
+        (selectedCategory === 'unisex' && (p.category_slug === 'unisex' || p.gender === 'unisex')) ||
+        (selectedCategory === 'yangi' && p.is_new) ||
+        (selectedCategory === 'bestseller' && p.is_bestseller);
+
       const matchesGender = selectedGender === 'all' || p.gender === selectedGender || p.gender === 'unisex';
       const matchesSearch =
         !searchQuery ||
@@ -130,7 +149,7 @@ export const CatalogScreen: React.FC = () => {
             {/* Duplicated array for seamless continuous loop */}
             {[...categories, ...categories].map((cat, idx) => {
               const isSelected = selectedCategory === cat.slug;
-              const catProductCount = products.filter((p) => p.category_slug === cat.slug).length;
+              const catProductCount = getCategoryProductCount(cat.slug);
 
               return (
                 <div

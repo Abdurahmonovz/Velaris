@@ -2,6 +2,8 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Language, User, Product, Category, Banner, CartItem, DecantSize, Order } from '../types';
 import { translations } from '../locales/translations';
 import { getApiUrl } from '../config';
+import { INITIAL_PRODUCTS } from '../data/initialProducts';
+import { INITIAL_BANNERS, INITIAL_CATEGORIES } from '../data/initialBanners';
 
 interface AppContextType {
   language: Language;
@@ -97,9 +99,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   });
 
   const [selectedProductModal, setSelectedProductModal] = useState<Product | null>(null);
-  const [products, setProducts] = useState<Product[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [banners, setBanners] = useState<Banner[]>([]);
+  const [products, setProducts] = useState<Product[]>(INITIAL_PRODUCTS);
+  const [categories, setCategories] = useState<Category[]>(INITIAL_CATEGORIES);
+  const [banners, setBanners] = useState<Banner[]>(INITIAL_BANNERS);
   const [orders, setOrders] = useState<Order[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
@@ -128,7 +130,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       const res = await fetch(getApiUrl('/api/products'));
       if (res.ok) {
         const data = await res.json();
-        setProducts(data);
+        if (Array.isArray(data) && data.length > 0) {
+          setProducts(data);
+        }
       }
     } catch (err) {
       console.error('Failed to fetch products:', err);
@@ -140,7 +144,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       const res = await fetch(getApiUrl('/api/categories'));
       if (res.ok) {
         const data = await res.json();
-        setCategories(data);
+        if (Array.isArray(data) && data.length > 0) {
+          setCategories(data);
+        }
       }
     } catch (err) {
       console.error('Failed to fetch categories:', err);
@@ -152,7 +158,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       const res = await fetch(getApiUrl('/api/banners'));
       if (res.ok) {
         const data = await res.json();
-        setBanners(data);
+        if (Array.isArray(data) && data.length > 0) {
+          setBanners(data);
+        }
       }
     } catch (err) {
       console.error('Failed to fetch banners:', err);

@@ -64,7 +64,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
   if (!isOpen) return null;
 
   const subtotal = cart.reduce((sum, item) => sum + item.totalPrice, 0);
-  const deliveryFee = deliveryType === 'courier' ? 25000 : 0;
+  const deliveryFee = deliveryType === 'courier' ? (appliedPromo ? 0 : 25000) : 0;
   const discountAmount = appliedPromo ? appliedPromo.discount_amount : 0;
   const totalAmount = Math.max(0, subtotal - discountAmount) + deliveryFee;
 
@@ -374,7 +374,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
               </span>
               {appliedPromo && (
                 <span className="text-[10px] text-emerald-400 font-semibold bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/30">
-                  ✅ -{appliedPromo.discount_percent}% Chegirma
+                  ✅ -{appliedPromo.discount_percent}% Chegirma + 🚚 Bepul yetkazib berish
                 </span>
               )}
             </div>
@@ -419,8 +419,12 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
             )}
             <div className="flex items-center justify-between text-xs text-gray-300">
               <span>{t('deliveryFee')}</span>
-              <span>
-                {deliveryFee > 0 ? `${deliveryFee.toLocaleString('uz-UZ')} ${t('som')}` : t('freeDelivery')}
+              <span className={appliedPromo && deliveryType === 'courier' ? 'text-emerald-400 font-semibold' : ''}>
+                {appliedPromo && deliveryType === 'courier'
+                  ? '0 so\'m (Promokod: Bepul)'
+                  : deliveryFee > 0
+                  ? `${deliveryFee.toLocaleString('uz-UZ')} ${t('som')}`
+                  : t('freeDelivery')}
               </span>
             </div>
             <div className="pt-2 border-t border-[#D4AF37]/20 flex items-center justify-between font-bold text-sm">

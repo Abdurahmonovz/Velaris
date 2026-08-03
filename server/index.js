@@ -17,8 +17,9 @@ const PORT = process.env.PORT || 5001;
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 
-// Serve static logo file from parent directory
+// Serve static logo & perfumes
 app.use('/assets', express.static(path.join(__dirname, '..')));
+app.use('/perfumes', express.static(path.join(__dirname, '..', 'public', 'perfumes')));
 
 // Initialize Database & Bot
 initDb();
