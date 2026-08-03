@@ -193,8 +193,8 @@ export const HomeScreen: React.FC = () => {
         </div>
       </div>
 
-      {/* Famous Perfumes Section (8 items, auto-refreshes every 1 min) */}
-      {!selectedCategory && !searchQuery && (
+      {/* Famous Perfumes Section (8 items, auto-refreshes every 20s) */}
+      {!selectedCategory && !searchQuery ? (
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <h2 className="text-xs font-bold text-[#D4AF37] uppercase tracking-wider flex items-center gap-1.5">
@@ -210,28 +210,15 @@ export const HomeScreen: React.FC = () => {
             </button>
           </div>
 
-          {/* 8 Famous Perfumes Grid */}
+          {/* Exactly 8 Famous Perfumes Grid */}
           <div className="grid grid-cols-2 gap-3 transition-all duration-500">
             {famous8.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
           </div>
-
-          {/* Button to view all in Catalog */}
-          <div className="pt-2">
-            <button
-              onClick={() => setActiveTab('catalog')}
-              className="w-full py-3.5 px-4 bg-gradient-to-r from-[#1E0F33] via-[#2A1547] to-[#1E0F33] hover:from-[#2A1547] hover:to-[#2A1547] border border-[#D4AF37]/40 hover:border-[#D4AF37] text-[#D4AF37] font-bold text-xs rounded-2xl flex items-center justify-center gap-2 shadow-gold-glow transition-all active:scale-98"
-            >
-              <span>Barcha atirlarni ko'rish (Katalog)</span>
-              <ChevronRight className="w-4 h-4" />
-            </button>
-          </div>
         </div>
-      )}
-
-      {/* Filtered Search or Category Results Grid */}
-      {(selectedCategory || searchQuery) && (
+      ) : (
+        /* Filtered Search or Category Results Grid (limited to 8 items on Home page) */
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <h2 className="text-xs font-bold text-gray-200 uppercase tracking-wider">
@@ -239,9 +226,15 @@ export const HomeScreen: React.FC = () => {
                 ? categories.find((c) => c.slug === selectedCategory)?.[`name_${language}`]
                 : t('allProductsTitle')}
             </h2>
-            <span className="text-[10px] text-gray-400">
-              {filteredProducts.length} mahsulot
-            </span>
+            <button
+              onClick={() => {
+                setSelectedCategory(null);
+                setSearchQuery('');
+              }}
+              className="text-[10px] text-[#D4AF37] hover:underline font-bold"
+            >
+              Filtni tozalash ✕
+            </button>
           </div>
 
           {filteredProducts.length === 0 ? (
@@ -250,13 +243,24 @@ export const HomeScreen: React.FC = () => {
             </div>
           ) : (
             <div className="grid grid-cols-2 gap-3">
-              {filteredProducts.map((product) => (
+              {filteredProducts.slice(0, 8).map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}
             </div>
           )}
         </div>
       )}
+
+      {/* Button to view all in Catalog - ALWAYS VISIBLE AT BOTTOM OF HOME SCREEN */}
+      <div className="pt-4">
+        <button
+          onClick={() => setActiveTab('catalog')}
+          className="w-full py-4 px-4 bg-gradient-to-r from-[#1E0F33] via-[#2A1547] to-[#1E0F33] hover:from-[#2A1547] hover:to-[#2A1547] border border-[#D4AF37]/50 hover:border-[#D4AF37] text-[#D4AF37] font-bold text-xs rounded-2xl flex items-center justify-center gap-2 shadow-gold-glow transition-all active:scale-98"
+        >
+          <span>Barcha atirlarni ko'rish (Katalog)</span>
+          <ChevronRight className="w-4 h-4" />
+        </button>
+      </div>
     </div>
   );
 };
