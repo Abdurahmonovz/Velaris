@@ -40,19 +40,20 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           src={mainImage}
           alt={product.name}
           onError={(e) => {
-            (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=400&q=80';
+            const target = e.target as HTMLImageElement;
+            if (!target.dataset.triedFallback) {
+              target.dataset.triedFallback = 'true';
+              target.src = 'https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=400&q=80';
+            }
           }}
-          className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105 drop-shadow-md"
+          className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"
           loading="lazy"
         />
-
-        {/* Subtle background glow */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#10071C]/80 via-transparent to-black/20 pointer-events-none" />
 
         {/* Favorite Heart Button */}
         <button
           onClick={handleFavClick}
-          className="absolute top-2.5 right-2.5 p-2 rounded-full bg-black/40 backdrop-blur-md border border-white/10 text-white hover:border-[#D4AF37] transition active:scale-90"
+          className="absolute top-2.5 right-2.5 p-2 rounded-full bg-black/40 border border-white/10 text-white hover:border-[#D4AF37] transition active:scale-90"
         >
           <Heart
             className={`w-4 h-4 transition-colors ${
