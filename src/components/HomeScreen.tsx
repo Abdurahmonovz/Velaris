@@ -1,13 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import { ProductCard } from './ProductCard';
-<<<<<<< HEAD
-import { Search, Sparkles, ChevronRight, Flame, Award } from 'lucide-react';
-import { getCleanImageUrl, FALLBACK_PRODUCT_IMAGE, preloadImages, getProductImages } from '../utils/imageUtils';
-=======
 import { Search, Sparkles, ChevronRight, Flame, Award, Megaphone } from 'lucide-react';
-import { getCleanImageUrl, FALLBACK_PRODUCT_IMAGE } from '../utils/imageUtils';
->>>>>>> 3866e4c (feat: add Add to Channel button and Telegram channel Mini App integration)
+import { getCleanImageUrl, FALLBACK_PRODUCT_IMAGE, getProductImages } from '../utils/imageUtils';
 
 export const HomeScreen: React.FC = () => {
   const {
