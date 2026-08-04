@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { DecantSize } from '../types';
 import { X, Star, Heart, Plus, Minus, ShoppingBag, Zap, Sparkles, Droplets, Wind, ShieldCheck } from 'lucide-react';
-import { getCleanImageUrl } from '../utils/imageUtils';
+import { getCleanImageUrl, getProductImages, FALLBACK_PRODUCT_IMAGE } from '../utils/imageUtils';
 
 export const ProductDetailModal: React.FC = () => {
   const {
@@ -25,7 +25,8 @@ export const ProductDetailModal: React.FC = () => {
 
   const product = selectedProductModal;
   const isFav = favorites.includes(product.id);
-  const rawImages = product.images.length > 0 ? product.images : ['https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=800&q=80'];
+  const parsedImages = getProductImages(product.images);
+  const rawImages = parsedImages.length > 0 ? parsedImages : [FALLBACK_PRODUCT_IMAGE];
   const images = rawImages.map(getCleanImageUrl);
 
   const decantPrices: { size: DecantSize; price: number }[] = [
@@ -86,6 +87,13 @@ export const ProductDetailModal: React.FC = () => {
               src={images[activeImageIdx]}
               alt={product.name}
               onClick={() => setIsZoomed(!isZoomed)}
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                if (!target.dataset.triedFallback) {
+                  target.dataset.triedFallback = 'true';
+                  target.src = FALLBACK_PRODUCT_IMAGE;
+                }
+              }}
               className={`w-full h-full object-contain p-4 transition-transform duration-300 cursor-zoom-in ${
                 isZoomed ? 'scale-150 cursor-zoom-out' : ''
               }`}

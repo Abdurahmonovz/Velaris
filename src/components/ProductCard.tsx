@@ -2,7 +2,7 @@ import React from 'react';
 import { Product } from '../types';
 import { useApp } from '../context/AppContext';
 import { Heart, Star, ShoppingBag, Sparkles } from 'lucide-react';
-import { getCleanImageUrl } from '../utils/imageUtils';
+import { getCleanImageUrl, getProductImages, FALLBACK_PRODUCT_IMAGE } from '../utils/imageUtils';
 
 interface ProductCardProps {
   product: Product;
@@ -12,8 +12,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const { language, favorites, toggleFavorite, setSelectedProductModal, addToCart, t } = useApp();
 
   const isFav = favorites.includes(product.id);
-  const rawImage = product.images?.[0];
-  const mainImage = getCleanImageUrl(rawImage);
+  const images = getProductImages(product.images);
+  const mainImage = getCleanImageUrl(images[0]);
 
   const handleCardClick = () => {
     setSelectedProductModal(product);
@@ -43,7 +43,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             const target = e.target as HTMLImageElement;
             if (!target.dataset.triedFallback) {
               target.dataset.triedFallback = 'true';
-              target.src = 'https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=400&q=80';
+              target.src = FALLBACK_PRODUCT_IMAGE;
             }
           }}
           className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"

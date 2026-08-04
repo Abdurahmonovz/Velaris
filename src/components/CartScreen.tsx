@@ -4,6 +4,7 @@ import { CheckoutModal } from './CheckoutModal';
 import { PaymentModal } from './PaymentModal';
 import { Order } from '../types';
 import { Trash2, Plus, Minus, ShoppingBag, ArrowRight, CheckCircle, Sparkles } from 'lucide-react';
+import { getCleanImageUrl, getProductImages, FALLBACK_PRODUCT_IMAGE } from '../utils/imageUtils';
 
 interface CartScreenProps {
   onOpenPayment?: (order: Order) => void;
@@ -60,7 +61,8 @@ export const CartScreen: React.FC<CartScreenProps> = ({ onOpenPayment }) => {
       {/* Cart Item Cards */}
       <div className="space-y-3">
         {cart.map((item) => {
-          const mainImg = item.product.images?.[0] || 'https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=400&q=80';
+          const images = getProductImages(item.product.images);
+          const mainImg = getCleanImageUrl(images[0]);
 
           return (
             <div
@@ -72,6 +74,13 @@ export const CartScreen: React.FC<CartScreenProps> = ({ onOpenPayment }) => {
                 <img
                   src={mainImg}
                   alt={item.product.name}
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    if (!target.dataset.triedFallback) {
+                      target.dataset.triedFallback = 'true';
+                      target.src = FALLBACK_PRODUCT_IMAGE;
+                    }
+                  }}
                   className="w-full h-full object-cover"
                 />
               </div>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import { ProductCard } from './ProductCard';
 import { Search, Sparkles, ChevronRight, Flame, Award } from 'lucide-react';
+import { getCleanImageUrl, FALLBACK_PRODUCT_IMAGE } from '../utils/imageUtils';
 
 export const HomeScreen: React.FC = () => {
   const {
@@ -98,8 +99,11 @@ export const HomeScreen: React.FC = () => {
               }`}
             >
               <img
-                src={banner.image}
+                src={getCleanImageUrl(banner.image)}
                 alt={banner.title_uz}
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = FALLBACK_PRODUCT_IMAGE;
+                }}
                 className="w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-4 flex flex-col justify-end">
@@ -174,8 +178,11 @@ export const HomeScreen: React.FC = () => {
                     }`}
                   >
                     <img
-                      src={cat.image}
+                      src={getCleanImageUrl(cat.image)}
                       alt={cat.name_uz}
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = FALLBACK_PRODUCT_IMAGE;
+                      }}
                       className="w-full h-full object-cover rounded-full border border-[#D4AF37]/20 group-hover:scale-105 transition duration-300"
                     />
                   </div>

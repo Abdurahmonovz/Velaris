@@ -1,16 +1,21 @@
-import Database from 'better-sqlite3';
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
 const dbPath = path.join(__dirname, 'velaris.db');
-const db = new Database(dbPath);
 
-// Enable foreign keys
-db.pragma('foreign_keys = ON');
+let db;
+try {
+  const BetterSqlite = (await import('better-sqlite3')).default;
+  db = new BetterSqlite(dbPath);
+  db.pragma('foreign_keys = ON');
+} catch (err) {
+  const { DatabaseSync } = await import('node:sqlite');
+  db = new DatabaseSync(dbPath);
+  db.exec('PRAGMA foreign_keys = ON;');
+}
 
 // Initialize database schema
 export function initDb() {

@@ -3,6 +3,7 @@ import { useApp } from '../context/AppContext';
 import { ProductCard } from './ProductCard';
 import { Gender } from '../types';
 import { SlidersHorizontal, Search, Sparkles } from 'lucide-react';
+import { getCleanImageUrl, FALLBACK_PRODUCT_IMAGE } from '../utils/imageUtils';
 
 export const CatalogScreen: React.FC = () => {
   const {
@@ -163,11 +164,11 @@ export const CatalogScreen: React.FC = () => {
                 >
                   <div className="w-full h-14 rounded-xl overflow-hidden border border-[#D4AF37]/30 bg-black relative">
                     <img
-                      src={cat.image}
+                      src={getCleanImageUrl(cat.image)}
                       alt={cat.name_uz}
                       className="w-full h-full object-cover group-hover:scale-110 transition duration-300"
                       onError={(e) => {
-                        (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=400&q=80';
+                        (e.target as HTMLImageElement).src = FALLBACK_PRODUCT_IMAGE;
                       }}
                     />
                     <span className="absolute bottom-1 right-1 px-1.5 py-0.5 rounded-md bg-black/80 text-[8px] font-bold text-[#D4AF37] border border-[#D4AF37]/30">

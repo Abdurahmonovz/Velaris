@@ -3,6 +3,7 @@ import { useApp } from '../context/AppContext';
 import { Product, Order, Category, AdminStats } from '../types';
 import { Shield, Package, DollarSign, Users, Plus, Edit, Trash2, CheckCircle, RefreshCw, X, FolderPlus, Layers, LogOut, Clock, TrendingUp, Award, ShoppingBag, Tag } from 'lucide-react';
 import { getApiUrl } from '../config';
+import { getCleanImageUrl, getProductImages, FALLBACK_PRODUCT_IMAGE } from '../utils/imageUtils';
 
 // Fast Canvas Image Compressor (Reduces 10MB camera photo to 50KB for instant 50ms upload)
 const compressImageFile = (file: File, maxWidth = 800, quality = 0.75): Promise<string> => {
@@ -468,7 +469,7 @@ export const AdminPanel: React.FC = () => {
       heart_notes_ru: p.heart_notes_ru,
       base_notes_uz: p.base_notes_uz,
       base_notes_ru: p.base_notes_ru,
-      images: p.images,
+      images: getProductImages(p.images).length > 0 ? getProductImages(p.images) : [FALLBACK_PRODUCT_IMAGE],
       is_bestseller: p.is_bestseller,
       is_new: p.is_new,
     });
@@ -740,14 +741,24 @@ export const AdminPanel: React.FC = () => {
           </button>
 
           <div className="space-y-2">
-            {products.map((p) => (
-              <div key={p.id} className="p-3 bg-[#150B21] rounded-xl border border-[#D4AF37]/20 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <img
-                    src={p.images?.[0] || ''}
-                    alt={p.name}
-                    className="w-12 h-12 object-cover rounded-lg bg-black"
-                  />
+            {products.map((p) => {
+              const images = getProductImages(p.images);
+              const mainImg = getCleanImageUrl(images[0]);
+              return (
+                <div key={p.id} className="p-3 bg-[#150B21] rounded-xl border border-[#D4AF37]/20 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <img
+                      src={mainImg}
+                      alt={p.name}
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        if (!target.dataset.triedFallback) {
+                          target.dataset.triedFallback = 'true';
+                          target.src = FALLBACK_PRODUCT_IMAGE;
+                        }
+                      }}
+                      className="w-12 h-12 object-cover rounded-lg bg-black"
+                    />
                   <div>
                     <span className="text-[9px] text-[#D4AF37] font-semibold block">{p.brand}</span>
                     <h4 className="text-xs font-bold text-gray-100">{p.name}</h4>
@@ -770,7 +781,8 @@ export const AdminPanel: React.FC = () => {
                   </button>
                 </div>
               </div>
-            ))}
+            );
+          })}
           </div>
         </div>
       )}
