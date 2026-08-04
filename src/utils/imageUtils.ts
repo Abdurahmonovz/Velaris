@@ -1,3 +1,5 @@
+import { RAILWAY_BACKEND } from '../config';
+
 export const FALLBACK_PRODUCT_IMAGE = 'https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=400&q=80';
 
 /**
@@ -57,25 +59,25 @@ export const getCleanImageUrl = (url?: string | null): string => {
 
   // If full HTTP/HTTPS URL
   if (/^https?:\/\//i.test(cleanUrl)) {
-    // If pointing to localhost/backend perfumes static path, convert to root-relative for frontend CDN / static serving
-    if (cleanUrl.includes('/perfumes/')) {
+    // If pointing to localhost/127.0.0.1, convert to live Railway backend
+    if (cleanUrl.includes('localhost') || cleanUrl.includes('127.0.0.1')) {
       const perfumesMatch = cleanUrl.match(/\/perfumes\/[^\/\?#]+/);
-      if (perfumesMatch) return perfumesMatch[0];
+      if (perfumesMatch) return `${RAILWAY_BACKEND}${perfumesMatch[0]}`;
     }
     return cleanUrl;
   }
 
-  // If relative path containing perfumes/
-  if (cleanUrl.includes('perfumes/')) {
-    const perfumesMatch = cleanUrl.match(/perfumes\/[^\/\?#]+/);
-    if (perfumesMatch) return '/' + perfumesMatch[0];
-  }
-
-  // Ensure any root-relative path starts with '/' so nested routes (e.g. /catalog, /admin) don't 404
+  // Ensure leading slash
   if (!cleanUrl.startsWith('/')) {
     cleanUrl = '/' + cleanUrl;
   }
 
+  // Route /perfumes/ static assets directly to Railway server URL
+  if (cleanUrl.startsWith('/perfumes/')) {
+    return `${RAILWAY_BACKEND}${cleanUrl}`;
+  }
+
   return cleanUrl;
 };
+
 
