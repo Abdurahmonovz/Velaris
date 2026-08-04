@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import { ProductCard } from './ProductCard';
 import { Search, Sparkles, ChevronRight, Flame, Award } from 'lucide-react';
-import { getCleanImageUrl, FALLBACK_PRODUCT_IMAGE } from '../utils/imageUtils';
+import { getCleanImageUrl, FALLBACK_PRODUCT_IMAGE, preloadImages, getProductImages } from '../utils/imageUtils';
 
 export const HomeScreen: React.FC = () => {
   const {
@@ -19,6 +19,16 @@ export const HomeScreen: React.FC = () => {
   } = useApp();
 
   const [activeBannerIdx, setActiveBannerIdx] = useState(0);
+
+  // Preload top featured product images for instant zero-lag rendering
+  useEffect(() => {
+    if (!products || products.length === 0) return;
+    const topUrls = products.slice(0, 16).map((p) => {
+      const imgs = getProductImages(p.images);
+      return imgs[0];
+    });
+    preloadImages(topUrls);
+  }, [products]);
 
   // Auto slide banners
   useEffect(() => {

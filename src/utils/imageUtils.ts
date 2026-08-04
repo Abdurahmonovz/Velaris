@@ -101,5 +101,19 @@ export const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event
   target.src = FALLBACK_PRODUCT_IMAGE;
 };
 
+/**
+ * Background preloader for smooth instant rendering.
+ */
+export const preloadImages = (urls: string[]) => {
+  if (typeof window === 'undefined') return;
+  urls.forEach((url) => {
+    if (!url) return;
+    const clean = getCleanImageUrl(url);
+    const img = new Image();
+    img.src = clean;
+  });
+};
+
+
 
 
