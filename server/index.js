@@ -284,13 +284,33 @@ app.delete('/api/products/:id', (req, res) => {
   }
 });
 
-const ADMIN_PHONES = ['+998937188885', '998937188885', '937188885', '+998955805852', '998955805852', '955805852', '+998921983377', '998921983377', '921983377', '+998901234567', '5744542264', '7146730534'];
+const ADMIN_PHONES = ['+998937188885', '998937188885', '937188885', '+998955805852', '998955805852', '955805852', '+998921983377', '998921983377', '921983377', '+998901234567', '998901234567', '901234567', '5744542264', '7146730534'];
+
+function syncUsersBackup() {
+  try {
+    const users = db.prepare('SELECT * FROM users').all();
+    const backupPath = path.join(__dirname, 'users_backup.json');
+    fs.writeFileSync(backupPath, JSON.stringify(users, null, 2), 'utf-8');
+  } catch (e) {
+    console.error('Failed to sync users backup:', e);
+  }
+}
+
+function syncOrdersBackup() {
+  try {
+    const orders = db.prepare('SELECT * FROM orders').all();
+    const backupPath = path.join(__dirname, 'orders_backup.json');
+    fs.writeFileSync(backupPath, JSON.stringify(orders, null, 2), 'utf-8');
+  } catch (e) {
+    console.error('Failed to sync orders backup:', e);
+  }
+}
 
 function checkIsAdmin(phone, telegram_id) {
   if (telegram_id === '5744542264' || telegram_id === '7146730534') return true;
   if (!phone) return false;
   const clean = phone.replace(/\D/g, '');
-  return ADMIN_PHONES.some(p => p.replace(/\D/g, '') === clean || p === telegram_id);
+  return ADMIN_PHONES.some(p => p.replace(/\D/g, '') === clean || p === String(telegram_id));
 }
 
 // 4. User Register / Login
@@ -317,6 +337,7 @@ app.post('/api/auth/telegram', (req, res) => {
       user.role = 'admin';
     }
 
+    syncUsersBackup();
     res.json(user);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -326,7 +347,7 @@ app.post('/api/auth/telegram', (req, res) => {
 // Update Profile
 app.put('/api/user/profile', (req, res) => {
   try {
-    const { telegram_id, name, phone, language, region, district, mahalla, street, house, location_lat, location_lng } = req.body;
+    const { telegram_id, name, phone, language, region, district, mahalla, street, house, location_lat, location_lng, role } = req.body;
 
     if (!telegram_id) {
       return res.status(400).json({ error: 'telegram_id is required' });
@@ -334,7 +355,11 @@ app.put('/api/user/profile', (req, res) => {
 
     const currentUser = db.prepare('SELECT * FROM users WHERE telegram_id = ?').get(String(telegram_id));
     const effectivePhone = phone || currentUser?.phone;
-    const newRole = checkIsAdmin(effectivePhone, String(telegram_id)) ? 'admin' : (currentUser?.role || 'user');
+    let newRole = currentUser?.role || 'user';
+
+    if (role === 'admin' || checkIsAdmin(effectivePhone, String(telegram_id))) {
+      newRole = 'admin';
+    }
 
     const stmt = db.prepare(`
       UPDATE users SET
@@ -355,6 +380,7 @@ app.put('/api/user/profile', (req, res) => {
     stmt.run(name, phone, language, region, district, mahalla, street, house, location_lat, location_lng, newRole, String(telegram_id));
 
     const updatedUser = db.prepare('SELECT * FROM users WHERE telegram_id = ?').get(String(telegram_id));
+    syncUsersBackup();
     res.json(updatedUser);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -437,6 +463,9 @@ app.post('/api/orders', async (req, res) => {
     );
 
     const newOrder = db.prepare('SELECT * FROM orders WHERE id = ?').get(info.lastInsertRowid);
+
+    // Sync persistent backup JSON
+    syncOrdersBackup();
 
     // Send Real-time notification to Telegram Admin if receipt uploaded
     if (payment_receipt_image || status !== 'To\'lov kutilmoqda') {
@@ -582,6 +611,32 @@ app.get('/api/admin/stats', (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
+  }
+});
+
+// Admin Users List Endpoint
+app.get('/api/admin/users', (req, res) => {
+  try {
+    const users = db.prepare('SELECT * FROM users ORDER BY id DESC').all();
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Admin Toggle User Role Endpoint
+app.put('/api/admin/users/:id/role', (req, res) => {
+  try {
+    const { role } = req.body;
+    if (!role || (role !== 'admin' && role !== 'user')) {
+      return res.status(400).json({ error: 'Noma\'lum rol' });
+    }
+    db.prepare('UPDATE users SET role = ? WHERE id = ?').run(role, req.params.id);
+    syncUsersBackup();
+    const updated = db.prepare('SELECT * FROM users WHERE id = ?').get(req.params.id);
+    res.json({ success: true, user: updated });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
   }
 });
 

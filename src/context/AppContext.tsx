@@ -171,7 +171,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     if (!user) return;
     try {
       const endpoint = user.role === 'admin' ? '/api/admin/orders' : `/api/orders?user_id=${user.id}`;
-      const res = await fetch(endpoint);
+      const res = await fetch(getApiUrl(endpoint));
       if (res.ok) {
         const data = await res.json();
         setOrders(data);
@@ -219,7 +219,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       }
 
       try {
-        const res = await fetch('/api/auth/telegram', {
+        const res = await fetch(getApiUrl('/api/auth/telegram'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -257,7 +257,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const updateUserProfile = async (data: Partial<User>) => {
     if (!user) return;
     try {
-      const res = await fetch('/api/user/profile', {
+      const res = await fetch(getApiUrl('/api/user/profile'), {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

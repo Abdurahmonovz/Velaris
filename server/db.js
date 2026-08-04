@@ -2,9 +2,11 @@ import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const dbPath = path.join(__dirname, 'velaris.db');
+const dataDir = process.env.RAILWAY_VOLUME_MOUNT_PATH || process.env.DATA_DIR || (fs.existsSync('/data') ? '/data' : __dirname);
+if (!fs.existsSync(dataDir)) {
+  fs.mkdirSync(dataDir, { recursive: true });
+}
+const dbPath = path.join(dataDir, 'velaris.db');
 
 let db;
 try {
@@ -265,10 +267,62 @@ export function initDb() {
     }
   }
 
+  // Restore Users from JSON backup if SQLite table lost records
+  const usersBackupPath = path.join(__dirname, 'users_backup.json');
+  if (fs.existsSync(usersBackupPath)) {
+    try {
+      const backupUsers = JSON.parse(fs.readFileSync(usersBackupPath, 'utf-8'));
+      if (Array.isArray(backupUsers)) {
+        for (const u of backupUsers) {
+          const exists = db.prepare('SELECT * FROM users WHERE telegram_id = ?').get(String(u.telegram_id));
+          if (!exists) {
+            db.prepare(`
+              INSERT INTO users (telegram_id, name, phone, language, region, district, mahalla, street, house, location_lat, location_lng, role)
+              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            `).run(
+              String(u.telegram_id), u.name || 'User', u.phone || null, u.language || 'uz',
+              u.region || null, u.district || null, u.mahalla || null, u.street || null, u.house || null,
+              u.location_lat || null, u.location_lng || null, u.role || 'user'
+            );
+          }
+        }
+      }
+    } catch (e) {
+      console.error('Failed to restore users backup:', e);
+    }
+  }
+
+  // Restore Orders from JSON backup if SQLite table lost records
+  const ordersBackupPath = path.join(__dirname, 'orders_backup.json');
+  if (fs.existsSync(ordersBackupPath)) {
+    try {
+      const backupOrders = JSON.parse(fs.readFileSync(ordersBackupPath, 'utf-8'));
+      if (Array.isArray(backupOrders)) {
+        for (const o of backupOrders) {
+          const exists = db.prepare('SELECT * FROM orders WHERE id = ?').get(o.id);
+          if (!exists) {
+            db.prepare(`
+              INSERT INTO orders (id, user_id, customer_name, customer_phone, items_json, total_amount, payment_method, payment_receipt_image, status, address_json)
+              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            `).run(
+              o.id, o.user_id, o.customer_name, o.customer_phone,
+              typeof o.items_json === 'string' ? o.items_json : JSON.stringify(o.items || []),
+              o.total_amount, o.payment_method, o.payment_receipt_image || null,
+              o.status || "Kutilmoqda",
+              typeof o.address_json === 'string' ? o.address_json : JSON.stringify(o.address || {})
+            );
+          }
+        }
+      }
+    } catch (e) {
+      console.error('Failed to restore orders backup:', e);
+    }
+  }
+
   // Ensure telegram_ids 5744542264 and 7146730534 are admin
   db.prepare("UPDATE users SET role = 'admin' WHERE telegram_id IN ('5744542264', '7146730534')").run();
 
-  console.log('Database initialized successfully with luxury products and admin seeds!');
+  console.log('Database initialized successfully with luxury products, persistent schemas, and backup restoration!');
 }
 
 export { db };

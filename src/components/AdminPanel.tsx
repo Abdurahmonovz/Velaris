@@ -41,10 +41,11 @@ const compressImageFile = (file: File, maxWidth = 800, quality = 0.75): Promise<
 export const AdminPanel: React.FC = () => {
   const { products, categories, banners, refreshProducts, refreshCategories, refreshBanners, setActiveTab, t } = useApp();
 
-  const [activeAdminTab, setActiveAdminTab] = useState<'stats' | 'products' | 'categories' | 'banners' | 'orders' | 'promos' | 'channel'>('stats');
+  const [activeAdminTab, setActiveAdminTab] = useState<'stats' | 'products' | 'categories' | 'banners' | 'orders' | 'promos' | 'channel' | 'users'>('stats');
   const [stats, setStats] = useState<AdminStats | null>(null);
   const [orders, setOrders] = useState<Order[]>([]);
   const [promos, setPromos] = useState<any[]>([]);
+  const [usersList, setUsersList] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   // New / Edit Promo Code state
@@ -55,6 +56,33 @@ export const AdminPanel: React.FC = () => {
     discount_percent: 10,
     min_order_amount: 0,
   });
+
+  const fetchUsersList = async () => {
+    try {
+      const res = await fetch(getApiUrl('/api/admin/users'));
+      if (res.ok) {
+        const data = await res.json();
+        setUsersList(data);
+      }
+    } catch (err) {
+      console.error('Failed to fetch users list:', err);
+    }
+  };
+
+  const handleToggleUserRole = async (userId: number, currentRole: string) => {
+    const nextRole = currentRole === 'admin' ? 'user' : 'admin';
+    if (!confirm(`Foydalanuvchi rolini "${nextRole.toUpperCase()}" darajasiga o'zgartirishni tasdiqlaysizmi?`)) return;
+    try {
+      const res = await fetch(getApiUrl(`/api/admin/users/${userId}/role`), {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ role: nextRole }),
+      });
+      if (res.ok) fetchUsersList();
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   const fetchPromos = async () => {
     try {
@@ -137,6 +165,7 @@ export const AdminPanel: React.FC = () => {
     fetchStats();
     fetchAdminOrders();
     fetchPromos();
+    fetchUsersList();
   }, []);
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
   const [editingCategoryId, setEditingCategoryId] = useState<number | null>(null);
@@ -550,7 +579,7 @@ export const AdminPanel: React.FC = () => {
       </div>
 
       {/* Admin View Navigation Tabs */}
-      <div className="grid grid-cols-7 gap-1 bg-[#12081E] p-1 rounded-xl border border-white/10 text-[8px] font-semibold">
+      <div className="grid grid-cols-4 gap-1.5 bg-[#12081E] p-1.5 rounded-xl border border-white/10 text-[9px] font-semibold">
         <button
           onClick={() => setActiveAdminTab('stats')}
           className={`py-2 rounded-lg transition ${
@@ -560,12 +589,23 @@ export const AdminPanel: React.FC = () => {
           Statistika
         </button>
         <button
+          onClick={() => {
+            setActiveAdminTab('users');
+            fetchUsersList();
+          }}
+          className={`py-2 rounded-lg transition ${
+            activeAdminTab === 'users' ? 'bg-[#D4AF37] text-black font-bold' : 'text-gray-400'
+          }`}
+        >
+          Userlar ({usersList.length})
+        </button>
+        <button
           onClick={() => setActiveAdminTab('products')}
           className={`py-2 rounded-lg transition ${
             activeAdminTab === 'products' ? 'bg-[#D4AF37] text-black font-bold' : 'text-gray-400'
           }`}
         >
-          Atirlar
+          Atirlar ({products.length})
         </button>
         <button
           onClick={() => setActiveAdminTab('categories')}
@@ -573,7 +613,7 @@ export const AdminPanel: React.FC = () => {
             activeAdminTab === 'categories' ? 'bg-[#D4AF37] text-black font-bold' : 'text-gray-400'
           }`}
         >
-          Toifalar
+          Toifalar ({categories.length})
         </button>
         <button
           onClick={() => setActiveAdminTab('banners')}
@@ -581,7 +621,7 @@ export const AdminPanel: React.FC = () => {
             activeAdminTab === 'banners' ? 'bg-[#D4AF37] text-black font-bold' : 'text-gray-400'
           }`}
         >
-          Banner
+          Banner ({banners.length})
         </button>
         <button
           onClick={() => setActiveAdminTab('orders')}
@@ -589,7 +629,7 @@ export const AdminPanel: React.FC = () => {
             activeAdminTab === 'orders' ? 'bg-[#D4AF37] text-black font-bold' : 'text-gray-400'
           }`}
         >
-          Buyurtma
+          Buyurtma ({orders.length})
         </button>
         <button
           onClick={() => setActiveAdminTab('promos')}
@@ -597,7 +637,7 @@ export const AdminPanel: React.FC = () => {
             activeAdminTab === 'promos' ? 'bg-[#D4AF37] text-black font-bold' : 'text-gray-400'
           }`}
         >
-          Promo
+          Promo ({promos.length})
         </button>
         <button
           onClick={() => setActiveAdminTab('channel')}
@@ -732,6 +772,82 @@ export const AdminPanel: React.FC = () => {
                   </div>
                 ))}
               </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* 2. USERLAR TAB */}
+      {activeAdminTab === 'users' && (
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <h3 className="text-xs font-bold text-[#D4AF37] uppercase tracking-wider flex items-center gap-2">
+              <Users className="w-4 h-4 text-[#D4AF37]" />
+              <span>Ro'yxatdan o'tgan foydalanuvchilar ({usersList.length})</span>
+            </h3>
+            <button
+              onClick={fetchUsersList}
+              className="text-[10px] text-gray-400 hover:text-[#D4AF37] underline"
+            >
+              Yangilash 🔄
+            </button>
+          </div>
+
+          {usersList.length === 0 ? (
+            <div className="text-center py-10 bg-[#12081E] rounded-2xl border border-white/10 text-xs text-gray-400">
+              Hozircha foydalanuvchilar mavjud emas
+            </div>
+          ) : (
+            <div className="space-y-2.5">
+              {usersList.map((u) => (
+                <div
+                  key={u.id}
+                  className="p-3.5 bg-[#150B21] border border-white/10 rounded-2xl space-y-2 hover:border-[#D4AF37]/40 transition shadow-sm"
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-bold text-gray-100">{u.name || 'Nomsiz foydalanuvchi'}</span>
+                        <span
+                          className={`px-2 py-0.5 rounded-full text-[9px] font-bold ${
+                            u.role === 'admin'
+                              ? 'bg-[#D4AF37]/20 text-[#D4AF37] border border-[#D4AF37]/40'
+                              : 'bg-white/10 text-gray-400 border border-white/10'
+                          }`}
+                        >
+                          {u.role === 'admin' ? '👑 ADMIN' : '👤 USER'}
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-gray-300 font-mono mt-0.5">
+                        📞 {u.phone || 'Telefon kiritilmagan'}
+                      </p>
+                      <p className="text-[10px] text-gray-400">
+                        Telegram ID: <span className="font-mono text-gray-300">{u.telegram_id}</span>
+                      </p>
+                    </div>
+
+                    <button
+                      onClick={() => handleToggleUserRole(u.id, u.role)}
+                      className={`px-2.5 py-1 rounded-xl text-[10px] font-bold border transition active:scale-95 ${
+                        u.role === 'admin'
+                          ? 'bg-red-500/10 text-red-400 border-red-500/30 hover:bg-red-500/20'
+                          : 'bg-[#D4AF37]/10 text-[#D4AF37] border-[#D4AF37]/30 hover:bg-[#D4AF37]/20'
+                      }`}
+                    >
+                      {u.role === 'admin' ? 'User qilish' : 'Admin qilish'}
+                    </button>
+                  </div>
+
+                  {(u.region || u.district || u.street) && (
+                    <div className="pt-1.5 border-t border-white/5 text-[10px] text-gray-400 flex items-center gap-1.5">
+                      <MapPin className="w-3 h-3 text-[#D4AF37] flex-shrink-0" />
+                      <span className="truncate">
+                        {[u.region, u.district, u.mahalla, u.street, u.house].filter(Boolean).join(', ')}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              ))}
             </div>
           )}
         </div>
