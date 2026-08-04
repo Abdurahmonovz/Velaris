@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import { Product, Order, Category, AdminStats } from '../types';
-import { Shield, Package, DollarSign, Users, Plus, Edit, Trash2, CheckCircle, RefreshCw, X, FolderPlus, Layers, LogOut, Clock, TrendingUp, Award, ShoppingBag, Tag } from 'lucide-react';
+import { Shield, Package, DollarSign, Users, Plus, Edit, Trash2, CheckCircle, RefreshCw, X, FolderPlus, Layers, LogOut, Clock, TrendingUp, Award, ShoppingBag, Tag, MapPin, Sparkles } from 'lucide-react';
 import { getApiUrl } from '../config';
 import { getCleanImageUrl, getProductImages, FALLBACK_PRODUCT_IMAGE } from '../utils/imageUtils';
 

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import { ProductCard } from './ProductCard';
 import { Search, Sparkles, ChevronRight, Flame, Award, Megaphone } from 'lucide-react';
-import { getCleanImageUrl, FALLBACK_PRODUCT_IMAGE, getProductImages } from '../utils/imageUtils';
+import { getCleanImageUrl, FALLBACK_PRODUCT_IMAGE, getProductImages, preloadImages } from '../utils/imageUtils';
 
 export const HomeScreen: React.FC = () => {
   const {
