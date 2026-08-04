@@ -119,6 +119,12 @@ export const translations = {
     delete: 'O\'chirish',
     save: 'Saqlash',
     cancel: 'Bekor qilish',
+
+    // Add to Channel & Mini App in Channel
+    addToChannel: '📢 Kanalga Mini App-ni Qo\'shish',
+    addToChannelDesc: 'Mini App-ni o\'zingizning Telegram kanalingizga qo\'shing va obunachilaringizga do\'konni ulashing!',
+    addToChannelBtn: '➕ Telegram Kanalga Qo\'shish',
+    copyChannelLinkBtn: '📋 Mini App Linkini Nusxalash',
   },
 
   ru: {
@@ -241,5 +247,11 @@ export const translations = {
     delete: 'Удалить',
     save: 'Сохранить',
     cancel: 'Отмена',
+
+    // Add to Channel & Mini App in Channel
+    addToChannel: '📢 Добавить Mini App в Канал',
+    addToChannelDesc: 'Добавьте Mini App в ваш Telegram канал и разместите кнопку открытия магазина для подписчиков!',
+    addToChannelBtn: '➕ Добавить в Telegram Канал',
+    copyChannelLinkBtn: '📋 Скопировать ссылку Mini App',
   }
 };

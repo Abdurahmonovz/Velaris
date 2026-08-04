@@ -41,7 +41,7 @@ const compressImageFile = (file: File, maxWidth = 800, quality = 0.75): Promise<
 export const AdminPanel: React.FC = () => {
   const { products, categories, banners, refreshProducts, refreshCategories, refreshBanners, setActiveTab, t } = useApp();
 
-  const [activeAdminTab, setActiveAdminTab] = useState<'stats' | 'products' | 'categories' | 'banners' | 'orders' | 'promos'>('stats');
+  const [activeAdminTab, setActiveAdminTab] = useState<'stats' | 'products' | 'categories' | 'banners' | 'orders' | 'promos' | 'channel'>('stats');
   const [stats, setStats] = useState<AdminStats | null>(null);
   const [orders, setOrders] = useState<Order[]>([]);
   const [promos, setPromos] = useState<any[]>([]);
@@ -550,7 +550,7 @@ export const AdminPanel: React.FC = () => {
       </div>
 
       {/* Admin View Navigation Tabs */}
-      <div className="grid grid-cols-6 gap-1 bg-[#12081E] p-1 rounded-xl border border-white/10 text-[9px] font-semibold">
+      <div className="grid grid-cols-7 gap-1 bg-[#12081E] p-1 rounded-xl border border-white/10 text-[8px] font-semibold">
         <button
           onClick={() => setActiveAdminTab('stats')}
           className={`py-2 rounded-lg transition ${
@@ -565,7 +565,7 @@ export const AdminPanel: React.FC = () => {
             activeAdminTab === 'products' ? 'bg-[#D4AF37] text-black font-bold' : 'text-gray-400'
           }`}
         >
-          Atirlar ({products.length})
+          Atirlar
         </button>
         <button
           onClick={() => setActiveAdminTab('categories')}
@@ -573,7 +573,7 @@ export const AdminPanel: React.FC = () => {
             activeAdminTab === 'categories' ? 'bg-[#D4AF37] text-black font-bold' : 'text-gray-400'
           }`}
         >
-          Toifalar ({categories.length})
+          Toifalar
         </button>
         <button
           onClick={() => setActiveAdminTab('banners')}
@@ -581,7 +581,7 @@ export const AdminPanel: React.FC = () => {
             activeAdminTab === 'banners' ? 'bg-[#D4AF37] text-black font-bold' : 'text-gray-400'
           }`}
         >
-          Banner ({banners.length})
+          Banner
         </button>
         <button
           onClick={() => setActiveAdminTab('orders')}
@@ -589,7 +589,7 @@ export const AdminPanel: React.FC = () => {
             activeAdminTab === 'orders' ? 'bg-[#D4AF37] text-black font-bold' : 'text-gray-400'
           }`}
         >
-          Orders ({orders.length})
+          Buyurtma
         </button>
         <button
           onClick={() => setActiveAdminTab('promos')}
@@ -597,7 +597,15 @@ export const AdminPanel: React.FC = () => {
             activeAdminTab === 'promos' ? 'bg-[#D4AF37] text-black font-bold' : 'text-gray-400'
           }`}
         >
-          Promokod ({promos.length})
+          Promo
+        </button>
+        <button
+          onClick={() => setActiveAdminTab('channel')}
+          className={`py-2 rounded-lg transition ${
+            activeAdminTab === 'channel' ? 'bg-[#D4AF37] text-black font-bold' : 'text-gray-400'
+          }`}
+        >
+          Kanal 📢
         </button>
       </div>
 
@@ -989,6 +997,66 @@ export const AdminPanel: React.FC = () => {
               ))}
             </div>
           )}
+        </div>
+      )}
+
+      {/* 7. TELEGRAM KANAL INTEGRATSIYASI TAB */}
+      {activeAdminTab === 'channel' && (
+        <div className="space-y-4">
+          <div className="p-4 bg-gradient-to-br from-[#1E0F30] via-[#150B21] to-[#0A0510] rounded-2xl border border-[#D4AF37]/40 space-y-3 shadow-gold-glow">
+            <div className="flex items-center gap-3">
+              <div className="p-2.5 rounded-xl bg-[#D4AF37]/20 border border-[#D4AF37]/40 text-[#D4AF37]">
+                <Sparkles className="w-5 h-5 text-[#D4AF37]" />
+              </div>
+              <div>
+                <h3 className="text-xs font-bold text-gray-100 gold-gradient-text">
+                  Telegram Kanalga Mini App Joylash (Add to Channel)
+                </h3>
+                <p className="text-[10px] text-gray-400">
+                  Bot va Mini App-ni o'zingizning Telegram kanallaringizga ulash va pin qilish
+                </p>
+              </div>
+            </div>
+
+            <div className="space-y-2 pt-2">
+              <button
+                onClick={() => {
+                  const url = 'https://t.me/velaris_parfume_atelier_bot?startchannel=true';
+                  if ((window as any).Telegram?.WebApp?.openTelegramLink) {
+                    (window as any).Telegram.WebApp.openTelegramLink(url);
+                  } else {
+                    window.open(url, '_blank');
+                  }
+                }}
+                className="w-full py-3 gold-btn rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-gold-glow active:scale-95 transition"
+              >
+                <span>➕ Telegram Kanalni Tanlash & Qo'shish</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  const link = 'https://t.me/velaris_parfume_atelier_bot/app';
+                  navigator.clipboard.writeText(link);
+                  alert(`Mini App havolasi nusxalandi: ${link}\n\nUshbu havolani Telegram kanalingizdagi post pastidagi tugmaga qo'shishingiz mumkin!`);
+                }}
+                className="w-full py-2.5 bg-white/10 hover:bg-white/15 border border-white/15 rounded-xl text-xs font-semibold text-gray-200 flex items-center justify-center gap-2 transition active:scale-95"
+              >
+                <span>📋 Mini App Direct Linkini Nusxalash</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Guide / Post Template */}
+          <div className="p-4 bg-[#150B21] rounded-2xl border border-white/10 space-y-3">
+            <h4 className="text-xs font-bold text-[#D4AF37] uppercase tracking-wider">
+              📌 Kanalda Post Yaratish va Mini App-ni Pin Qilish Yo'riqnomasi
+            </h4>
+            <ol className="text-[11px] text-gray-300 space-y-2 list-decimal list-inside leading-relaxed">
+              <li>Yuqoridagi <b>"➕ Telegram Kanalni Tanlash & Qo'shish"</b> tugmasini bosing va o'zingiz boshqaradigan kanalni tanlang.</li>
+              <li>Kanalingizga parfyumlar haqida post joylang va post havolasiga ushbu Mini App havolasini biriktiring: <code className="text-[#D4AF37] bg-black/40 px-1 py-0.5 rounded">https://t.me/velaris_parfume_atelier_bot/app</code></li>
+              <li>Obunachilaringiz postdagi havola yoki tugma orqali bevosita kanaldan chiqmasdan Mini App do'koningizni ochishlari va buyurtma berishlari mumkin!</li>
+            </ol>
+          </div>
         </div>
       )}
 

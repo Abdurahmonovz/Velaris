@@ -1,6 +1,6 @@
 import React from 'react';
 import { useApp } from '../context/AppContext';
-import { Search, Globe, Shield, Sun, Moon } from 'lucide-react';
+import { Search, Globe, Shield, Sun, Moon, Megaphone } from 'lucide-react';
 
 export const Header: React.FC = () => {
   const { language, setLanguage, theme, toggleTheme, user, activeTab, setActiveTab, t } = useApp();
@@ -9,6 +9,15 @@ export const Header: React.FC = () => {
 
   const toggleLang = () => {
     setLanguage(language === 'uz' ? 'ru' : 'uz');
+  };
+
+  const handleAddToChannel = () => {
+    const url = 'https://t.me/velaris_parfume_atelier_bot?startchannel=true';
+    if ((window as any).Telegram?.WebApp?.openTelegramLink) {
+      (window as any).Telegram.WebApp.openTelegramLink(url);
+    } else {
+      window.open(url, '_blank');
+    }
   };
 
   return (
@@ -42,6 +51,15 @@ export const Header: React.FC = () => {
 
         {/* Right action tools */}
         <div className="flex items-center gap-2">
+          {/* Add to Channel Button */}
+          <button
+            onClick={handleAddToChannel}
+            className="p-1.5 rounded-full border border-[#D4AF37]/40 bg-[#1E0F30] text-xs font-semibold text-[#D4AF37] hover:border-[#D4AF37] hover:bg-[#D4AF37]/20 transition active:scale-95 flex items-center justify-center"
+            title="Kanalga Mini App-ni Qo'shish (Add to Channel)"
+          >
+            <Megaphone className="w-3.5 h-3.5 text-[#D4AF37]" />
+          </button>
+
           {/* Admin Panel Button (Visible ONLY to verified Admin users) */}
           {user?.role === 'admin' && (
             <button

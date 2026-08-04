@@ -176,6 +176,49 @@ export const ProfileScreen: React.FC = () => {
         </div>
       </div>
 
+      {/* Add to Channel Card */}
+      <div className="p-4 bg-gradient-to-br from-[#1E0F30] via-[#150B21] to-[#0A0510] border border-[#D4AF37]/40 rounded-3xl space-y-3 shadow-gold-glow relative overflow-hidden">
+        <div className="flex items-start gap-3">
+          <div className="p-2.5 rounded-2xl bg-[#D4AF37]/20 border border-[#D4AF37]/40 text-[#D4AF37] flex-shrink-0">
+            <Sparkles className="w-5 h-5" />
+          </div>
+          <div>
+            <h3 className="text-xs font-bold text-gray-100 gold-gradient-text">
+              {t('addToChannel')}
+            </h3>
+            <p className="text-[10px] text-gray-400 mt-0.5">
+              {t('addToChannelDesc')}
+            </p>
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-2 pt-1">
+          <button
+            onClick={() => {
+              const url = 'https://t.me/velaris_parfume_atelier_bot?startchannel=true';
+              if ((window as any).Telegram?.WebApp?.openTelegramLink) {
+                (window as any).Telegram.WebApp.openTelegramLink(url);
+              } else {
+                window.open(url, '_blank');
+              }
+            }}
+            className="w-full py-2.5 gold-btn rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-gold-glow transition active:scale-95"
+          >
+            <span>{t('addToChannelBtn')}</span>
+          </button>
+
+          <button
+            onClick={() => {
+              navigator.clipboard.writeText('https://t.me/velaris_parfume_atelier_bot/app');
+              alert('Mini App havolasi nusxalandi! Endi buni kanalingizdagi postlarga qo\'shishingiz mumkin: https://t.me/velaris_parfume_atelier_bot/app');
+            }}
+            className="w-full py-2 bg-white/10 hover:bg-white/15 border border-white/10 rounded-xl text-[11px] font-semibold text-gray-300 flex items-center justify-center gap-1.5 transition active:scale-95"
+          >
+            <span>{t('copyChannelLinkBtn')}</span>
+          </button>
+        </div>
+      </div>
+
       {/* Favorites Section */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">

@@ -35,16 +35,25 @@ export function initBot() {
       console.warn('Failed to set chat menu button:', e);
     }
 
-    // Handle /start command
-    bot.onText(/\/start/, (msg) => {
+    // Handle /start and /addtochannel commands
+    bot.onText(/\/(start|addtochannel|channel)/, (msg) => {
       const chatId = msg.chat.id;
-      const firstName = msg.from?.first_name || 'Hurmatli mijoz';
+      const firstName = msg.from?.first_name || 'Hurmatli foydalanuvchi';
+
+      const ADD_TO_CHANNEL_URL = 'https://t.me/velaris_parfume_atelier_bot?startchannel=true';
+      const ADD_TO_GROUP_URL = 'https://t.me/velaris_parfume_atelier_bot?startgroup=true';
+      const MINI_APP_DIRECT_LINK = 'https://t.me/velaris_parfume_atelier_bot/app';
 
       bot.sendMessage(
         chatId,
-        `✨ **VELARIS - Parfume Atelier** ga xush kelibsiz, ${firstName}!\n\n` +
-        `Fransiyaning eng sara va lyuks parfyumeriya mahsulotlarini Telegram Mini App orqali buyurtma qiling.\n\n` +
-        `Pastdagi tugma orqali ilovani oching 👇`,
+        `✨ **VELARIS - Parfume Atelier**\n\n` +
+        `Siz Telegram Mini App-ni o'zingizning Telegram kanalingizga yoki guruhingizga o'rnatishingiz va obunachilaringiz uchun qulay parfyum do'konini ulashingiz mumkin!\n\n` +
+        `📌 **Kanalda Mini App-ni ko'rsatish yo'li:**\n` +
+        `1. Pastdagi **📢 Kanalga Qo'shish** tugmasini bosing\n` +
+        `2. Mini App joylanadigan Kanalingizni tanlang\n` +
+        `3. Kanalingizga post joylab, havola qismiga ushbu havolani biriktiring: \n` +
+        `\`${MINI_APP_DIRECT_LINK}\`\n\n` +
+        `Pastdagi tugmalar orqali Mini App-ni kanalga qo'shing 👇`,
         {
           parse_mode: 'Markdown',
           reply_markup: {
@@ -53,6 +62,18 @@ export function initBot() {
                 {
                   text: '🛍️ Do\'konni Ochish (Mini App)',
                   web_app: { url: MINI_APP_URL }
+                }
+              ],
+              [
+                {
+                  text: '📢 Kanalga Qo\'shish (Add to Channel)',
+                  url: ADD_TO_CHANNEL_URL
+                }
+              ],
+              [
+                {
+                  text: '👥 Guruhga Qo\'shish (Add to Group)',
+                  url: ADD_TO_GROUP_URL
                 }
               ]
             ]
