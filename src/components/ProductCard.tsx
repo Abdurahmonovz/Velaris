@@ -2,7 +2,7 @@ import React from 'react';
 import { Product } from '../types';
 import { useApp } from '../context/AppContext';
 import { Heart, Star, ShoppingBag, Sparkles } from 'lucide-react';
-import { getCleanImageUrl, getProductImages, FALLBACK_PRODUCT_IMAGE } from '../utils/imageUtils';
+import { getCleanImageUrl, getProductImages, handleImageError } from '../utils/imageUtils';
 
 interface ProductCardProps {
   product: Product;
@@ -39,15 +39,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         <img
           src={mainImage}
           alt={product.name}
-          onError={(e) => {
-            const target = e.target as HTMLImageElement;
-            if (!target.dataset.triedFallback) {
-              target.dataset.triedFallback = 'true';
-              target.src = FALLBACK_PRODUCT_IMAGE;
-            }
-          }}
+          onError={handleImageError}
           className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"
-          loading="lazy"
+          loading="eager"
         />
 
         {/* Favorite Heart Button */}

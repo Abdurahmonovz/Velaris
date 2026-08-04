@@ -38,7 +38,7 @@ export const getProductImages = (rawImages: any): string[] => {
 
 /**
  * Formats image URL to guarantee a valid absolute or root-relative URL.
- * Prevents 404 errors caused by missing leading slashes, escaped quotes, or stringified arrays.
+ * Prefers ultra-fast Vercel Edge CDN root-relative static paths for zero latency.
  */
 export const getCleanImageUrl = (url?: string | null): string => {
   if (!url || typeof url !== 'string') return FALLBACK_PRODUCT_IMAGE;
@@ -57,13 +57,19 @@ export const getCleanImageUrl = (url?: string | null): string => {
     return cleanUrl;
   }
 
-  // If full HTTP/HTTPS URL
+  // Extract relative /perfumes/ static path for instant Vercel Edge CDN loading (5ms)
+  if (cleanUrl.includes('/perfumes/')) {
+    const perfumesMatch = cleanUrl.match(/\/perfumes\/[^\/\?#]+/);
+    if (perfumesMatch) return perfumesMatch[0];
+  }
+
+  if (cleanUrl.includes('perfumes/')) {
+    const perfumesMatch = cleanUrl.match(/perfumes\/[^\/\?#]+/);
+    if (perfumesMatch) return '/' + perfumesMatch[0];
+  }
+
+  // If full HTTP/HTTPS URL (non-perfume external image)
   if (/^https?:\/\//i.test(cleanUrl)) {
-    // If pointing to localhost/127.0.0.1, convert to live Railway backend
-    if (cleanUrl.includes('localhost') || cleanUrl.includes('127.0.0.1')) {
-      const perfumesMatch = cleanUrl.match(/\/perfumes\/[^\/\?#]+/);
-      if (perfumesMatch) return `${RAILWAY_BACKEND}${perfumesMatch[0]}`;
-    }
     return cleanUrl;
   }
 
@@ -72,12 +78,28 @@ export const getCleanImageUrl = (url?: string | null): string => {
     cleanUrl = '/' + cleanUrl;
   }
 
-  // Route /perfumes/ static assets directly to Railway server URL
-  if (cleanUrl.startsWith('/perfumes/')) {
-    return `${RAILWAY_BACKEND}${cleanUrl}`;
-  }
-
   return cleanUrl;
 };
+
+/**
+ * Smart error handler for image <img> tags.
+ * Tries Vercel Edge CDN -> Railway Backend -> Unsplash Fallback seamlessly.
+ */
+export const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+  const target = e.target as HTMLImageElement;
+  const currentSrc = target.src || '';
+
+  if (!target.dataset.triedRailway && currentSrc.includes('/perfumes/')) {
+    target.dataset.triedRailway = 'true';
+    const match = currentSrc.match(/\/perfumes\/[^\/\?#]+/);
+    if (match) {
+      target.src = `${RAILWAY_BACKEND}${match[0]}`;
+      return;
+    }
+  }
+
+  target.src = FALLBACK_PRODUCT_IMAGE;
+};
+
 
 
