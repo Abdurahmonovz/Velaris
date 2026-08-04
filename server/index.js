@@ -17,9 +17,11 @@ const PORT = process.env.PORT || 5001;
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 
-// Serve static logo & perfumes
-app.use('/assets', express.static(path.join(__dirname, '..')));
+// Serve static public assets, logo & perfumes
+app.use(express.static(path.join(__dirname, '..', 'public')));
 app.use('/perfumes', express.static(path.join(__dirname, '..', 'public', 'perfumes')));
+app.use('/assets', express.static(path.join(__dirname, '..', 'dist', 'assets')));
+app.use(express.static(path.join(__dirname, '..', 'dist')));
 
 // Initialize Database & Bot
 initDb();
@@ -685,7 +687,20 @@ app.post('/api/promo-codes/validate', (req, res) => {
   }
 });
 
+// SPA Fallback for client-side routing on Railway
+app.get('*', (req, res) => {
+  if (req.path.startsWith('/api/')) {
+    return res.status(404).json({ error: 'API endpoint not found' });
+  }
+  const indexPath = path.join(__dirname, '..', 'dist', 'index.html');
+  if (fs.existsSync(indexPath)) {
+    res.sendFile(indexPath);
+  } else {
+    res.send('Velaris API Server running!');
+  }
+});
+
 // Start Server
-app.listen(PORT, () => {
-  console.log(`🚀 Velaris Server running on http://localhost:${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`🚀 Velaris Server running on port ${PORT}`);
 });
