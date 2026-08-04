@@ -84,13 +84,6 @@ const MainLayout: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#0A0510] text-gray-100 font-sans selection:bg-[#D4AF37] selection:text-black">
-      {/* Maintenance Notice Banner */}
-      <div className="bg-gradient-to-r from-[#D4AF37] via-[#FFF5D1] to-[#D4AF37] text-black font-semibold text-xs py-2.5 px-4 text-center shadow-lg flex items-center justify-center space-x-2 border-b border-[#D4AF37]/30 z-50 sticky top-0">
-        <span className="animate-pulse text-base">🛠️</span>
-        <span className="tracking-wider uppercase font-extrabold text-sm">TEXNIK ISHLAR OLIB BORILMOQDA</span>
-        <span className="opacity-80 text-[11px] hidden sm:inline">(Tizim yangilanmoqda)</span>
-      </div>
-
       {/* Top Sticky Header */}
       <Header />
 
