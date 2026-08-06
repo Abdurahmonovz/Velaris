@@ -12,8 +12,12 @@
     "start": "node server/index.js",
     "dev:all": "concurrently \"npm run server\" \"npm run dev\""
   },
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "dependencies": {
     "@twa-dev/sdk": "^7.0.0",
+    "better-sqlite3": "^11.8.0",
     "clsx": "^2.1.1",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",

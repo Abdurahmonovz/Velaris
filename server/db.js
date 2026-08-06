@@ -17,9 +17,15 @@ try {
   db = new BetterSqlite(dbPath);
   db.pragma('foreign_keys = ON');
 } catch (err) {
-  const { DatabaseSync } = await import('node:sqlite');
-  db = new DatabaseSync(dbPath);
-  db.exec('PRAGMA foreign_keys = ON;');
+  console.warn('better-sqlite3 import failed, attempting node:sqlite fallback:', err?.message || err);
+  try {
+    const { DatabaseSync } = await import('node:sqlite');
+    db = new DatabaseSync(dbPath);
+    db.exec('PRAGMA foreign_keys = ON;');
+  } catch (fallbackErr) {
+    console.error('CRITICAL: Failed to load SQLite database with both drivers!', err, fallbackErr);
+    throw new Error(`SQLite Initialization Failed: ${err?.message} | Fallback: ${fallbackErr?.message}`);
+  }
 }
 
 // Initialize database schema

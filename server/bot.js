@@ -15,6 +15,9 @@ export function initBot() {
 
   try {
     bot = new TelegramBot(BOT_TOKEN, { polling: true });
+    bot.on('polling_error', (error) => {
+      console.warn('Telegram Bot Polling Warning:', error?.message || error);
+    });
     console.log('✨ Telegram Bot initialized & polling started...');
 
     const RAW_URL = process.env.MINI_APP_URL || '';
