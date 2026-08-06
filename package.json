@@ -13,7 +13,7 @@
     "dev:all": "concurrently \"npm run server\" \"npm run dev\""
   },
   "engines": {
-    "node": ">=20.0.0"
+    "node": "20.x"
   },
   "dependencies": {
     "@twa-dev/sdk": "^7.0.0",
