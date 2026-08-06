@@ -123,11 +123,11 @@ app.get('/api/products', (req, res) => {
 
     if (gender && gender !== 'all') {
       if (gender === 'women') {
-        query += ' AND (gender = "women" OR (category_slug = "ayollar" AND gender != "men"))';
+        query += " AND (gender = 'women' OR (category_slug = 'ayollar' AND gender != 'men'))";
       } else if (gender === 'men') {
-        query += ' AND (gender = "men" OR (category_slug = "erkaklar" AND gender != "women"))';
+        query += " AND (gender = 'men' OR (category_slug = 'erkaklar' AND gender != 'women'))";
       } else {
-        query += ' AND gender = ?';
+        query += " AND gender = ?";
         params.push(gender);
       }
     }
@@ -615,14 +615,14 @@ app.get('/api/admin/stats', requireAdmin, (req, res) => {
 
     const totalRevenueRow = db.prepare(`
       SELECT SUM(total_amount) as total FROM orders 
-      WHERE status IN ('Qabul qilindi', 'Tayyorlanmoqda', 'Jo\'natildi', 'Yetkazildi')
+      WHERE status IN ('Qabul qilindi', 'Tayyorlanmoqda', 'Jo''natildi', 'Yetkazildi')
     `).get();
     const totalRevenue = totalRevenueRow?.total || 0;
 
     const topProducts = db.prepare(`
       SELECT p.id, p.name, p.brand, p.price_10g, p.rating, COUNT(o.id) as order_count
       FROM products p
-      LEFT JOIN orders o ON o.items_json LIKE ('%' || p.name || '%') AND o.status IN ('Qabul qilindi', 'Tayyorlanmoqda', 'Jo\'natildi', 'Yetkazildi')
+      LEFT JOIN orders o ON o.items_json LIKE ('%' || p.name || '%') AND o.status IN ('Qabul qilindi', 'Tayyorlanmoqda', 'Jo''natildi', 'Yetkazildi')
       GROUP BY p.id
       ORDER BY order_count DESC
       LIMIT 5
