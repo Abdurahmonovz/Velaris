@@ -33,20 +33,39 @@ export const CatalogScreen: React.FC = () => {
 
   const filteredProducts = products
     .filter((p) => {
-      const matchesCategory =
-        !selectedCategory ||
-        p.category_slug === selectedCategory ||
-        (selectedCategory === 'erkaklar' && (p.category_slug === 'erkaklar' || p.gender === 'men')) ||
-        (selectedCategory === 'ayollar' && (p.category_slug === 'ayollar' || p.gender === 'women')) ||
-        (selectedCategory === 'unisex' && (p.category_slug === 'unisex' || p.gender === 'unisex')) ||
-        (selectedCategory === 'yangi' && p.is_new) ||
-        (selectedCategory === 'bestseller' && p.is_bestseller);
+      let matchesCategory = true;
+      if (selectedCategory) {
+        if (selectedCategory === 'erkaklar') {
+          matchesCategory = (p.category_slug === 'erkaklar' || p.gender === 'men') && p.gender !== 'women';
+        } else if (selectedCategory === 'ayollar') {
+          matchesCategory = (p.category_slug === 'ayollar' || p.gender === 'women') && p.gender !== 'men';
+        } else if (selectedCategory === 'unisex') {
+          matchesCategory = p.category_slug === 'unisex' || p.gender === 'unisex';
+        } else if (selectedCategory === 'yangi') {
+          matchesCategory = p.is_new;
+        } else if (selectedCategory === 'bestseller') {
+          matchesCategory = p.is_bestseller;
+        } else {
+          matchesCategory = p.category_slug === selectedCategory;
+        }
+      }
 
-      const matchesGender = selectedGender === 'all' || p.gender === selectedGender || p.gender === 'unisex';
+      let matchesGender = true;
+      if (selectedGender !== 'all') {
+        if (selectedGender === 'women') {
+          matchesGender = p.gender === 'women' || (p.category_slug === 'ayollar' && p.gender !== 'men');
+        } else if (selectedGender === 'men') {
+          matchesGender = p.gender === 'men' || (p.category_slug === 'erkaklar' && p.gender !== 'women');
+        } else if (selectedGender === 'unisex') {
+          matchesGender = p.gender === 'unisex';
+        }
+      }
+
       const matchesSearch =
         !searchQuery ||
         p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         p.brand.toLowerCase().includes(searchQuery.toLowerCase());
+
       return matchesCategory && matchesGender && matchesSearch;
     })
     .sort((a, b) => {

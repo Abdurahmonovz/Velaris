@@ -41,7 +41,23 @@ export const HomeScreen: React.FC = () => {
 
   // Filter products by search & selected category
   const filteredProducts = products.filter((p) => {
-    const matchesCategory = !selectedCategory || p.category_slug === selectedCategory;
+    let matchesCategory = true;
+    if (selectedCategory) {
+      if (selectedCategory === 'erkaklar') {
+        matchesCategory = (p.category_slug === 'erkaklar' || p.gender === 'men') && p.gender !== 'women';
+      } else if (selectedCategory === 'ayollar') {
+        matchesCategory = (p.category_slug === 'ayollar' || p.gender === 'women') && p.gender !== 'men';
+      } else if (selectedCategory === 'unisex') {
+        matchesCategory = p.category_slug === 'unisex' || p.gender === 'unisex';
+      } else if (selectedCategory === 'yangi') {
+        matchesCategory = p.is_new;
+      } else if (selectedCategory === 'bestseller') {
+        matchesCategory = p.is_bestseller;
+      } else {
+        matchesCategory = p.category_slug === selectedCategory;
+      }
+    }
+
     const matchesSearch =
       !searchQuery ||
       p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||

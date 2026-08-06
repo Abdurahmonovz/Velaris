@@ -39,7 +39,32 @@ const compressImageFile = (file: File, maxWidth = 800, quality = 0.75): Promise<
 };
 
 export const AdminPanel: React.FC = () => {
-  const { products, categories, banners, refreshProducts, refreshCategories, refreshBanners, setActiveTab, t } = useApp();
+  const { user, products, categories, banners, refreshProducts, refreshCategories, refreshBanners, setActiveTab, t } = useApp();
+
+  const getHeaders = () => ({
+    'Content-Type': 'application/json',
+    'x-telegram-id': user?.telegram_id || ''
+  });
+
+  if (!user || user.role !== 'admin') {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center bg-[#0A0510] light:bg-[#FAF7F2] space-y-4">
+        <div className="w-16 h-16 rounded-full bg-red-500/10 border border-red-500/30 flex items-center justify-center text-red-400">
+          <Shield className="w-8 h-8" />
+        </div>
+        <h2 className="text-lg font-bold text-gray-100 gold-gradient-text">Ruxsat etilmagan (Access Denied)</h2>
+        <p className="text-xs text-gray-400 max-w-xs">
+          Ushbu sahifaga faqat tasdiqlangan administratorlar kirishi mumkin.
+        </p>
+        <button
+          onClick={() => setActiveTab('home')}
+          className="py-2.5 px-6 gold-btn rounded-xl text-xs font-bold shadow-gold-glow"
+        >
+          Bosh sahifaga qaytish
+        </button>
+      </div>
+    );
+  }
 
   const [activeAdminTab, setActiveAdminTab] = useState<'stats' | 'products' | 'categories' | 'banners' | 'orders' | 'promos' | 'channel' | 'users'>('stats');
   const [stats, setStats] = useState<AdminStats | null>(null);
@@ -59,7 +84,7 @@ export const AdminPanel: React.FC = () => {
 
   const fetchUsersList = async () => {
     try {
-      const res = await fetch(getApiUrl('/api/admin/users'));
+      const res = await fetch(getApiUrl('/api/admin/users'), { headers: getHeaders() });
       if (res.ok) {
         const data = await res.json();
         setUsersList(data);
@@ -75,7 +100,7 @@ export const AdminPanel: React.FC = () => {
     try {
       const res = await fetch(getApiUrl(`/api/admin/users/${userId}/role`), {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getHeaders(),
         body: JSON.stringify({ role: nextRole }),
       });
       if (res.ok) fetchUsersList();
@@ -86,7 +111,7 @@ export const AdminPanel: React.FC = () => {
 
   const fetchPromos = async () => {
     try {
-      const res = await fetch(getApiUrl('/api/promo-codes'));
+      const res = await fetch(getApiUrl('/api/promo-codes'), { headers: getHeaders() });
       if (res.ok) {
         const data = await res.json();
         setPromos(data);
@@ -124,7 +149,7 @@ export const AdminPanel: React.FC = () => {
 
       const res = await fetch(getApiUrl(url), {
         method,
-        headers: { 'Content-Type': 'application/json' },
+        headers: getHeaders(),
         body: JSON.stringify(promoForm),
       });
 
@@ -145,7 +170,7 @@ export const AdminPanel: React.FC = () => {
   const handleDeletePromo = async (id: number) => {
     if (!confirm('Promokodni o\'chirishga ishonchingiz komilmi?')) return;
     try {
-      const res = await fetch(getApiUrl(`/api/promo-codes/${id}`), { method: 'DELETE' });
+      const res = await fetch(getApiUrl(`/api/promo-codes/${id}`), { method: 'DELETE', headers: getHeaders() });
       if (res.ok) fetchPromos();
     } catch (err) {
       console.error(err);
@@ -154,7 +179,7 @@ export const AdminPanel: React.FC = () => {
 
   const handleTogglePromo = async (id: number) => {
     try {
-      const res = await fetch(getApiUrl(`/api/promo-codes/${id}/toggle`), { method: 'PUT' });
+      const res = await fetch(getApiUrl(`/api/promo-codes/${id}/toggle`), { method: 'PUT', headers: getHeaders() });
       if (res.ok) fetchPromos();
     } catch (err) {
       console.error(err);
@@ -217,7 +242,7 @@ export const AdminPanel: React.FC = () => {
 
   const fetchStats = async () => {
     try {
-      const res = await fetch(getApiUrl('/api/admin/stats'));
+      const res = await fetch(getApiUrl('/api/admin/stats'), { headers: getHeaders() });
       if (res.ok) {
         const data = await res.json();
         setStats(data);
@@ -229,7 +254,7 @@ export const AdminPanel: React.FC = () => {
 
   const fetchAdminOrders = async () => {
     try {
-      const res = await fetch(getApiUrl('/api/admin/orders'));
+      const res = await fetch(getApiUrl('/api/admin/orders'), { headers: getHeaders() });
       if (res.ok) {
         const data = await res.json();
         setOrders(data);
@@ -262,7 +287,7 @@ export const AdminPanel: React.FC = () => {
     try {
       const res = await fetch(getApiUrl('/api/banners'), {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getHeaders(),
         body: JSON.stringify(bannerForm),
       });
 
@@ -293,7 +318,7 @@ export const AdminPanel: React.FC = () => {
   const handleDeleteBanner = async (id: number) => {
     if (!confirm('Ushbu reklama bannerini o\'chirishga ishonchingiz komilmi?')) return;
     try {
-      const res = await fetch(getApiUrl(`/api/banners/${id}`), { method: 'DELETE' });
+      const res = await fetch(getApiUrl(`/api/banners/${id}`), { method: 'DELETE', headers: getHeaders() });
       if (res.ok) {
         refreshBanners();
       }
@@ -316,7 +341,7 @@ export const AdminPanel: React.FC = () => {
 
       const res = await fetch(getApiUrl(url), {
         method,
-        headers: { 'Content-Type': 'application/json' },
+        headers: getHeaders(),
         body: JSON.stringify(categoryForm),
       });
 
@@ -341,7 +366,7 @@ export const AdminPanel: React.FC = () => {
   const handleDeleteCategory = async (id: number) => {
     if (!confirm('Ushbu toifani o\'chirishga ishonchingiz komilmi?')) return;
     try {
-      const res = await fetch(getApiUrl(`/api/categories/${id}`), { method: 'DELETE' });
+      const res = await fetch(getApiUrl(`/api/categories/${id}`), { method: 'DELETE', headers: getHeaders() });
       if (res.ok) {
         refreshCategories();
       }
@@ -365,7 +390,7 @@ export const AdminPanel: React.FC = () => {
     try {
       const res = await fetch(getApiUrl(`/api/admin/orders/${orderId}/status`), {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getHeaders(),
         body: JSON.stringify({ status }),
       });
       if (res.ok) {
@@ -380,7 +405,7 @@ export const AdminPanel: React.FC = () => {
   const handleClearAllOrders = async () => {
     if (!confirm('⚠️ DIQQAT! Barcha buyurtmalar tarixini to\'liq o\'chirib tashlashga ishonchingiz komilmi?')) return;
     try {
-      const res = await fetch(getApiUrl('/api/admin/orders'), { method: 'DELETE' });
+      const res = await fetch(getApiUrl('/api/admin/orders'), { method: 'DELETE', headers: getHeaders() });
       if (res.ok) {
         setOrders([]);
         fetchStats();
@@ -396,7 +421,7 @@ export const AdminPanel: React.FC = () => {
   const handleDeleteProduct = async (id: number) => {
     if (!confirm('Ushbu atirni o\'chirishga ishonchingiz komilmi?')) return;
     try {
-      const res = await fetch(getApiUrl(`/api/products/${id}`), { method: 'DELETE' });
+      const res = await fetch(getApiUrl(`/api/products/${id}`), { method: 'DELETE', headers: getHeaders() });
       if (res.ok) {
         refreshProducts();
         fetchStats();
@@ -426,7 +451,7 @@ export const AdminPanel: React.FC = () => {
 
       const res = await fetch(getApiUrl(url), {
         method,
-        headers: { 'Content-Type': 'application/json' },
+        headers: getHeaders(),
         body: JSON.stringify(productForm),
       });
 

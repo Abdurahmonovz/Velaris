@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
 import { initDb, db } from './db.js';
 import { initBot, sendOrderNotificationToAdmin } from './bot.js';
@@ -40,7 +41,7 @@ app.get('/api/categories', (req, res) => {
 });
 
 // Create Category (Admin)
-app.post('/api/categories', (req, res) => {
+app.post('/api/categories', requireAdmin, (req, res) => {
   try {
     const { slug, name_uz, name_ru, image } = req.body;
     const cleanSlug = slug || name_uz.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
@@ -53,7 +54,7 @@ app.post('/api/categories', (req, res) => {
 });
 
 // Update Category (Admin)
-app.put('/api/categories/:id', (req, res) => {
+app.put('/api/categories/:id', requireAdmin, (req, res) => {
   try {
     const { slug, name_uz, name_ru, image } = req.body;
     const cleanSlug = slug || name_uz.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
@@ -66,7 +67,7 @@ app.put('/api/categories/:id', (req, res) => {
 });
 
 // Delete Category (Admin)
-app.delete('/api/categories/:id', (req, res) => {
+app.delete('/api/categories/:id', requireAdmin, (req, res) => {
   try {
     db.prepare('DELETE FROM categories WHERE id = ?').run(req.params.id);
     res.json({ success: true });
@@ -86,7 +87,7 @@ app.get('/api/banners', (req, res) => {
 });
 
 // Create Banner (Admin)
-app.post('/api/banners', (req, res) => {
+app.post('/api/banners', requireAdmin, (req, res) => {
   try {
     const { title_uz, title_ru, subtitle_uz, subtitle_ru, image, link } = req.body;
     const stmt = db.prepare('INSERT INTO banners (title_uz, title_ru, subtitle_uz, subtitle_ru, image, link) VALUES (?, ?, ?, ?, ?, ?)');
@@ -98,7 +99,7 @@ app.post('/api/banners', (req, res) => {
 });
 
 // Delete Banner (Admin)
-app.delete('/api/banners/:id', (req, res) => {
+app.delete('/api/banners/:id', requireAdmin, (req, res) => {
   try {
     db.prepare('DELETE FROM banners WHERE id = ?').run(req.params.id);
     res.json({ success: true });
@@ -121,8 +122,14 @@ app.get('/api/products', (req, res) => {
     }
 
     if (gender && gender !== 'all') {
-      query += ' AND (gender = ? OR gender = "unisex")';
-      params.push(gender);
+      if (gender === 'women') {
+        query += ' AND (gender = "women" OR (category_slug = "ayollar" AND gender != "men"))';
+      } else if (gender === 'men') {
+        query += ' AND (gender = "men" OR (category_slug = "erkaklar" AND gender != "women"))';
+      } else {
+        query += ' AND gender = ?';
+        params.push(gender);
+      }
     }
 
     if (is_bestseller === 'true') {
@@ -185,7 +192,7 @@ app.get('/api/products/:id', (req, res) => {
 });
 
 // Product CRUD (Admin)
-app.post('/api/products', (req, res) => {
+app.post('/api/products', requireAdmin, (req, res) => {
   try {
     const {
       name, brand, category_slug, gender,
@@ -231,7 +238,7 @@ app.post('/api/products', (req, res) => {
   }
 });
 
-app.put('/api/products/:id', (req, res) => {
+app.put('/api/products/:id', requireAdmin, (req, res) => {
   try {
     const {
       name, brand, category_slug, gender,
@@ -275,7 +282,7 @@ app.put('/api/products/:id', (req, res) => {
   }
 });
 
-app.delete('/api/products/:id', (req, res) => {
+app.delete('/api/products/:id', requireAdmin, (req, res) => {
   try {
     db.prepare('DELETE FROM products WHERE id = ?').run(req.params.id);
     res.json({ success: true });
@@ -311,6 +318,24 @@ function checkIsAdmin(phone, telegram_id) {
   if (!phone) return false;
   const clean = phone.replace(/\D/g, '');
   return ADMIN_PHONES.some(p => p.replace(/\D/g, '') === clean || p === String(telegram_id));
+}
+
+function requireAdmin(req, res, next) {
+  try {
+    const telegramId = req.headers['x-telegram-id'] || req.body?.admin_telegram_id || req.query?.admin_telegram_id;
+    if (!telegramId) {
+      return res.status(401).json({ error: 'Ruxsat etilmagan: Admin identifikatsiyasi (x-telegram-id) kiritilmadi!' });
+    }
+    const user = db.prepare('SELECT * FROM users WHERE telegram_id = ?').get(String(telegramId));
+    const isAdmin = (user && (user.role === 'admin' || checkIsAdmin(user.phone, user.telegram_id))) || checkIsAdmin('', String(telegramId));
+    if (!isAdmin) {
+      return res.status(403).json({ error: 'Faqat administratorlar uchun ruxsat berilgan (Admin Auth Required)!' });
+    }
+    req.adminUser = user;
+    next();
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 }
 
 // 4. User Register / Login
@@ -550,7 +575,7 @@ app.delete('/api/orders/:id', (req, res) => {
 });
 
 // 7. Admin Dashboard Endpoints
-app.delete('/api/admin/orders', (req, res) => {
+app.delete('/api/admin/orders', requireAdmin, (req, res) => {
   try {
     db.prepare('DELETE FROM orders').run();
     res.json({ success: true, message: 'Barcha buyurtmalar tarixi o\'chirildi' });
@@ -559,7 +584,7 @@ app.delete('/api/admin/orders', (req, res) => {
   }
 });
 
-app.get('/api/admin/orders', (req, res) => {
+app.get('/api/admin/orders', requireAdmin, (req, res) => {
   try {
     const orders = db.prepare('SELECT * FROM orders ORDER BY id DESC').all();
     const formatted = orders.map((o) => ({
@@ -573,7 +598,7 @@ app.get('/api/admin/orders', (req, res) => {
   }
 });
 
-app.put('/api/admin/orders/:id/status', (req, res) => {
+app.put('/api/admin/orders/:id/status', requireAdmin, (req, res) => {
   try {
     const { status } = req.body;
     db.prepare('UPDATE orders SET status = ? WHERE id = ?').run(status, req.params.id);
@@ -583,7 +608,7 @@ app.put('/api/admin/orders/:id/status', (req, res) => {
   }
 });
 
-app.get('/api/admin/stats', (req, res) => {
+app.get('/api/admin/stats', requireAdmin, (req, res) => {
   try {
     const totalOrders = db.prepare('SELECT COUNT(*) as count FROM orders').get().count;
     const totalUsers = db.prepare('SELECT COUNT(*) as count FROM users').get().count;
@@ -615,7 +640,7 @@ app.get('/api/admin/stats', (req, res) => {
 });
 
 // Admin Users List Endpoint
-app.get('/api/admin/users', (req, res) => {
+app.get('/api/admin/users', requireAdmin, (req, res) => {
   try {
     const users = db.prepare('SELECT * FROM users ORDER BY id DESC').all();
     res.json(users);
@@ -625,7 +650,7 @@ app.get('/api/admin/users', (req, res) => {
 });
 
 // Admin Toggle User Role Endpoint
-app.put('/api/admin/users/:id/role', (req, res) => {
+app.put('/api/admin/users/:id/role', requireAdmin, (req, res) => {
   try {
     const { role } = req.body;
     if (!role || (role !== 'admin' && role !== 'user')) {
@@ -650,7 +675,7 @@ app.get('/api/promo-codes', (req, res) => {
   }
 });
 
-app.post('/api/promo-codes', (req, res) => {
+app.post('/api/promo-codes', requireAdmin, (req, res) => {
   try {
     const { code, discount_percent, min_order_amount = 0 } = req.body;
     if (!code || !discount_percent) {
@@ -669,7 +694,7 @@ app.post('/api/promo-codes', (req, res) => {
   }
 });
 
-app.put('/api/promo-codes/:id', (req, res) => {
+app.put('/api/promo-codes/:id', requireAdmin, (req, res) => {
   try {
     const { code, discount_percent, min_order_amount = 0 } = req.body;
     if (!code || !discount_percent) {
@@ -689,7 +714,7 @@ app.put('/api/promo-codes/:id', (req, res) => {
   }
 });
 
-app.delete('/api/promo-codes/:id', (req, res) => {
+app.delete('/api/promo-codes/:id', requireAdmin, (req, res) => {
   try {
     db.prepare('DELETE FROM promo_codes WHERE id = ?').run(req.params.id);
     res.json({ success: true });
@@ -698,7 +723,7 @@ app.delete('/api/promo-codes/:id', (req, res) => {
   }
 });
 
-app.put('/api/promo-codes/:id/toggle', (req, res) => {
+app.put('/api/promo-codes/:id/toggle', requireAdmin, (req, res) => {
   try {
     const promo = db.prepare('SELECT * FROM promo_codes WHERE id = ?').get(req.params.id);
     if (!promo) return res.status(44).json({ error: 'Mavjud emas' });

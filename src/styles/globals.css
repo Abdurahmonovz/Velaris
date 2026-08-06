@@ -27,32 +27,49 @@ html.light nav {
   border-color: rgba(212, 175, 55, 0.3) !important;
 }
 
-html.light .glass-panel {
-  background: rgba(255, 255, 255, 0.9) !important;
-  backdrop-filter: blur(16px);
-  border: 1px solid rgba(212, 175, 55, 0.3) !important;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05) !important;
-}
-
+/* Force light background on all dark containers, panels, modals & custom dark gradients */
+html.light .glass-panel,
 html.light .glass-card,
-html.light .bg-\[\#0A0510\],
-html.light .bg-\[\#12081E\],
-html.light .bg-\[\#160A26\],
-html.light .bg-\[\#140921\],
-html.light .bg-\[\#1E0F30\],
-html.light .bg-\[\#1A0E2B\],
-html.light .bg-\[\#150B21\],
-html.light .bg-\[\#170928\],
-html.light .bg-\[\#26123D\] {
+html.light [class*="bg-\[\#0A0510\]"],
+html.light [class*="bg-\[\#12081E\]"],
+html.light [class*="bg-\[\#160A26\]"],
+html.light [class*="bg-\[\#140921\]"],
+html.light [class*="bg-\[\#1E0F30\]"],
+html.light [class*="bg-\[\#1A0E2B\]"],
+html.light [class*="bg-\[\#150B21\]"],
+html.light [class*="bg-\[\#170928\]"],
+html.light [class*="bg-\[\#10071C\]"],
+html.light [class*="bg-\[\#190B2B\]"],
+html.light [class*="bg-\[\#26123D\]"],
+html.light [class*="bg-\[\#2A1547\]"],
+html.light [class*="bg-black"],
+html.light [class*="bg-black/"] {
   background: #FFFFFF !important;
-  border-color: rgba(212, 175, 55, 0.25) !important;
+  border-color: rgba(212, 175, 55, 0.3) !important;
   color: #1F162B !important;
-  box-shadow: 0 4px 15px rgba(212, 175, 55, 0.08) !important;
+  box-shadow: 0 4px 18px rgba(212, 175, 55, 0.08) !important;
 }
 
+/* Light mode overrides for gradient backgrounds */
+html.light [class*="bg-gradient-to-"] {
+  background-image: linear-gradient(135deg, #FFFFFF 0%, #F9F6F0 100%) !important;
+  border-color: rgba(212, 175, 55, 0.3) !important;
+}
+
+/* Special gold button gradients keep gold contrast */
+html.light .gold-btn,
+html.light [class*="from-\[\#D4AF37\]"],
+html.light [class*="via-\[\#FFF0B8\]"],
+html.light [class*="to-\[\#AA771C\]"] {
+  background: linear-gradient(135deg, #F3E5AB 0%, #D4AF37 50%, #997A15 100%) !important;
+  color: #0A0510 !important;
+}
+
+/* Typography & icon contrast in Light Mode */
 html.light .text-gray-100,
 html.light .text-gray-200,
-html.light .text-gray-300 {
+html.light .text-gray-300,
+html.light .text-white {
   color: #1F162B !important;
 }
 
@@ -63,8 +80,10 @@ html.light .text-gray-500 {
 
 html.light .border-white\/10,
 html.light .border-white\/5,
-html.light .border-white\/20 {
-  border-color: rgba(212, 175, 55, 0.25) !important;
+html.light .border-white\/20,
+html.light .border-white\/30,
+html.light .border-white\/40 {
+  border-color: rgba(212, 175, 55, 0.3) !important;
 }
 
 html.light input,
@@ -75,7 +94,8 @@ html.light textarea {
   border-color: rgba(212, 175, 55, 0.4) !important;
 }
 
-html.light input::placeholder {
+html.light input::placeholder,
+html.light textarea::placeholder {
   color: #8E7A9F !important;
 }
 
@@ -83,6 +103,13 @@ html.light .gold-gradient-text {
   background: linear-gradient(135deg, #B8860B 0%, #AA771C 50%, #8B6508 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+}
+
+/* Modal backdrops in light mode */
+html.light .fixed.inset-0.bg-black\/80,
+html.light .fixed.inset-0.bg-black\/70,
+html.light .fixed.inset-0.bg-black\/60 {
+  background-color: rgba(31, 22, 43, 0.65) !important;
 }
 
 /* Custom Luxury Glassmorphism & Gold Styling */

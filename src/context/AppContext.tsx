@@ -171,7 +171,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     if (!user) return;
     try {
       const endpoint = user.role === 'admin' ? '/api/admin/orders' : `/api/orders?user_id=${user.id}`;
-      const res = await fetch(getApiUrl(endpoint));
+      const res = await fetch(getApiUrl(endpoint), {
+        headers: { 'x-telegram-id': user.telegram_id || '' }
+      });
       if (res.ok) {
         const data = await res.json();
         setOrders(data);
