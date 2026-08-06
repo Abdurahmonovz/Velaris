@@ -315,9 +315,17 @@ function syncOrdersBackup() {
 
 function checkIsAdmin(phone, telegram_id) {
   if (telegram_id === '5744542264' || telegram_id === '7146730534') return true;
-  if (!phone) return false;
-  const clean = phone.replace(/\D/g, '');
-  return ADMIN_PHONES.some(p => p.replace(/\D/g, '') === clean || p === String(telegram_id));
+  if (!phone && !telegram_id) return false;
+  const cleanPhone = phone ? String(phone).replace(/\D/g, '') : '';
+  const cleanTgId = telegram_id ? String(telegram_id).trim() : '';
+
+  if (cleanTgId && ADMIN_PHONES.includes(cleanTgId)) return true;
+  if (!cleanPhone) return false;
+
+  return ADMIN_PHONES.some(p => {
+    const cleanP = p.replace(/\D/g, '');
+    return cleanP && (cleanP === cleanPhone || cleanPhone.endsWith(cleanP.slice(-9)));
+  });
 }
 
 function requireAdmin(req, res, next) {
@@ -378,7 +386,7 @@ app.put('/api/user/profile', (req, res) => {
       return res.status(400).json({ error: 'telegram_id is required' });
     }
 
-    const currentUser = db.prepare('SELECT * FROM users WHERE telegram_id = ?').get(String(telegram_id));
+    let currentUser = db.prepare('SELECT * FROM users WHERE telegram_id = ?').get(String(telegram_id));
     const effectivePhone = phone || currentUser?.phone;
     let newRole = currentUser?.role || 'user';
 
@@ -386,23 +394,35 @@ app.put('/api/user/profile', (req, res) => {
       newRole = 'admin';
     }
 
-    const stmt = db.prepare(`
-      UPDATE users SET
-        name = COALESCE(?, name),
-        phone = COALESCE(?, phone),
-        language = COALESCE(?, language),
-        region = COALESCE(?, region),
-        district = COALESCE(?, district),
-        mahalla = COALESCE(?, mahalla),
-        street = COALESCE(?, street),
-        house = COALESCE(?, house),
-        location_lat = COALESCE(?, location_lat),
-        location_lng = COALESCE(?, location_lng),
-        role = ?
-      WHERE telegram_id = ?
-    `);
+    if (!currentUser) {
+      const stmt = db.prepare(`
+        INSERT INTO users (telegram_id, name, phone, language, region, district, mahalla, street, house, location_lat, location_lng, role)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `);
+      stmt.run(
+        String(telegram_id), name || 'User', phone || null, language || 'uz',
+        region || null, district || null, mahalla || null, street || null, house || null,
+        location_lat || null, location_lng || null, newRole
+      );
+    } else {
+      const stmt = db.prepare(`
+        UPDATE users SET
+          name = COALESCE(?, name),
+          phone = COALESCE(?, phone),
+          language = COALESCE(?, language),
+          region = COALESCE(?, region),
+          district = COALESCE(?, district),
+          mahalla = COALESCE(?, mahalla),
+          street = COALESCE(?, street),
+          house = COALESCE(?, house),
+          location_lat = COALESCE(?, location_lat),
+          location_lng = COALESCE(?, location_lng),
+          role = ?
+        WHERE telegram_id = ?
+      `);
 
-    stmt.run(name, phone, language, region, district, mahalla, street, house, location_lat, location_lng, newRole, String(telegram_id));
+      stmt.run(name, phone, language, region, district, mahalla, street, house, location_lat, location_lng, newRole, String(telegram_id));
+    }
 
     const updatedUser = db.prepare('SELECT * FROM users WHERE telegram_id = ?').get(String(telegram_id));
     syncUsersBackup();
