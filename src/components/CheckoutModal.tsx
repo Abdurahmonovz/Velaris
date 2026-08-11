@@ -5,6 +5,7 @@ import { X, MapPin, Phone, User as UserIcon, Truck, Store, CheckCircle2, Sparkle
 import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import { getApiUrl } from '../config';
+import { formatPhoneNumber } from '../utils/phoneUtils';
 
 // Fix leaflet marker icon path issue in Vite
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -38,11 +39,11 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
   const { user, cart, clearCart, updateUserProfile, t } = useApp();
 
   const [customerName, setCustomerName] = useState(user?.name || '');
-  const [customerPhone, setCustomerPhone] = useState(user?.phone || '');
+  const [customerPhone, setCustomerPhone] = useState(user?.phone ? formatPhoneNumber(user.phone) : '+998 ');
   const [deliveryType, setDeliveryType] = useState<DeliveryType>('courier');
 
-  const [region, setRegion] = useState(user?.region || 'Toshkent sh.');
-  const [district, setDistrict] = useState(user?.district || 'Mirobod t.');
+  const [region, setRegion] = useState(user?.region || '');
+  const [district, setDistrict] = useState(user?.district || '');
   const [mahalla, setMahalla] = useState(user?.mahalla || '');
   const [street, setStreet] = useState(user?.street || '');
   const [house, setHouse] = useState(user?.house || '');
@@ -272,7 +273,10 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
               <input
                 type="tel"
                 value={customerPhone}
-                onChange={(e) => setCustomerPhone(e.target.value)}
+                onChange={(e) => setCustomerPhone(formatPhoneNumber(e.target.value))}
+                onFocus={() => {
+                  if (!customerPhone || customerPhone === '') setCustomerPhone('+998 ');
+                }}
                 required
                 className="w-full bg-[#160A26] border border-[#D4AF37]/30 rounded-xl px-3.5 py-2.5 text-xs text-gray-100 focus:outline-none focus:border-[#D4AF37]"
               />

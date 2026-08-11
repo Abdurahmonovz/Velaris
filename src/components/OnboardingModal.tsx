@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { Phone, MapPin, CheckCircle, ShieldCheck, Sparkles, Navigation } from 'lucide-react';
+import { formatPhoneNumber } from '../utils/phoneUtils';
 
 export const OnboardingModal: React.FC = () => {
   const { user, updateUserProfile, isOnboardingOpen, setIsOnboardingOpen, t } = useApp();
 
-  const [phone, setPhone] = useState(user?.phone || '');
-  const [region, setRegion] = useState(user?.region || 'Toshkent sh.');
-  const [district, setDistrict] = useState(user?.district || 'Mirobod t.');
+  const [phone, setPhone] = useState(user?.phone ? formatPhoneNumber(user.phone) : '+998 ');
+  const [region, setRegion] = useState(user?.region || '');
+  const [district, setDistrict] = useState(user?.district || '');
   const [locationLat, setLocationLat] = useState<number | undefined>(user?.location_lat || 41.2995);
   const [locationLng, setLocationLng] = useState<number | undefined>(user?.location_lng || 69.2401);
   const [errorMsg, setErrorMsg] = useState('');
@@ -22,8 +23,7 @@ export const OnboardingModal: React.FC = () => {
     const tgUser = tg?.initDataUnsafe?.user;
     if (tgUser?.phone_number) {
       const num = tgUser.phone_number;
-      const formatted = num.startsWith('+') ? num : `+${num}`;
-      setPhone(formatted);
+      setPhone(formatPhoneNumber(num));
       setErrorMsg('');
       return;
     }
@@ -33,8 +33,7 @@ export const OnboardingModal: React.FC = () => {
         tg.requestContact((sent: boolean, response: any) => {
           if (sent && (response?.responseUnsafe?.contact?.phone_number || response?.contact?.phone_number)) {
             const num = response?.responseUnsafe?.contact?.phone_number || response?.contact?.phone_number;
-            const formatted = num.startsWith('+') ? num : `+${num}`;
-            setPhone(formatted);
+            setPhone(formatPhoneNumber(num));
             setErrorMsg('');
           } else {
             // If contact sharing was denied or unavailable, set +998 prefix & focus
@@ -137,7 +136,10 @@ export const OnboardingModal: React.FC = () => {
                 id="onboarding-phone-input"
                 type="tel"
                 value={phone}
-                onChange={(e) => setPhone(e.target.value)}
+                onChange={(e) => setPhone(formatPhoneNumber(e.target.value))}
+                onFocus={() => {
+                  if (!phone || phone === '') setPhone('+998 ');
+                }}
                 className="flex-1 bg-[#1E0F30] border border-[#D4AF37]/30 rounded-xl px-4 py-3 text-sm text-gray-100 focus:outline-none focus:border-[#D4AF37]"
                 required
               />

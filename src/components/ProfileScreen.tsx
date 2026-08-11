@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { ProductCard } from './ProductCard';
 import { User as UserIcon, Heart, Globe, Shield, Phone, MapPin, Sparkles, ChevronRight, Key, X } from 'lucide-react';
+import { formatPhoneNumber } from '../utils/phoneUtils';
 
 const AdminLoginButton: React.FC = () => {
   const { updateUserProfile, setActiveTab } = useApp();
   const [isOpen, setIsOpen] = useState(false);
-  const [adminPhone, setAdminPhone] = useState('');
+  const [adminPhone, setAdminPhone] = useState('+998 ');
   const [adminPassword, setAdminPassword] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
 
@@ -74,7 +75,10 @@ const AdminLoginButton: React.FC = () => {
                 <input
                   type="tel"
                   value={adminPhone}
-                  onChange={(e) => setAdminPhone(e.target.value)}
+                  onChange={(e) => setAdminPhone(formatPhoneNumber(e.target.value))}
+                  onFocus={() => {
+                    if (!adminPhone || adminPhone === '') setAdminPhone('+998 ');
+                  }}
                   className="w-full bg-[#1E0F30] border border-[#D4AF37]/30 rounded-xl px-3 py-2.5 text-xs text-gray-100 focus:outline-none focus:border-[#D4AF37]"
                   required
                 />
