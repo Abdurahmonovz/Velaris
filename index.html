@@ -7,6 +7,17 @@
 
     <!-- Telegram WebApp SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script>
+      try {
+        if (window.Telegram && window.Telegram.WebApp) {
+          window.Telegram.WebApp.ready();
+          window.Telegram.WebApp.expand();
+          if (typeof window.Telegram.WebApp.disableVerticalSwipes === 'function') {
+            window.Telegram.WebApp.disableVerticalSwipes();
+          }
+        }
+      } catch (e) {}
+    </script>
 
     <!-- Google Fonts: Cormorant Garamond & Plus Jakarta Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">

@@ -200,16 +200,32 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setIsLoading(true);
       await Promise.all([refreshProducts(), fetchCategories(), fetchBanners()]);
 
-      // Telegram WebApp detection
+      // Telegram WebApp detection & initialization
       let tgId = '';
       let tgName = 'Foydalanuvchi';
+
+      if (window.Telegram?.WebApp) {
+        try {
+          window.Telegram.WebApp.ready();
+          window.Telegram.WebApp.expand();
+          if (typeof window.Telegram.WebApp.disableVerticalSwipes === 'function') {
+            window.Telegram.WebApp.disableVerticalSwipes();
+          }
+          if (typeof window.Telegram.WebApp.setHeaderColor === 'function') {
+            window.Telegram.WebApp.setHeaderColor('#0A0510');
+          }
+          if (typeof window.Telegram.WebApp.setBackgroundColor === 'function') {
+            window.Telegram.WebApp.setBackgroundColor('#0A0510');
+          }
+        } catch (e) {
+          console.error('Telegram WebApp init error:', e);
+        }
+      }
 
       if (window.Telegram?.WebApp?.initDataUnsafe?.user) {
         const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
         tgId = String(tgUser.id);
         tgName = `${tgUser.first_name || ''} ${tgUser.last_name || ''}`.trim() || tgUser.username || 'Telegram User';
-        window.Telegram.WebApp.ready();
-        window.Telegram.WebApp.expand();
       } else {
         // Standard Web Browser Visitor - retrieve or generate unique guest ID
         let guestId = localStorage.getItem('velaris_guest_id');
