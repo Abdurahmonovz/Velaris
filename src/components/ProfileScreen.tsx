@@ -73,7 +73,6 @@ const AdminLoginButton: React.FC = () => {
                 <label className="text-[10px] text-gray-400 block mb-1">Admin Telefon Raqami</label>
                 <input
                   type="tel"
-                  placeholder="+998 9X XXX XX XX"
                   value={adminPhone}
                   onChange={(e) => setAdminPhone(e.target.value)}
                   className="w-full bg-[#1E0F30] border border-[#D4AF37]/30 rounded-xl px-3 py-2.5 text-xs text-gray-100 focus:outline-none focus:border-[#D4AF37]"
@@ -85,7 +84,6 @@ const AdminLoginButton: React.FC = () => {
                 <label className="text-[10px] text-gray-400 block mb-1">Maxfiy Parol (Password)</label>
                 <input
                   type="password"
-                  placeholder="****"
                   value={adminPassword}
                   onChange={(e) => setAdminPassword(e.target.value)}
                   className="w-full bg-[#1E0F30] border border-[#D4AF37]/30 rounded-xl px-3 py-2.5 text-xs text-gray-100 focus:outline-none focus:border-[#D4AF37]"

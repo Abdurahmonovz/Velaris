@@ -138,7 +138,6 @@ export const OnboardingModal: React.FC = () => {
                 type="tel"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                placeholder={t('phonePlaceholder')}
                 className="flex-1 bg-[#1E0F30] border border-[#D4AF37]/30 rounded-xl px-4 py-3 text-sm text-gray-100 focus:outline-none focus:border-[#D4AF37]"
                 required
               />
