@@ -15,6 +15,9 @@
           if (typeof window.Telegram.WebApp.disableVerticalSwipes === 'function') {
             window.Telegram.WebApp.disableVerticalSwipes();
           }
+          if (typeof window.Telegram.WebApp.enableClosingConfirmation === 'function') {
+            window.Telegram.WebApp.enableClosingConfirmation();
+          }
         }
       } catch (e) {}
     </script>

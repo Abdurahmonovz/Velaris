@@ -211,6 +211,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           if (typeof window.Telegram.WebApp.disableVerticalSwipes === 'function') {
             window.Telegram.WebApp.disableVerticalSwipes();
           }
+          if (typeof window.Telegram.WebApp.enableClosingConfirmation === 'function') {
+            window.Telegram.WebApp.enableClosingConfirmation();
+          }
           if (typeof window.Telegram.WebApp.setHeaderColor === 'function') {
             window.Telegram.WebApp.setHeaderColor('#0A0510');
           }
