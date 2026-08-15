@@ -108,7 +108,7 @@ export const ProductDetailModal: React.FC = () => {
       )}
 
       {/* Main Container */}
-      <div className="relative w-full max-w-lg bg-[#12081E] border border-[#D4AF37]/30 rounded-t-3xl sm:rounded-3xl shadow-gold-glow-lg text-gray-100 max-h-[92vh] flex flex-col overflow-hidden animate-in slide-in-from-bottom duration-300">
+      <div className="relative w-full max-w-lg product-modal-container bg-[#12081E] border border-[#D4AF37]/30 rounded-t-3xl sm:rounded-3xl shadow-gold-glow-lg text-gray-100 max-h-[92vh] flex flex-col overflow-hidden animate-in slide-in-from-bottom duration-300">
         
         {/* Top Floating Action Bar */}
         <div className="absolute top-3 left-3 right-3 z-20 flex items-center justify-between pointer-events-none">
@@ -116,7 +116,7 @@ export const ProductDetailModal: React.FC = () => {
             {/* Favorite Button */}
             <button
               onClick={() => toggleFavorite(product.id)}
-              className="p-2.5 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-white hover:border-[#D4AF37] transition active:scale-90 shadow-md"
+              className="p-2.5 rounded-full bg-black/50 backdrop-blur-md border border-white/10 text-white hover:border-[#D4AF37] transition active:scale-90 shadow-md"
               title="Sevimli qilish"
             >
               <Heart className={`w-4 h-4 transition-colors ${isFav ? 'fill-red-500 text-red-500' : 'text-gray-200'}`} />
@@ -125,7 +125,7 @@ export const ProductDetailModal: React.FC = () => {
             {/* Share / Copy Link Button */}
             <button
               onClick={handleShare}
-              className="p-2.5 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-white hover:border-[#D4AF37] transition active:scale-90 shadow-md flex items-center gap-1.5"
+              className="p-2.5 rounded-full bg-black/50 backdrop-blur-md border border-white/10 text-white hover:border-[#D4AF37] transition active:scale-90 shadow-md flex items-center gap-1.5"
               title="Ulashish"
             >
               {copied ? (
@@ -142,7 +142,7 @@ export const ProductDetailModal: React.FC = () => {
           {/* Close Button */}
           <button
             onClick={() => setSelectedProductModal(null)}
-            className="pointer-events-auto p-2.5 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-white hover:border-[#D4AF37] transition active:scale-90 shadow-md"
+            className="pointer-events-auto p-2.5 rounded-full bg-black/50 backdrop-blur-md border border-white/10 text-white hover:border-[#D4AF37] transition active:scale-90 shadow-md"
             title="Yopish"
           >
             <X className="w-4 h-4" />
@@ -153,7 +153,7 @@ export const ProductDetailModal: React.FC = () => {
         <div className="overflow-y-auto flex-1 no-scrollbar space-y-5 pb-28">
           
           {/* Main Image Slider with Zoom Toggle & Badges */}
-          <div className="relative w-full aspect-[4/3] bg-gradient-to-b from-[#180C28] to-[#0A0510] overflow-hidden flex items-center justify-center border-b border-[#D4AF37]/15">
+          <div className="relative w-full aspect-[4/3] product-modal-image-frame overflow-hidden flex items-center justify-center border-b border-[#D4AF37]/15">
             <img
               src={images[activeImageIdx]}
               alt={product.name}

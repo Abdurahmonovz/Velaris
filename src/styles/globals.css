@@ -42,7 +42,57 @@ html.light nav {
   border-color: rgba(212, 175, 55, 0.3) !important;
 }
 
-/* Force light background on all dark containers, panels, modals & custom dark gradients */
+/* Dedicated Product Card & Frame Classes for Crisp Dark/Light Rendering */
+.product-luxury-card {
+  background: linear-gradient(180deg, #180C28 0%, #0F071A 100%);
+  border: 1px solid rgba(212, 175, 55, 0.22);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
+}
+
+.product-luxury-card:hover {
+  border-color: rgba(212, 175, 55, 0.55);
+  box-shadow: 0 8px 25px rgba(212, 175, 55, 0.2);
+}
+
+.product-image-frame {
+  background: radial-gradient(circle at center, #24133A 0%, #0E0616 100%);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.15);
+}
+
+html.light .product-luxury-card {
+  background: #FFFFFF !important;
+  border: 1px solid rgba(212, 175, 55, 0.35) !important;
+  box-shadow: 0 4px 18px rgba(212, 175, 55, 0.12) !important;
+}
+
+html.light .product-luxury-card:hover {
+  border-color: rgba(212, 175, 55, 0.8) !important;
+  box-shadow: 0 8px 28px rgba(212, 175, 55, 0.25) !important;
+}
+
+html.light .product-image-frame {
+  background: radial-gradient(circle at center, #FAF7F2 0%, #EFE8DC 100%) !important;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.25) !important;
+}
+
+html.light .product-modal-container {
+  background: #FFFFFF !important;
+  border-color: rgba(212, 175, 55, 0.4) !important;
+  color: #1F162B !important;
+}
+
+html.light .product-modal-image-frame {
+  background: radial-gradient(circle at center, #FAF7F2 0%, #ECE4D6 100%) !important;
+  border-color: rgba(212, 175, 55, 0.25) !important;
+}
+
+html.light .product-modal-subcard {
+  background: #F8F5EE !important;
+  border-color: rgba(212, 175, 55, 0.3) !important;
+  color: #1F162B !important;
+}
+
+/* Force light background on dark containers, panels & modals in Light Mode */
 html.light .glass-panel,
 html.light .glass-card,
 html.light [class*="bg-\[\#0A0510\]"],
@@ -56,19 +106,11 @@ html.light [class*="bg-\[\#170928\]"],
 html.light [class*="bg-\[\#10071C\]"],
 html.light [class*="bg-\[\#190B2B\]"],
 html.light [class*="bg-\[\#26123D\]"],
-html.light [class*="bg-\[\#2A1547\]"],
-html.light [class*="bg-black"],
-html.light [class*="bg-black/"] {
-  background: #FFFFFF !important;
+html.light [class*="bg-\[\#2A1547\]"] {
+  background-color: #FFFFFF !important;
   border-color: rgba(212, 175, 55, 0.3) !important;
   color: #1F162B !important;
   box-shadow: 0 4px 18px rgba(212, 175, 55, 0.08) !important;
-}
-
-/* Light mode overrides for gradient backgrounds */
-html.light [class*="bg-gradient-to-"] {
-  background-image: linear-gradient(135deg, #FFFFFF 0%, #F9F6F0 100%) !important;
-  border-color: rgba(212, 175, 55, 0.3) !important;
 }
 
 /* Special gold button gradients keep gold contrast */
@@ -121,6 +163,7 @@ html.light .gold-gradient-text {
 }
 
 /* Modal backdrops in light mode */
+html.light .fixed.inset-0.bg-black\/85,
 html.light .fixed.inset-0.bg-black\/80,
 html.light .fixed.inset-0.bg-black\/70,
 html.light .fixed.inset-0.bg-black\/60 {

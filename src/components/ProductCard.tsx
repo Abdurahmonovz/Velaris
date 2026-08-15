@@ -1,7 +1,7 @@
 import React from 'react';
 import { Product } from '../types';
 import { useApp } from '../context/AppContext';
-import { Heart, Star, ShoppingBag, Sparkles } from 'lucide-react';
+import { Heart, Star, ShoppingBag } from 'lucide-react';
 import { getCleanImageUrl, getProductImages, handleImageError } from '../utils/imageUtils';
 
 interface ProductCardProps {
@@ -32,25 +32,25 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   return (
     <div
       onClick={handleCardClick}
-      className="group relative bg-gradient-to-b from-[#1A0E2B]/80 to-[#10071C]/90 rounded-2xl border border-[#D4AF37]/20 hover:border-[#D4AF37]/60 overflow-hidden shadow-lg hover:shadow-gold-glow transition-all duration-300 flex flex-col justify-between cursor-pointer"
+      className="group relative product-luxury-card rounded-2xl transition-all duration-300 flex flex-col justify-between cursor-pointer overflow-hidden active:scale-[0.98]"
     >
       {/* Top Badges & Like Button */}
-      <div className="relative aspect-square w-full bg-[#12081E] overflow-hidden p-2 flex items-center justify-center">
+      <div className="relative aspect-square w-full product-image-frame overflow-hidden p-2.5 flex items-center justify-center">
         <img
           src={mainImage}
           alt={product.name}
           onError={handleImageError}
-          className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"
+          className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-108"
           loading="eager"
         />
 
         {/* Favorite Heart Button */}
         <button
           onClick={handleFavClick}
-          className="absolute top-2.5 right-2.5 p-2 rounded-full bg-black/40 border border-white/10 text-white hover:border-[#D4AF37] transition active:scale-90"
+          className="absolute top-2.5 right-2.5 p-2 rounded-full bg-black/40 backdrop-blur-md border border-white/10 text-white hover:border-[#D4AF37] transition active:scale-90 shadow"
         >
           <Heart
-            className={`w-4 h-4 transition-colors ${
+            className={`w-3.5 h-3.5 transition-colors ${
               isFav ? 'fill-red-500 text-red-500' : 'text-gray-300 group-hover:text-[#D4AF37]'
             }`}
           />
@@ -59,12 +59,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         {/* Badges: Bestseller / New */}
         <div className="absolute top-2.5 left-2.5 flex flex-col gap-1">
           {product.is_bestseller && (
-            <span className="px-2 py-0.5 rounded-md bg-[#D4AF37] text-black text-[9px] font-bold uppercase tracking-wider shadow">
+            <span className="px-2 py-0.5 rounded-md bg-[#D4AF37] text-black text-[8px] font-black uppercase tracking-wider shadow">
               Bestseller
             </span>
           )}
           {product.is_new && (
-            <span className="px-2 py-0.5 rounded-md bg-purple-600 text-white text-[9px] font-bold uppercase tracking-wider shadow">
+            <span className="px-2 py-0.5 rounded-md bg-purple-600 text-white text-[8px] font-black uppercase tracking-wider shadow">
               NEW
             </span>
           )}
@@ -80,23 +80,24 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       {/* Product Information */}
       <div className="p-3 flex-1 flex flex-col justify-between space-y-2">
         <div>
-          <span className="text-[10px] text-[#D4AF37] tracking-widest uppercase font-medium block">
+          <span className="text-[10px] text-[#D4AF37] tracking-widest uppercase font-bold block truncate">
             {product.brand}
           </span>
-          <h3 className="text-sm font-serif font-bold text-gray-100 line-clamp-1 group-hover:text-[#D4AF37] transition-colors">
+          <h3 className="text-sm font-serif font-bold product-card-title text-gray-100 line-clamp-1 group-hover:text-[#D4AF37] transition-colors">
             {product.name}
           </h3>
-          <p className="text-[10px] text-gray-400 line-clamp-1 mt-0.5">
+          <p className="text-[10px] product-card-sub text-gray-400 line-clamp-1 mt-0.5">
             {language === 'uz' ? product.scent_family_uz : product.scent_family_ru}
           </p>
         </div>
 
         {/* Price & Quick Add */}
-        <div className="pt-1 flex items-center justify-between border-t border-[#D4AF37]/15">
+        <div className="pt-1.5 flex items-center justify-between border-t border-[#D4AF37]/15">
           <div>
-            <span className="text-[9px] text-gray-400 block">{t('fromPrice')} 10 ml</span>
+            <span className="text-[9px] product-card-sub text-gray-400 block">{t('fromPrice')} 10 ml</span>
             <span className="text-sm font-bold text-[#D4AF37]">
-              {product.price_10g.toLocaleString('uz-UZ')} <span className="text-[10px] font-normal text-gray-300">{t('som')}</span>
+              {product.price_10g.toLocaleString('uz-UZ')}{' '}
+              <span className="text-[10px] font-normal product-card-sub text-gray-300">{t('som')}</span>
             </span>
           </div>
 

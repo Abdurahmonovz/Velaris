@@ -215,7 +215,7 @@ export const ProfileScreen: React.FC = () => {
               alert('Mini App havolasi nusxalandi! Endi buni kanalingizdagi postlarga qo\'shishingiz mumkin: https://t.me/velaris_parfume_atelier_bot/app');
             }}
             className="w-full py-2 bg-white/10 hover:bg-white/15 border border-white/10 rounded-xl text-[11px] font-semibold text-gray-300 flex items-center justify-center gap-1.5 transition active:scale-95"
-          >
+          > 
             <span>{t('copyChannelLinkBtn')}</span>
           </button>
         </div>
