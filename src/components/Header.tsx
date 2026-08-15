@@ -135,6 +135,11 @@ export const Header: React.FC = () => {
           </button>
         </div>
       </div>
+
+      {/* Test Notice Banner for deployment verification */}
+      <div className="max-w-md mx-auto mt-1.5 py-1 px-2.5 rounded-lg bg-amber-500/20 border border-amber-500/40 text-amber-300 text-center text-xs font-bold tracking-wide flex items-center justify-center gap-1.5 shadow-sm">
+        <span>⚠️ Texnik nosozliklar 1</span>
+      </div>
     </header>
   );
 };
