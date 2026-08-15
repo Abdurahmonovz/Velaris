@@ -42,7 +42,7 @@ html.light nav {
   border-color: rgba(212, 175, 55, 0.3) !important;
 }
 
-/* Dedicated Product Card & Frame Classes for Crisp Dark/Light Rendering */
+/* Dedicated Product Card & Frame Classes for Ultra-Sharp Crisp HD Rendering */
 .product-luxury-card {
   background: linear-gradient(180deg, #180C28 0%, #0F071A 100%);
   border: 1px solid rgba(212, 175, 55, 0.22);
@@ -59,18 +59,21 @@ html.light nav {
   border-bottom: 1px solid rgba(212, 175, 55, 0.15);
 }
 
-/* White-bg images blend with dark card background via multiply */
+/* Crystal-clear HD image rendering styles */
 .product-image-frame img,
 .product-modal-image-frame img {
-  mix-blend-mode: multiply;
-  filter: contrast(1.05) saturate(1.1);
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  filter: contrast(1.02) brightness(1.02);
 }
 
-/* Override for explicitly black-bg images — use screen mode instead */
+/* Dark background mode override if needed */
 .product-image-frame.dark-bg img,
 .product-modal-image-frame.dark-bg img {
-  mix-blend-mode: screen;
-  filter: contrast(1.0) saturate(1.05);
+  filter: contrast(1.03) brightness(1.02);
 }
 
 html.light .product-luxury-card {
