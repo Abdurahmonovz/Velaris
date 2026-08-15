@@ -7,8 +7,6 @@ export const OnboardingModal: React.FC = () => {
   const { user, updateUserProfile, isOnboardingOpen, setIsOnboardingOpen, t } = useApp();
 
   const [phone, setPhone] = useState(user?.phone ? formatPhoneNumber(user.phone) : '+998 ');
-  const [region, setRegion] = useState(user?.region || '');
-  const [district, setDistrict] = useState(user?.district || '');
   const [locationLat, setLocationLat] = useState<number | undefined>(user?.location_lat || 41.2995);
   const [locationLng, setLocationLng] = useState<number | undefined>(user?.location_lng || 69.2401);
   const [errorMsg, setErrorMsg] = useState('');
@@ -90,8 +88,6 @@ export const OnboardingModal: React.FC = () => {
 
     await updateUserProfile({
       phone,
-      region,
-      district,
       location_lat: locationLat || 41.2995,
       location_lng: locationLng || 69.2401,
     });
@@ -153,29 +149,7 @@ export const OnboardingModal: React.FC = () => {
             </div>
           </div>
 
-          {/* Region & District Quick Selection */}
-          <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-1">
-              <label className="text-[11px] text-gray-400">{t('region')}</label>
-              <input
-                type="text"
-                value={region}
-                onChange={(e) => setRegion(e.target.value)}
-                className="w-full bg-[#1E0F30] border border-[#D4AF37]/30 rounded-xl px-3 py-2.5 text-xs text-gray-100 focus:outline-none focus:border-[#D4AF37]"
-              />
-            </div>
-            <div className="space-y-1">
-              <label className="text-[11px] text-gray-400">{t('district')}</label>
-              <input
-                type="text"
-                value={district}
-                onChange={(e) => setDistrict(e.target.value)}
-                className="w-full bg-[#1E0F30] border border-[#D4AF37]/30 rounded-xl px-3 py-2.5 text-xs text-gray-100 focus:outline-none focus:border-[#D4AF37]"
-              />
-            </div>
-          </div>
 
-          {/* Location Field */}
           <div className="space-y-1.5">
             <label className="text-xs font-semibold text-[#D4AF37] uppercase tracking-wider flex items-center gap-1.5">
               <MapPin className="w-3.5 h-3.5" />
