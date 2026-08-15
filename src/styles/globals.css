@@ -54,9 +54,10 @@ html.light nav {
   box-shadow: 0 8px 25px rgba(212, 175, 55, 0.2);
 }
 
-.product-image-frame {
-  background: radial-gradient(circle at center, #1E0A32 0%, #0A0414 100%);
-  border-bottom: 1px solid rgba(212, 175, 55, 0.15);
+.product-image-frame,
+.product-modal-image-frame {
+  background: radial-gradient(circle at center, #FFFFFF 0%, #F4EFE6 100%);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.25);
 }
 
 /* Crystal-clear HD image rendering styles */
