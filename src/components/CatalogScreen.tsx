@@ -143,8 +143,8 @@ export const CatalogScreen: React.FC = () => {
         </button>
       </div>
 
-      {/* Visual Category Cards Carousel with Infinite Marquee Animation */}
-      <div className="space-y-2 overflow-hidden">
+      {/* Visual Category Cards Carousel */}
+      <div className="space-y-2">
         <div className="flex items-center justify-between text-xs text-gray-400">
           <span className="font-bold text-[#D4AF37] uppercase tracking-wider flex items-center gap-1.5">
             <Sparkles className="w-3.5 h-3.5 text-[#D4AF37]" />
@@ -160,20 +160,19 @@ export const CatalogScreen: React.FC = () => {
           )}
         </div>
 
-        <div className="w-full overflow-hidden py-1 relative rounded-2xl bg-[#12081E]/40 border border-[#D4AF37]/15">
+        <div className="w-full relative rounded-2xl bg-[#12081E]/40 border border-[#D4AF37]/15 overflow-hidden">
           {/* Side Fades */}
-          <div className="absolute left-0 top-0 bottom-0 w-4 bg-gradient-to-r from-[#0A0510] to-transparent z-10 pointer-events-none" />
-          <div className="absolute right-0 top-0 bottom-0 w-4 bg-gradient-to-l from-[#0A0510] to-transparent z-10 pointer-events-none" />
+          <div className="absolute left-0 top-0 bottom-0 w-3 bg-gradient-to-r from-[#0A0510] to-transparent z-10 pointer-events-none" />
+          <div className="absolute right-0 top-0 bottom-0 w-3 bg-gradient-to-l from-[#0A0510] to-transparent z-10 pointer-events-none" />
 
-          <div className="animate-infinite-marquee flex items-center gap-3 px-2">
-            {/* Duplicated array for seamless continuous loop */}
-            {[...categories, ...categories].map((cat, idx) => {
+          <div className="flex items-center gap-3 px-3 py-2.5 overflow-x-auto no-scrollbar scroll-smooth">
+            {categories.map((cat) => {
               const isSelected = selectedCategory === cat.slug;
               const catProductCount = getCategoryProductCount(cat.slug);
 
               return (
                 <div
-                  key={`${cat.id}-${idx}`}
+                  key={cat.id}
                   onClick={() => setSelectedCategory(isSelected ? null : cat.slug)}
                   className={`flex-shrink-0 w-28 p-2 rounded-2xl border transition-all cursor-pointer text-center space-y-1.5 relative overflow-hidden group active:scale-95 ${
                     isSelected
