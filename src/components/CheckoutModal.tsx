@@ -42,9 +42,9 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
   const [customerPhone, setCustomerPhone] = useState(user?.phone ? formatPhoneNumber(user.phone) : '+998 ');
   const [deliveryType, setDeliveryType] = useState<DeliveryType>('courier');
 
-  const [region, setRegion] = useState(user?.region || '');
-  const [district, setDistrict] = useState(user?.district || '');
-  const [mahalla, setMahalla] = useState(user?.mahalla || '');
+  const [region, setRegion] = useState('');
+  const [district, setDistrict] = useState('');
+  const [mahalla, setMahalla] = useState('');
   const [street, setStreet] = useState(user?.street || '');
   const [house, setHouse] = useState(user?.house || '');
 
