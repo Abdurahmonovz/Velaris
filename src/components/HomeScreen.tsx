@@ -53,15 +53,26 @@ export const HomeScreen: React.FC = () => {
         matchesCategory = p.is_new;
       } else if (selectedCategory === 'bestseller') {
         matchesCategory = p.is_bestseller;
+      } else if (selectedCategory === 'premium') {
+        matchesCategory = p.category_slug === 'premium' || p.price_10g >= 120000;
       } else {
         matchesCategory = p.category_slug === selectedCategory;
       }
     }
 
-    const matchesSearch =
-      !searchQuery ||
-      p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p.brand.toLowerCase().includes(searchQuery.toLowerCase());
+    let matchesSearch = true;
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase().trim();
+      matchesSearch =
+        p.name.toLowerCase().includes(q) ||
+        p.brand.toLowerCase().includes(q) ||
+        (p.scent_family_uz && p.scent_family_uz.toLowerCase().includes(q)) ||
+        (p.scent_family_ru && p.scent_family_ru.toLowerCase().includes(q)) ||
+        (p.top_notes_uz && p.top_notes_uz.toLowerCase().includes(q)) ||
+        (p.heart_notes_uz && p.heart_notes_uz.toLowerCase().includes(q)) ||
+        (p.base_notes_uz && p.base_notes_uz.toLowerCase().includes(q));
+    }
+
     return matchesCategory && matchesSearch;
   });
 
