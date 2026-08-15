@@ -241,3 +241,46 @@ html.light .fixed.inset-0.bg-black\/60 {
 .animate-rotate-ring {
   animation: rotate-gold-ring 12s linear infinite;
 }
+
+/* Luxury Royal Loading & Shimmer Keyframes */
+@keyframes gold-shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(200%); }
+}
+
+@keyframes pulse-ring {
+  0% { transform: scale(0.9); opacity: 0.8; }
+  50% { transform: scale(1.15); opacity: 0.3; }
+  100% { transform: scale(0.9); opacity: 0.8; }
+}
+
+@keyframes breathe-glow {
+  0%, 100% {
+    box-shadow: 0 0 25px rgba(212, 175, 55, 0.25), 0 0 50px rgba(120, 50, 200, 0.2);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 45px rgba(212, 175, 55, 0.55), 0 0 80px rgba(170, 119, 28, 0.35);
+    transform: scale(1.03);
+  }
+}
+
+.animate-gold-shimmer {
+  animation: gold-shimmer 2s ease-in-out infinite;
+}
+
+.animate-pulse-ring {
+  animation: pulse-ring 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-breathe-glow {
+  animation: breathe-glow 3.2s ease-in-out infinite;
+}
+
+.animate-spin-slow {
+  animation: rotate-gold-ring 16s linear infinite;
+}
+
+.animate-spin-reverse-slow {
+  animation: rotate-gold-ring 20s linear infinite reverse;
+}
