@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import { ProductCard } from './ProductCard';
-import { Search, Sparkles, ChevronRight, Flame, Award, Megaphone } from 'lucide-react';
+import { Search, Sparkles, ChevronRight, Flame, Award } from 'lucide-react';
 import { getCleanImageUrl, FALLBACK_PRODUCT_IMAGE, getProductImages, preloadImages } from '../utils/imageUtils';
 
 export const HomeScreen: React.FC = () => {
@@ -114,37 +114,6 @@ export const HomeScreen: React.FC = () => {
         )}
       </div>
 
-      {/* Add to Channel Banner Bar */}
-      {!searchQuery && (
-        <div
-          onClick={() => {
-            const url = 'https://t.me/velaris_parfume_atelier_bot?startchannel=true';
-            if ((window as any).Telegram?.WebApp?.openTelegramLink) {
-              (window as any).Telegram.WebApp.openTelegramLink(url);
-            } else {
-              window.open(url, '_blank');
-            }
-          }}
-          className="p-3 rounded-2xl bg-gradient-to-r from-[#1A0E2B] via-[#12081E] to-[#1A0E2B] border border-[#D4AF37]/30 flex items-center justify-between gap-2 cursor-pointer hover:border-[#D4AF37]/60 shadow-md transition active:scale-98"
-        >
-          <div className="flex items-center gap-2.5 min-w-0">
-            <div className="p-2 rounded-xl bg-[#D4AF37]/15 border border-[#D4AF37]/40 text-[#D4AF37] flex-shrink-0">
-              <Megaphone className="w-4 h-4 text-[#D4AF37]" />
-            </div>
-            <div className="min-w-0">
-              <span className="text-xs font-bold text-gray-100 block gold-gradient-text truncate">
-                Mini App-ni Telegram Kanalga Qo'shing 📢
-              </span>
-              <span className="text-[10px] text-gray-400 block truncate">
-                Kanalingizga qo'shib, obunachilaringizga ulashing
-              </span>
-            </div>
-          </div>
-          <span className="px-2.5 py-1 rounded-xl bg-[#D4AF37] text-black font-bold text-[10px] flex-shrink-0 shadow">
-            Qo'shish
-          </span>
-        </div>
-      )}
 
       {/* Hero Banner Slider */}
       {banners.length > 0 && !searchQuery && (
