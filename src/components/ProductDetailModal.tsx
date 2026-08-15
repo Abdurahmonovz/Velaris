@@ -25,6 +25,9 @@ import {
 } from 'lucide-react';
 import { getCleanImageUrl, getProductImages, FALLBACK_PRODUCT_IMAGE } from '../utils/imageUtils';
 
+const DARK_BG_PRODUCT_IDS = new Set([10, 13, 23, 59, 71, 105, 200, 201, 202, 203, 204, 205, 207, 208, 209, 210]);
+
+
 export const ProductDetailModal: React.FC = () => {
   const {
     selectedProductModal,
@@ -48,7 +51,9 @@ export const ProductDetailModal: React.FC = () => {
 
   const product = selectedProductModal;
   const isFav = favorites.includes(product.id);
+  const isDarkBg = DARK_BG_PRODUCT_IDS.has(product.id);
   const parsedImages = getProductImages(product.images);
+
   const rawImages = parsedImages.length > 0 ? parsedImages : [FALLBACK_PRODUCT_IMAGE];
   const images = rawImages.map(getCleanImageUrl);
 
@@ -153,7 +158,7 @@ export const ProductDetailModal: React.FC = () => {
         <div className="overflow-y-auto flex-1 no-scrollbar space-y-5 pb-28">
           
           {/* Main Image Slider with Zoom Toggle & Badges */}
-          <div className="relative w-full aspect-[4/3] product-modal-image-frame overflow-hidden flex items-center justify-center border-b border-[#D4AF37]/15">
+          <div className={`relative w-full aspect-[4/3] product-modal-image-frame${isDarkBg ? ' dark-bg' : ''} overflow-hidden flex items-center justify-center border-b border-[#D4AF37]/15`}>
             <img
               src={images[activeImageIdx]}
               alt={product.name}

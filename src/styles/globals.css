@@ -55,8 +55,22 @@ html.light nav {
 }
 
 .product-image-frame {
-  background: radial-gradient(circle at center, #24133A 0%, #0E0616 100%);
+  background: radial-gradient(circle at center, #1E0A32 0%, #0A0414 100%);
   border-bottom: 1px solid rgba(212, 175, 55, 0.15);
+}
+
+/* White-bg images blend with dark card background via multiply */
+.product-image-frame img,
+.product-modal-image-frame img {
+  mix-blend-mode: multiply;
+  filter: contrast(1.05) saturate(1.1);
+}
+
+/* Override for explicitly black-bg images — use screen mode instead */
+.product-image-frame.dark-bg img,
+.product-modal-image-frame.dark-bg img {
+  mix-blend-mode: screen;
+  filter: contrast(1.0) saturate(1.05);
 }
 
 html.light .product-luxury-card {
