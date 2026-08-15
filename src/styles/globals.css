@@ -10,6 +10,14 @@
     -webkit-overflow-scrolling: touch;
   }
 
+  /* iOS safe-area-inset-top — Status bar soati headerga tegmasligi uchun */
+  :root {
+    --sat: env(safe-area-inset-top, 0px);
+    --sab: env(safe-area-inset-bottom, 0px);
+    --sal: env(safe-area-inset-left, 0px);
+    --sar: env(safe-area-inset-right, 0px);
+  }
+
   body {
     background-color: #0A0510;
     color: #F3F4F6;
@@ -117,6 +125,12 @@ html.light .fixed.inset-0.bg-black\/80,
 html.light .fixed.inset-0.bg-black\/70,
 html.light .fixed.inset-0.bg-black\/60 {
   background-color: rgba(31, 22, 43, 0.65) !important;
+}
+
+/* iOS Safe Area Header Fix */
+.header-safe {
+  padding-top: max(0.6rem, calc(env(safe-area-inset-top, 0px) + 0.6rem));
+  padding-top: max(0.6rem, calc(var(--sat, 0px) + 0.6rem));
 }
 
 /* Custom Luxury Glassmorphism & Gold Styling */

@@ -20,7 +20,10 @@ export const Header: React.FC = () => {
 
   if (activeTab === 'admin') {
     return (
-      <header className="sticky top-0 z-50 bg-[#0A0510]/95 backdrop-blur-md border-b border-[#D4AF37]/20 px-3 sm:px-4 py-2.5 pt-[calc(env(safe-area-inset-top,0px)+0.6rem)] shadow-md transition-all">
+      <header
+        className="sticky top-0 z-50 bg-[#0A0510]/95 backdrop-blur-md border-b border-[#D4AF37]/20 px-3 sm:px-4 pb-2.5 shadow-md transition-all header-safe"
+        style={{ paddingTop: 'max(0.6rem, calc(env(safe-area-inset-top, 0px) + 0.6rem))' }}
+      >
         <div className="flex items-center justify-between max-w-md mx-auto">
           <div className="flex items-center gap-2 min-w-0 flex-1 pr-2">
             <button
@@ -59,7 +62,10 @@ export const Header: React.FC = () => {
   }
 
   return (
-    <header className="sticky top-0 z-50 bg-[#0A0510]/95 backdrop-blur-md border-b border-[#D4AF37]/20 px-3 sm:px-4 py-2.5 pt-[calc(env(safe-area-inset-top,0px)+0.6rem)] shadow-md transition-all">
+    <header
+      className="sticky top-0 z-50 bg-[#0A0510]/95 backdrop-blur-md border-b border-[#D4AF37]/20 px-3 sm:px-4 pb-2.5 shadow-md transition-all header-safe"
+      style={{ paddingTop: 'max(0.6rem, calc(env(safe-area-inset-top, 0px) + 0.6rem))' }}
+    >
       <div className="flex items-center justify-between gap-2 max-w-md mx-auto">
         {/* Brand logo & title */}
         <div
