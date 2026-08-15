@@ -56,25 +56,27 @@ html.light nav {
 
 .product-image-frame,
 .product-modal-image-frame {
-  background: radial-gradient(circle at center, #FFFFFF 0%, #F4EFE6 100%);
-  border-bottom: 1px solid rgba(212, 175, 55, 0.25);
+  background: #1A1A2E;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.2);
 }
 
-/* Crystal-clear HD image rendering styles */
+/* Clean crisp image rendering — no blend mode tinting */
 .product-image-frame img,
 .product-modal-image-frame img {
+  mix-blend-mode: normal;
+  filter: none;
   image-rendering: -webkit-optimize-contrast;
   image-rendering: crisp-edges;
   transform: translateZ(0);
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
-  filter: contrast(1.02) brightness(1.02);
 }
 
-/* Dark background mode override if needed */
+/* Same for dark-bg variant */
 .product-image-frame.dark-bg img,
 .product-modal-image-frame.dark-bg img {
-  filter: contrast(1.03) brightness(1.02);
+  mix-blend-mode: normal;
+  filter: none;
 }
 
 html.light .product-luxury-card {
