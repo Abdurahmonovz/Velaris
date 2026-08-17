@@ -4,10 +4,6 @@ import { useApp } from '../context/AppContext';
 import { Heart, Star, ShoppingBag } from 'lucide-react';
 import { getCleanImageUrl, getProductImages, handleImageError } from '../utils/imageUtils';
 
-// Product IDs whose images have dark/black backgrounds (use screen blend mode instead of multiply)
-const DARK_BG_PRODUCT_IDS = new Set([10, 13, 23, 59, 71, 105, 200, 201, 202, 203, 204, 205, 207, 208, 209, 210]);
-
-
 interface ProductCardProps {
   product: Product;
 }
@@ -18,8 +14,6 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const isFav = favorites.includes(product.id);
   const images = getProductImages(product.images);
   const mainImage = getCleanImageUrl(images[0]);
-  const isDarkBg = DARK_BG_PRODUCT_IDS.has(product.id);
-
 
   const handleCardClick = () => {
     setSelectedProductModal(product);
@@ -41,7 +35,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       className="group relative product-luxury-card rounded-2xl transition-all duration-300 flex flex-col justify-between cursor-pointer overflow-hidden active:scale-[0.98]"
     >
       {/* Top Badges & Like Button */}
-      <div className={`relative aspect-square w-full product-image-frame${isDarkBg ? ' dark-bg' : ''} overflow-hidden p-2.5 flex items-center justify-center`}>
+      <div className="relative aspect-square w-full product-image-frame overflow-hidden p-2.5 flex items-center justify-center">
         <img
           src={mainImage}
           alt={product.name}
