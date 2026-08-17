@@ -112,7 +112,7 @@ export const HomeScreen: React.FC = () => {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder={t('searchPlaceholder')}
-          className="w-full bg-[#14141B] border border-[#D4AF37]/30 focus:border-[#D4AF37] rounded-2xl py-3.5 pl-11 pr-4 text-xs text-gray-100 placeholder-gray-400 focus:outline-none shadow-gold-glow transition-all"
+          className="w-full bg-[#160A26] border border-[#D4AF37]/30 focus:border-[#D4AF37] rounded-2xl py-3.5 pl-11 pr-4 text-xs text-gray-100 placeholder-gray-400 focus:outline-none shadow-gold-glow transition-all"
         />
         <Search className="w-4 h-4 text-[#D4AF37] absolute left-4 top-1/2 -translate-y-1/2" />
         {searchQuery && (
@@ -204,7 +204,7 @@ export const HomeScreen: React.FC = () => {
                   className="flex flex-col items-center gap-1.5 flex-shrink-0 cursor-pointer group transition-all active:scale-95 text-center focus:outline-none"
                 >
                   <div
-                    className={`w-14 h-14 sm:w-16 sm:h-16 rounded-2xl transition-all duration-300 relative ${
+                    className={`w-15 h-15 sm:w-16 sm:h-16 rounded-2xl transition-all duration-300 relative ${
                       isSelected
                         ? 'p-[2px] bg-gradient-to-b from-[#F5E4A0] via-[#D4AF37] to-[#997B20] shadow-sm scale-105'
                         : 'p-[1px] bg-white/10 group-hover:bg-[#D4AF37]/40'

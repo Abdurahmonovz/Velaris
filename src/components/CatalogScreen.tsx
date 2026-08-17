@@ -137,7 +137,7 @@ export const CatalogScreen: React.FC = () => {
             {t('navCatalog')}
           </h1>
         </div>
-        <span className="text-xs text-[#D4AF37] font-semibold bg-[#181822] px-3 py-1 rounded-full border border-[#D4AF37]/30 shadow">
+        <span className="text-xs text-[#D4AF37] font-semibold bg-[#1E0F30] px-3 py-1 rounded-full border border-[#D4AF37]/30 shadow">
           {filteredProducts.length} {language === 'uz' ? 'atir' : 'аромат'}
         </span>
       </div>
@@ -149,7 +149,7 @@ export const CatalogScreen: React.FC = () => {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder={t('searchPlaceholder')}
-          className="w-full bg-[#14141B] border border-[#D4AF37]/30 focus:border-[#D4AF37] rounded-2xl py-3 pl-10 pr-10 text-xs text-gray-100 placeholder-gray-400 focus:outline-none transition shadow-inner"
+          className="w-full bg-[#160A26] border border-[#D4AF37]/30 focus:border-[#D4AF37] rounded-2xl py-3 pl-10 pr-10 text-xs text-gray-100 placeholder-gray-400 focus:outline-none transition shadow-inner"
         />
         <Search className="w-4 h-4 text-[#D4AF37] absolute left-3.5 top-1/2 -translate-y-1/2" />
         {searchQuery && (
@@ -163,7 +163,7 @@ export const CatalogScreen: React.FC = () => {
       </div>
 
       {/* Gender Filter Tabs */}
-      <div className="grid grid-cols-4 gap-1.5 p-1 bg-[#111116] rounded-2xl border border-white/10 text-xs">
+      <div className="grid grid-cols-4 gap-1.5 p-1 bg-[#12081E] rounded-2xl border border-white/10 text-xs">
         <button
           onClick={() => setSelectedGender('all')}
           className={`py-2 rounded-xl font-semibold transition active:scale-95 ${
@@ -213,7 +213,7 @@ export const CatalogScreen: React.FC = () => {
           className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition active:scale-95 border ${
             fastFilter === 'all'
               ? 'bg-[#D4AF37]/20 border-[#D4AF37] text-[#D4AF37]'
-              : 'bg-[#14141B] border-white/10 text-gray-400 hover:text-gray-200'
+              : 'bg-[#160A26] border-white/10 text-gray-400 hover:text-gray-200'
           }`}
         >
           {t('seeAll')}
@@ -224,7 +224,7 @@ export const CatalogScreen: React.FC = () => {
           className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap flex items-center gap-1.5 transition active:scale-95 border ${
             fastFilter === 'bestseller'
               ? 'bg-amber-500/20 border-amber-400 text-amber-400 shadow-sm'
-              : 'bg-[#14141B] border-white/10 text-gray-400 hover:text-gray-200'
+              : 'bg-[#160A26] border-white/10 text-gray-400 hover:text-gray-200'
           }`}
         >
           <Flame className="w-3.5 h-3.5 text-amber-400" />
@@ -236,7 +236,7 @@ export const CatalogScreen: React.FC = () => {
           className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap flex items-center gap-1.5 transition active:scale-95 border ${
             fastFilter === 'new'
               ? 'bg-purple-500/20 border-purple-400 text-purple-300 shadow-sm'
-              : 'bg-[#14141B] border-white/10 text-gray-400 hover:text-gray-200'
+              : 'bg-[#160A26] border-white/10 text-gray-400 hover:text-gray-200'
           }`}
         >
           <Sparkles className="w-3.5 h-3.5 text-purple-400" />
@@ -248,7 +248,7 @@ export const CatalogScreen: React.FC = () => {
           className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap flex items-center gap-1.5 transition active:scale-95 border ${
             fastFilter === 'top_rated'
               ? 'bg-yellow-500/20 border-yellow-400 text-yellow-300 shadow-sm'
-              : 'bg-[#14141B] border-white/10 text-gray-400 hover:text-gray-200'
+              : 'bg-[#160A26] border-white/10 text-gray-400 hover:text-gray-200'
           }`}
         >
           <Star className="w-3.5 h-3.5 text-yellow-400 fill-yellow-400" />
@@ -260,7 +260,7 @@ export const CatalogScreen: React.FC = () => {
           className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap flex items-center gap-1.5 transition active:scale-95 border ${
             fastFilter === 'premium'
               ? 'bg-emerald-500/20 border-emerald-400 text-emerald-300 shadow-sm'
-              : 'bg-[#14141B] border-white/10 text-gray-400 hover:text-gray-200'
+              : 'bg-[#160A26] border-white/10 text-gray-400 hover:text-gray-200'
           }`}
         >
           <Award className="w-3.5 h-3.5 text-emerald-400" />
@@ -339,7 +339,7 @@ export const CatalogScreen: React.FC = () => {
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as any)}
-            className="bg-[#14141B] border border-[#D4AF37]/30 text-xs text-[#D4AF37] rounded-xl px-2.5 py-1.5 focus:outline-none"
+            className="bg-[#160A26] border border-[#D4AF37]/30 text-xs text-[#D4AF37] rounded-xl px-2.5 py-1.5 focus:outline-none"
           >
             <option value="default">{t('sortDefault')}</option>
             <option value="price_asc">{t('sortPriceAsc')}</option>
@@ -351,7 +351,7 @@ export const CatalogScreen: React.FC = () => {
         {hasActiveFilters && (
           <button
             onClick={resetAllFilters}
-            className="flex items-center gap-1 text-[11px] text-[#D4AF37] hover:text-[#FFF0B8] bg-[#181822] border border-[#D4AF37]/30 px-2.5 py-1.5 rounded-xl transition active:scale-95"
+            className="flex items-center gap-1 text-[11px] text-[#D4AF37] hover:text-[#FFF0B8] bg-[#1E0F30] border border-[#D4AF37]/30 px-2.5 py-1.5 rounded-xl transition active:scale-95"
             title="Barcha filtrlarni tozalash"
           >
             <RotateCcw className="w-3 h-3 text-[#D4AF37]" />
@@ -362,7 +362,7 @@ export const CatalogScreen: React.FC = () => {
 
       {/* Perfumes Grid */}
       {filteredProducts.length === 0 ? (
-        <div className="text-center py-16 px-4 bg-gradient-to-b from-[#14141B] to-[#0E0E14] rounded-3xl border border-[#D4AF37]/20 space-y-3 shadow-inner">
+        <div className="text-center py-16 px-4 bg-gradient-to-b from-[#160A26] to-[#10071C] rounded-3xl border border-[#D4AF37]/20 space-y-3 shadow-inner">
           <div className="w-12 h-12 rounded-2xl bg-[#D4AF37]/10 border border-[#D4AF37]/30 flex items-center justify-center mx-auto text-[#D4AF37]">
             <Search className="w-6 h-6" />
           </div>
