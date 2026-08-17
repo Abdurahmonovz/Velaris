@@ -285,31 +285,27 @@ export const CatalogScreen: React.FC = () => {
           )}
         </div>
 
-        <div className="w-full relative rounded-2xl bg-[#12081E]/40 border border-[#D4AF37]/15 overflow-hidden">
-          {/* Side Fades */}
-          <div className="absolute left-0 top-0 bottom-0 w-3 bg-gradient-to-r from-[#0A0510] to-transparent z-10 pointer-events-none" />
-          <div className="absolute right-0 top-0 bottom-0 w-3 bg-gradient-to-l from-[#0A0510] to-transparent z-10 pointer-events-none" />
-
-          <div className="flex items-center gap-3 px-3 py-2.5 overflow-x-auto no-scrollbar scroll-smooth">
+        <div className="w-full py-1">
+          <div className="flex items-center gap-3 px-0.5 overflow-x-auto no-scrollbar scroll-smooth">
             {categories.map((cat) => {
               const isSelected = selectedCategory === cat.slug;
               const catProductCount = getCategoryProductCount(cat.slug);
 
               return (
-                <div
+                <button
                   key={cat.id}
                   onClick={() => setSelectedCategory(isSelected ? null : cat.slug)}
-                  className={`flex-shrink-0 w-28 p-2 rounded-2xl border transition-all cursor-pointer text-center space-y-1.5 relative overflow-hidden group active:scale-95 ${
+                  className={`flex-shrink-0 w-28 p-2 rounded-2xl border transition-all cursor-pointer text-center space-y-1.5 relative overflow-hidden group active:scale-95 focus:outline-none ${
                     isSelected
-                      ? 'border-[#D4AF37] bg-gradient-to-b from-[#26123D] to-[#160A26] shadow-gold-glow scale-105'
-                      : 'border-white/10 bg-[#12081E] hover:border-[#D4AF37]/50'
+                      ? 'border-[#D4AF37] bg-[#1E1E28] shadow-sm scale-105'
+                      : 'border-white/10 bg-[#13131A] hover:border-[#D4AF37]/50'
                   }`}
                 >
-                  <div className="w-full h-14 rounded-xl overflow-hidden border border-[#D4AF37]/30 bg-black relative">
+                  <div className="w-full h-14 rounded-xl overflow-hidden border border-[#D4AF37]/20 bg-[#0E0E14] relative">
                     <img
                       src={getCleanImageUrl(cat.image)}
                       alt={cat.name_uz}
-                      className="w-full h-full object-cover group-hover:scale-110 transition duration-300"
+                      className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
                       onError={(e) => {
                         (e.target as HTMLImageElement).src = FALLBACK_PRODUCT_IMAGE;
                       }}
@@ -325,7 +321,7 @@ export const CatalogScreen: React.FC = () => {
                   >
                     {language === 'uz' ? cat.name_uz : cat.name_ru}
                   </span>
-                </div>
+                </button>
               );
             })}
           </div>

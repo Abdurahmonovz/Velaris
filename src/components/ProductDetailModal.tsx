@@ -113,7 +113,7 @@ export const ProductDetailModal: React.FC = () => {
       )}
 
       {/* Main Container */}
-      <div className="relative w-full max-w-lg product-modal-container bg-[#12081E] border border-[#D4AF37]/30 rounded-t-3xl sm:rounded-3xl shadow-gold-glow-lg text-gray-100 max-h-[92vh] flex flex-col overflow-hidden animate-in slide-in-from-bottom duration-300">
+      <div className="relative w-full max-w-lg product-modal-container bg-[#111116] border border-[#D4AF37]/30 rounded-t-3xl sm:rounded-3xl shadow-gold-glow-lg text-gray-100 max-h-[92vh] flex flex-col overflow-hidden animate-in slide-in-from-bottom duration-300">
         
         {/* Top Floating Action Bar */}
         <div className="absolute top-3 left-3 right-3 z-20 flex items-center justify-between pointer-events-none">
@@ -216,7 +216,7 @@ export const ProductDetailModal: React.FC = () => {
                     {product.brand}
                   </span>
                 </div>
-                <div className="flex items-center gap-1 bg-[#1E0F30] px-2.5 py-1 rounded-full border border-[#D4AF37]/30 text-xs">
+                <div className="flex items-center gap-1 bg-[#181822] px-2.5 py-1 rounded-full border border-[#D4AF37]/30 text-xs">
                   <Star className="w-3.5 h-3.5 text-[#D4AF37] fill-[#D4AF37]" />
                   <span className="font-bold text-gray-100">{product.rating}</span>
                   <span className="text-gray-400 text-[10px]">({product.reviews_count || 12})</span>
@@ -228,7 +228,7 @@ export const ProductDetailModal: React.FC = () => {
               </h2>
 
               <div className="flex items-center gap-2 pt-0.5">
-                <span className="inline-flex items-center gap-1 text-[11px] font-medium text-gray-300 bg-[#1A0E2B] px-2.5 py-1 rounded-lg border border-white/10">
+                <span className="inline-flex items-center gap-1 text-[11px] font-medium text-gray-300 bg-[#16161F] px-2.5 py-1 rounded-lg border border-white/10">
                   <Compass className="w-3 h-3 text-[#D4AF37]" />
                   <span>{language === 'uz' ? product.scent_family_uz : product.scent_family_ru}</span>
                 </span>
@@ -241,7 +241,7 @@ export const ProductDetailModal: React.FC = () => {
 
             {/* 4 Luxury Spec Cards Grid */}
             <div className="grid grid-cols-2 gap-2">
-              <div className="p-2.5 rounded-2xl bg-[#160A26] border border-[#D4AF37]/15 flex items-center gap-2.5">
+              <div className="p-2.5 rounded-2xl bg-[#15151D] border border-[#D4AF37]/15 flex items-center gap-2.5">
                 <div className="p-2 rounded-xl bg-[#D4AF37]/10 text-[#D4AF37] shrink-0 border border-[#D4AF37]/20">
                   <Droplets className="w-4 h-4 text-[#D4AF37]" />
                 </div>
@@ -255,7 +255,7 @@ export const ProductDetailModal: React.FC = () => {
                 </div>
               </div>
 
-              <div className="p-2.5 rounded-2xl bg-[#160A26] border border-[#D4AF37]/15 flex items-center gap-2.5">
+              <div className="p-2.5 rounded-2xl bg-[#15151D] border border-[#D4AF37]/15 flex items-center gap-2.5">
                 <div className="p-2 rounded-xl bg-[#D4AF37]/10 text-[#D4AF37] shrink-0 border border-[#D4AF37]/20">
                   <Clock className="w-4 h-4 text-[#D4AF37]" />
                 </div>
@@ -269,7 +269,7 @@ export const ProductDetailModal: React.FC = () => {
                 </div>
               </div>
 
-              <div className="p-2.5 rounded-2xl bg-[#160A26] border border-[#D4AF37]/15 flex items-center gap-2.5">
+              <div className="p-2.5 rounded-2xl bg-[#15151D] border border-[#D4AF37]/15 flex items-center gap-2.5">
                 <div className="p-2 rounded-xl bg-[#D4AF37]/10 text-[#D4AF37] shrink-0 border border-[#D4AF37]/20">
                   <Wind className="w-4 h-4 text-[#D4AF37]" />
                 </div>
@@ -283,7 +283,7 @@ export const ProductDetailModal: React.FC = () => {
                 </div>
               </div>
 
-              <div className="p-2.5 rounded-2xl bg-[#160A26] border border-[#D4AF37]/15 flex items-center gap-2.5">
+              <div className="p-2.5 rounded-2xl bg-[#15151D] border border-[#D4AF37]/15 flex items-center gap-2.5">
                 <div className="p-2 rounded-xl bg-[#D4AF37]/10 text-[#D4AF37] shrink-0 border border-[#D4AF37]/20">
                   <ShieldCheck className="w-4 h-4 text-[#D4AF37]" />
                 </div>
@@ -306,7 +306,7 @@ export const ProductDetailModal: React.FC = () => {
               </h3>
 
               <div className="grid grid-cols-3 gap-2 text-center">
-                <div className="p-2.5 bg-gradient-to-b from-[#1A0E2B] to-[#12081E] border border-[#D4AF37]/20 rounded-2xl space-y-1">
+                <div className="p-2.5 bg-gradient-to-b from-[#181822] to-[#111116] border border-[#D4AF37]/20 rounded-2xl space-y-1">
                   <div className="flex items-center justify-center gap-1 text-[9px] text-[#D4AF37] font-bold uppercase">
                     <Sparkles className="w-3 h-3 text-[#D4AF37]" />
                     <span>{t('topNotes')}</span>
@@ -316,7 +316,7 @@ export const ProductDetailModal: React.FC = () => {
                   </p>
                 </div>
 
-                <div className="p-2.5 bg-gradient-to-b from-[#1A0E2B] to-[#12081E] border border-[#D4AF37]/20 rounded-2xl space-y-1">
+                <div className="p-2.5 bg-gradient-to-b from-[#181822] to-[#111116] border border-[#D4AF37]/20 rounded-2xl space-y-1">
                   <div className="flex items-center justify-center gap-1 text-[9px] text-[#D4AF37] font-bold uppercase">
                     <Layers className="w-3 h-3 text-[#D4AF37]" />
                     <span>{t('heartNotes')}</span>
@@ -326,7 +326,7 @@ export const ProductDetailModal: React.FC = () => {
                   </p>
                 </div>
 
-                <div className="p-2.5 bg-gradient-to-b from-[#1A0E2B] to-[#12081E] border border-[#D4AF37]/20 rounded-2xl space-y-1">
+                <div className="p-2.5 bg-gradient-to-b from-[#181822] to-[#111116] border border-[#D4AF37]/20 rounded-2xl space-y-1">
                   <div className="flex items-center justify-center gap-1 text-[9px] text-[#D4AF37] font-bold uppercase">
                     <ShieldCheck className="w-3 h-3 text-[#D4AF37]" />
                     <span>{t('baseNotes')}</span>
@@ -343,7 +343,7 @@ export const ProductDetailModal: React.FC = () => {
               <h3 className="text-xs font-bold text-gray-300 uppercase tracking-wider">
                 {t('description')}
               </h3>
-              <p className="text-xs text-gray-300 leading-relaxed bg-[#160A26] p-3 rounded-2xl border border-white/5">
+              <p className="text-xs text-gray-300 leading-relaxed bg-[#15151D] p-3 rounded-2xl border border-white/5">
                 {language === 'uz' ? product.description_uz : product.description_ru}
               </p>
             </div>
@@ -369,8 +369,8 @@ export const ProductDetailModal: React.FC = () => {
                       onClick={() => setSelectedSize(item.size)}
                       className={`p-2 rounded-2xl border text-center transition-all duration-200 flex flex-col items-center justify-between relative ${
                         isActive
-                          ? 'border-[#D4AF37] bg-gradient-to-b from-[#26123D] to-[#170928] shadow-gold-glow scale-105 z-10'
-                          : 'border-white/10 bg-[#160A26] hover:border-[#D4AF37]/40'
+                          ? 'border-[#D4AF37] bg-gradient-to-b from-[#262636] to-[#161620] shadow-gold-glow scale-105 z-10'
+                          : 'border-white/10 bg-[#15151D] hover:border-[#D4AF37]/40'
                       }`}
                     >
                       {item.isBestValue && (
@@ -391,7 +391,7 @@ export const ProductDetailModal: React.FC = () => {
             </div>
 
             {/* Quantity Controls & Dynamic Total */}
-            <div className="flex items-center justify-between bg-gradient-to-r from-[#1E0F30] via-[#160A26] to-[#1E0F30] p-3.5 rounded-2xl border border-[#D4AF37]/25 shadow-md">
+            <div className="flex items-center justify-between bg-gradient-to-r from-[#181822] via-[#14141B] to-[#181822] p-3.5 rounded-2xl border border-[#D4AF37]/25 shadow-md">
               <div>
                 <span className="text-[10px] text-gray-400 block uppercase font-medium">
                   {t('quantity')}
@@ -399,14 +399,14 @@ export const ProductDetailModal: React.FC = () => {
                 <div className="flex items-center gap-2.5 mt-1">
                   <button
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="w-8 h-8 rounded-xl bg-[#26123D] hover:bg-[#341852] border border-[#D4AF37]/30 flex items-center justify-center text-gray-100 active:scale-95 transition"
+                    className="w-8 h-8 rounded-xl bg-[#20202B] hover:bg-[#2A2A38] border border-[#D4AF37]/30 flex items-center justify-center text-gray-100 active:scale-95 transition"
                   >
                     <Minus className="w-3.5 h-3.5" />
                   </button>
                   <span className="text-base font-bold text-[#D4AF37] w-6 text-center">{quantity}</span>
                   <button
                     onClick={() => setQuantity(quantity + 1)}
-                    className="w-8 h-8 rounded-xl bg-[#26123D] hover:bg-[#341852] border border-[#D4AF37]/30 flex items-center justify-center text-gray-100 active:scale-95 transition"
+                    className="w-8 h-8 rounded-xl bg-[#20202B] hover:bg-[#2A2A38] border border-[#D4AF37]/30 flex items-center justify-center text-gray-100 active:scale-95 transition"
                   >
                     <Plus className="w-3.5 h-3.5" />
                   </button>
@@ -426,15 +426,15 @@ export const ProductDetailModal: React.FC = () => {
 
             {/* Atelier Trust Badges Bar */}
             <div className="grid grid-cols-3 gap-2 pt-1 pb-2 text-center text-[10px] text-gray-300">
-              <div className="p-2 rounded-xl bg-[#160A26]/80 border border-white/5 space-y-1">
+              <div className="p-2 rounded-xl bg-[#15151D]/80 border border-white/5 space-y-1">
                 <ShieldCheck className="w-4 h-4 text-[#D4AF37] mx-auto" />
                 <span className="block font-medium leading-tight">100% Original</span>
               </div>
-              <div className="p-2 rounded-xl bg-[#160A26]/80 border border-white/5 space-y-1">
+              <div className="p-2 rounded-xl bg-[#15151D]/80 border border-white/5 space-y-1">
                 <Droplets className="w-4 h-4 text-[#D4AF37] mx-auto" />
                 <span className="block font-medium leading-tight">Shisha atomayzer</span>
               </div>
-              <div className="p-2 rounded-xl bg-[#160A26]/80 border border-white/5 space-y-1">
+              <div className="p-2 rounded-xl bg-[#15151D]/80 border border-white/5 space-y-1">
                 <Award className="w-4 h-4 text-[#D4AF37] mx-auto" />
                 <span className="block font-medium leading-tight">Yuqori sifat</span>
               </div>
@@ -444,10 +444,10 @@ export const ProductDetailModal: React.FC = () => {
         </div>
 
         {/* Fixed Bottom Action Buttons Bar */}
-        <div className="absolute bottom-0 left-0 right-0 p-3.5 bg-[#0D0517]/95 backdrop-blur-md border-t border-[#D4AF37]/25 grid grid-cols-2 gap-2.5 z-30">
+        <div className="absolute bottom-0 left-0 right-0 p-3.5 bg-[#0C0C10]/95 backdrop-blur-md border-t border-[#D4AF37]/25 grid grid-cols-2 gap-2.5 z-30">
           <button
             onClick={handleAddToCart}
-            className="py-3 px-3 rounded-2xl border border-[#D4AF37]/40 bg-[#1E0F30] hover:bg-[#281440] text-[#D4AF37] font-bold text-xs flex items-center justify-center gap-2 transition active:scale-95 shadow-md"
+            className="py-3 px-3 rounded-2xl border border-[#D4AF37]/40 bg-[#181822] hover:bg-[#22222E] text-[#D4AF37] font-bold text-xs flex items-center justify-center gap-2 transition active:scale-95 shadow-md"
           >
             <ShoppingBag className="w-4 h-4 text-[#D4AF37]" />
             <span>{t('addToCart')}</span>

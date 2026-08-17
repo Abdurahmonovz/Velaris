@@ -62,12 +62,12 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
   if (isWaitingApproval) {
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
-        <div className="relative w-full max-w-sm bg-[#12081E] border border-[#D4AF37]/50 rounded-3xl p-6 text-gray-100 text-center space-y-6 shadow-gold-glow-lg animate-in zoom-in-95 duration-200">
+        <div className="relative w-full max-w-sm bg-[#111116] border border-[#D4AF37]/50 rounded-3xl p-6 text-gray-100 text-center space-y-6 shadow-sm animate-in zoom-in-95 duration-200">
           
           {/* Glowing Animated Spinner */}
           <div className="relative w-24 h-24 mx-auto flex items-center justify-center">
-            <div className="absolute inset-0 rounded-full border-4 border-[#D4AF37]/20 border-t-[#D4AF37] animate-spin shadow-gold-glow" />
-            <div className="w-16 h-16 rounded-full bg-[#1A0E2B] border border-[#D4AF37]/40 flex items-center justify-center text-[#D4AF37]">
+            <div className="absolute inset-0 rounded-full border-4 border-[#D4AF37]/20 border-t-[#D4AF37] animate-spin shadow-sm" />
+            <div className="w-16 h-16 rounded-full bg-[#181822] border border-[#D4AF37]/40 flex items-center justify-center text-[#D4AF37]">
               <Clock className="w-8 h-8 animate-pulse" />
             </div>
           </div>
@@ -82,7 +82,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
           </div>
 
           {/* Status Box */}
-          <div className="p-3 bg-[#1A0E2B] rounded-2xl border border-[#D4AF37]/30 text-xs space-y-1">
+          <div className="p-3 bg-[#181822] rounded-2xl border border-[#D4AF37]/30 text-xs space-y-1">
             <div className="flex items-center justify-between text-gray-400">
               <span>Buyurtma:</span>
               <span className="font-bold text-[#D4AF37]">#{orderId}</span>
@@ -103,7 +103,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                 onSuccess();
                 setActiveTab('orders');
               }}
-              className="w-full py-3 bg-[#1E0F30] border border-[#D4AF37]/30 hover:border-[#D4AF37] rounded-xl text-xs text-[#D4AF37] font-semibold transition"
+              className="w-full py-3 bg-[#181822] border border-[#D4AF37]/30 hover:border-[#D4AF37] rounded-xl text-xs text-[#D4AF37] font-semibold transition"
             >
               Buyurtmalar bo'limiga o'tish
             </button>
@@ -123,29 +123,38 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        setError('Rasm hajmi 5MB dan kichik bo\'lishi kerak!');
+        return;
+      }
       const reader = new FileReader();
       reader.onload = (evt) => {
         const img = new Image();
         img.onload = () => {
           const canvas = document.createElement('canvas');
+          const MAX_WIDTH = 1200;
+          const MAX_HEIGHT = 1200;
           let width = img.width;
           let height = img.height;
-          const maxWidth = 800;
 
-          if (width > maxWidth) {
-            height = Math.round((height * maxWidth) / width);
-            width = maxWidth;
+          if (width > height) {
+            if (width > MAX_WIDTH) {
+              height *= MAX_WIDTH / width;
+              width = MAX_WIDTH;
+            }
+          } else {
+            if (height > MAX_HEIGHT) {
+              width *= MAX_HEIGHT / height;
+              height = MAX_HEIGHT;
+            }
           }
 
           canvas.width = width;
           canvas.height = height;
           const ctx = canvas.getContext('2d');
-          if (ctx) {
-            ctx.drawImage(img, 0, 0, width, height);
-            setReceiptImage(canvas.toDataURL('image/jpeg', 0.8));
-          } else {
-            setReceiptImage(evt.target?.result as string);
-          }
+          ctx?.drawImage(img, 0, 0, width, height);
+          const compressed = canvas.toDataURL('image/jpeg', 0.8);
+          setReceiptImage(compressed);
           setError('');
         };
         img.onerror = () => {
@@ -194,7 +203,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
-      <div className="relative w-full max-w-md bg-[#12081E] border border-[#D4AF37]/40 rounded-3xl p-6 text-gray-100 space-y-5 shadow-gold-glow-lg max-h-[90vh] overflow-y-auto no-scrollbar animate-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-md bg-[#111116] border border-[#D4AF37]/40 rounded-3xl p-6 text-gray-100 space-y-5 shadow-sm max-h-[90vh] overflow-y-auto no-scrollbar animate-in zoom-in-95 duration-200">
         
         {/* Top Header */}
         <div className="flex items-center justify-between border-b border-white/10 pb-3">
@@ -213,7 +222,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
         </div>
 
         {/* Total Amount Badge */}
-        <div className="p-4 bg-gradient-to-r from-[#26123D] to-[#170928] rounded-2xl border border-[#D4AF37]/30 text-center space-y-1">
+        <div className="p-4 bg-gradient-to-r from-[#1E1E2A] to-[#121218] rounded-2xl border border-[#D4AF37]/30 text-center space-y-1">
           <span className="text-[10px] text-gray-400 font-semibold uppercase tracking-wider block">
             To'lanishi kerak bo'lgan summa (Buyurtma #{orderId})
           </span>
@@ -223,14 +232,14 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
         </div>
 
         {/* Card Details Box */}
-        <div className="p-4 bg-[#1A0E2B] rounded-2xl border border-[#D4AF37]/30 space-y-3">
+        <div className="p-4 bg-[#161620] rounded-2xl border border-[#D4AF37]/30 space-y-3">
           <div className="flex items-center justify-between text-xs text-gray-400">
             <span>Karta raqami (Uzcard / Humo):</span>
             <span className="text-[10px] text-[#D4AF37] font-semibold">100% Xavfsiz</span>
           </div>
 
           {/* Card Number & Copy */}
-          <div className="p-3 bg-[#12081E] rounded-xl border border-[#D4AF37]/40 flex items-center justify-between">
+          <div className="p-3 bg-[#0F0F14] rounded-xl border border-[#D4AF37]/40 flex items-center justify-between">
             <span className="text-base font-mono font-bold text-[#D4AF37] tracking-wider">
               {cardNumber}
             </span>

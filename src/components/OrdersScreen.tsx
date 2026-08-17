@@ -61,7 +61,7 @@ export const OrdersScreen: React.FC<OrdersScreenProps> = ({ onOpenPayment }) => 
       </div>
 
       {orders.length === 0 ? (
-        <div className="text-center py-16 bg-[#140921] rounded-2xl border border-white/5 space-y-3">
+        <div className="text-center py-16 bg-[#13131A] rounded-2xl border border-white/5 space-y-3">
           <Package className="w-10 h-10 text-gray-500 mx-auto" />
           <p className="text-xs text-gray-400">{t('noOrders')}</p>
         </div>
@@ -76,7 +76,7 @@ export const OrdersScreen: React.FC<OrdersScreenProps> = ({ onOpenPayment }) => 
               <div
                 key={order.id}
                 onClick={() => isUnpaid && onOpenPayment?.(order)}
-                className={`p-4 bg-gradient-to-br from-[#1A0E2B] to-[#12081E] rounded-2xl border space-y-3 shadow-lg transition ${
+                className={`p-4 bg-gradient-to-br from-[#14141B] to-[#0E0E14] rounded-2xl border space-y-3 shadow-lg transition ${
                   isUnpaid
                     ? 'border-[#D4AF37] shadow-gold-glow cursor-pointer hover:scale-[1.01]'
                     : 'border-[#D4AF37]/25'
@@ -152,7 +152,7 @@ export const OrdersScreen: React.FC<OrdersScreenProps> = ({ onOpenPayment }) => 
                     </div>
 
                     {/* Progress Track */}
-                    <div className="relative w-full h-2.5 bg-[#0D0517] rounded-full overflow-hidden border border-[#D4AF37]/30">
+                    <div className="relative w-full h-2.5 bg-[#0E0E14] rounded-full overflow-hidden border border-[#D4AF37]/30">
                       <div
                         className="h-full bg-gradient-to-r from-[#F5E4A0] via-[#D4AF37] to-[#A37F1D] transition-all duration-700 ease-out shadow-gold-glow"
                         style={{
@@ -175,7 +175,7 @@ export const OrdersScreen: React.FC<OrdersScreenProps> = ({ onOpenPayment }) => 
                   <span className="text-[10px] text-gray-400 font-medium uppercase">Mahsulotlar:</span>
                   <div className="space-y-1">
                     {order.items.map((item, idx) => (
-                      <div key={idx} className="flex items-center justify-between text-xs text-gray-300 bg-[#140824] px-2.5 py-1.5 rounded-lg border border-white/5">
+                      <div key={idx} className="flex items-center justify-between text-xs text-gray-300 bg-[#13131A] px-2.5 py-1.5 rounded-lg border border-white/5">
                         <span className="truncate max-w-[200px]">
                           {item.name} ({item.size})
                         </span>

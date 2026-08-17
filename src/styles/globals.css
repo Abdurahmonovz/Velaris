@@ -44,9 +44,9 @@ html.light nav {
 
 /* Dedicated Product Card & Frame Classes for Ultra-Sharp Crisp HD Rendering */
 .product-luxury-card {
-  background: linear-gradient(180deg, #180C28 0%, #0F071A 100%);
+  background: linear-gradient(180deg, #14141B 0%, #0D0D12 100%);
   border: 1px solid rgba(212, 175, 55, 0.22);
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.45);
 }
 
 .product-luxury-card:hover {
@@ -56,8 +56,8 @@ html.light nav {
 
 .product-image-frame,
 .product-modal-image-frame {
-  background: #1A1A2E;
-  border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+  background: #0F0F14;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.18);
 }
 
 /* Clean crisp image rendering — no blend mode tinting */

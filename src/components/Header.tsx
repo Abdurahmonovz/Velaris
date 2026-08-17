@@ -12,14 +12,14 @@ export const Header: React.FC = () => {
   if (activeTab === 'admin') {
     return (
       <header
-        className="sticky top-0 z-50 bg-[#0A0510]/95 backdrop-blur-md border-b border-[#D4AF37]/20 px-3 sm:px-4 pb-2.5 shadow-md transition-all header-safe"
+        className="sticky top-0 z-50 bg-[#09090D]/95 backdrop-blur-md border-b border-[#D4AF37]/20 px-3 sm:px-4 pb-2.5 shadow-md transition-all header-safe"
         style={{ paddingTop: 'max(0.6rem, calc(env(safe-area-inset-top, 0px) + 0.6rem))' }}
       >
         <div className="flex items-center justify-between max-w-md mx-auto">
           <div className="flex items-center gap-2 min-w-0 flex-1 pr-2">
             <button
               onClick={() => setActiveTab('home')}
-              className="p-1.5 px-2.5 rounded-xl border border-[#D4AF37]/30 bg-[#1E0F30] text-[#D4AF37] hover:border-[#D4AF37] transition active:scale-95 flex items-center justify-center gap-1.5 text-xs font-semibold shrink-0"
+              className="p-1.5 px-2.5 rounded-xl border border-[#D4AF37]/30 bg-[#181822] text-[#D4AF37] hover:border-[#D4AF37] transition active:scale-95 flex items-center justify-center gap-1.5 text-xs font-semibold shrink-0"
               title="Do'konga qaytish"
             >
               <ArrowLeft className="w-4 h-4 text-[#D4AF37]" />
@@ -34,14 +34,14 @@ export const Header: React.FC = () => {
           <div className="flex items-center gap-1.5 shrink-0">
             <button
               onClick={toggleTheme}
-              className="w-8 h-8 rounded-xl border border-[#D4AF37]/30 bg-[#1E0F30] text-[#D4AF37] hover:border-[#D4AF37] transition active:scale-95 flex items-center justify-center shrink-0"
+              className="w-8 h-8 rounded-xl border border-[#D4AF37]/30 bg-[#181822] text-[#D4AF37] hover:border-[#D4AF37] transition active:scale-95 flex items-center justify-center shrink-0"
               title={theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
             >
               {theme === 'dark' ? <Moon className="w-3.5 h-3.5 text-[#D4AF37]" /> : <Sun className="w-3.5 h-3.5 text-amber-500" />}
             </button>
             <button
               onClick={toggleLang}
-              className="flex items-center gap-1 px-2 py-1.5 rounded-xl border border-[#D4AF37]/30 bg-[#1E0F30] text-[11px] font-bold text-[#D4AF37] hover:border-[#D4AF37] transition active:scale-95 shrink-0"
+              className="flex items-center gap-1 px-2 py-1.5 rounded-xl border border-[#D4AF37]/30 bg-[#181822] text-[11px] font-bold text-[#D4AF37] hover:border-[#D4AF37] transition active:scale-95 shrink-0"
             >
               <Globe className="w-3 h-3 text-[#D4AF37]" />
               <span>{language.toUpperCase()}</span>
@@ -54,7 +54,7 @@ export const Header: React.FC = () => {
 
   return (
     <header
-      className="sticky top-0 z-50 bg-[#0A0510]/95 backdrop-blur-md border-b border-[#D4AF37]/20 px-3 sm:px-4 pb-2.5 shadow-md transition-all header-safe"
+      className="sticky top-0 z-50 bg-[#09090D]/95 backdrop-blur-md border-b border-[#D4AF37]/20 px-3 sm:px-4 pb-2.5 shadow-md transition-all header-safe"
       style={{ paddingTop: 'max(0.6rem, calc(env(safe-area-inset-top, 0px) + 0.6rem))' }}
     >
       <div className="flex items-center justify-between gap-2 max-w-md mx-auto">
@@ -63,7 +63,7 @@ export const Header: React.FC = () => {
           onClick={() => setActiveTab('home')}
           className="flex items-center gap-2 cursor-pointer group flex-1 min-w-0 pr-1"
         >
-          <div className="w-9 h-9 rounded-xl overflow-hidden border border-[#D4AF37]/50 shadow-gold-glow flex items-center justify-center bg-[#150B21] shrink-0">
+          <div className="w-9 h-9 rounded-xl overflow-hidden border border-[#D4AF37]/40 shadow-sm flex items-center justify-center bg-[#111116] shrink-0">
             <img
               src="/velaris-logo.jpg"
               alt="Velaris Logo"
@@ -89,7 +89,7 @@ export const Header: React.FC = () => {
           {user?.role === 'admin' && (
             <button
               onClick={() => setActiveTab('admin')}
-              className="flex items-center gap-1 px-2 py-1.5 rounded-xl border border-[#D4AF37]/40 bg-gradient-to-r from-[#26123D] to-[#170928] text-[11px] font-bold text-[#D4AF37] hover:shadow-gold-glow transition active:scale-95 shrink-0"
+              className="flex items-center gap-1 px-2 py-1.5 rounded-xl border border-[#D4AF37]/40 bg-gradient-to-r from-[#20202B] to-[#14141A] text-[11px] font-bold text-[#D4AF37] hover:shadow-sm transition active:scale-95 shrink-0"
               title="Admin Panel"
             >
               <Shield className="w-3.5 h-3.5 text-[#D4AF37]" />
@@ -100,7 +100,7 @@ export const Header: React.FC = () => {
           {/* Dark / Light Theme Toggle Button */}
           <button
             onClick={toggleTheme}
-            className="w-8 h-8 rounded-xl border border-[#D4AF37]/30 bg-[#1E0F30] text-[#D4AF37] hover:border-[#D4AF37] transition active:scale-95 flex items-center justify-center shrink-0"
+            className="w-8 h-8 rounded-xl border border-[#D4AF37]/30 bg-[#181822] text-[#D4AF37] hover:border-[#D4AF37] transition active:scale-95 flex items-center justify-center shrink-0"
             title={theme === 'dark' ? 'Kunduzgi rejim (Light Mode)' : 'Tungi rejim (Dark Mode)'}
           >
             {theme === 'dark' ? <Moon className="w-3.5 h-3.5 text-[#D4AF37]" /> : <Sun className="w-3.5 h-3.5 text-amber-500" />}
@@ -109,7 +109,7 @@ export const Header: React.FC = () => {
           {/* Language Switcher */}
           <button
             onClick={toggleLang}
-            className="flex items-center gap-1 px-2 py-1.5 rounded-xl border border-[#D4AF37]/30 bg-[#1E0F30] text-[11px] font-bold text-[#D4AF37] hover:border-[#D4AF37] transition active:scale-95 shrink-0"
+            className="flex items-center gap-1 px-2 py-1.5 rounded-xl border border-[#D4AF37]/30 bg-[#181822] text-[11px] font-bold text-[#D4AF37] hover:border-[#D4AF37] transition active:scale-95 shrink-0"
             title="Tilni o'zgartirish"
           >
             <Globe className="w-3 h-3 text-[#D4AF37]" />

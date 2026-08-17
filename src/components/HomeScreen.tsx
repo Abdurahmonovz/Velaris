@@ -191,46 +191,46 @@ export const HomeScreen: React.FC = () => {
           )}
         </div>
 
-        <div className="w-full relative rounded-2xl bg-[#12081E]/40 border border-[#D4AF37]/15 overflow-hidden">
-          {/* Side Fades */}
-          <div className="absolute left-0 top-0 bottom-0 w-3 bg-gradient-to-r from-[#0A0510] to-transparent z-10 pointer-events-none" />
-          <div className="absolute right-0 top-0 bottom-0 w-3 bg-gradient-to-l from-[#0A0510] to-transparent z-10 pointer-events-none" />
-
-          <div className="flex items-center gap-4 px-3 py-2.5 overflow-x-auto no-scrollbar scroll-smooth">
+        <div className="w-full py-1">
+          <div className="flex items-center gap-3.5 px-0.5 overflow-x-auto no-scrollbar scroll-smooth">
             {categories.map((cat) => {
               const isSelected = selectedCategory === cat.slug;
               return (
-                <div
+                <button
                   key={cat.id}
                   onClick={() => {
                     setSelectedCategory(isSelected ? null : cat.slug);
                   }}
-                  className="flex flex-col items-center gap-1.5 flex-shrink-0 cursor-pointer group transition-transform active:scale-95"
+                  className="flex flex-col items-center gap-1.5 flex-shrink-0 cursor-pointer group transition-all active:scale-95 text-center focus:outline-none"
                 >
                   <div
-                    className={`w-16 h-16 rounded-full p-0.5 transition-all ${
+                    className={`w-15 h-15 sm:w-16 sm:h-16 rounded-2xl transition-all duration-300 relative ${
                       isSelected
-                        ? 'bg-gradient-to-tr from-[#FFF0B8] via-[#D4AF37] to-[#AA771C] shadow-gold-glow scale-105'
-                        : 'bg-white/10 group-hover:border-[#D4AF37]/60'
+                        ? 'p-[2px] bg-gradient-to-b from-[#F5E4A0] via-[#D4AF37] to-[#997B20] shadow-sm scale-105'
+                        : 'p-[1px] bg-white/10 group-hover:bg-[#D4AF37]/40'
                     }`}
                   >
-                    <img
-                      src={getCleanImageUrl(cat.image)}
-                      alt={cat.name_uz}
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).src = FALLBACK_PRODUCT_IMAGE;
-                      }}
-                      className="w-full h-full object-cover rounded-full border border-[#D4AF37]/20 group-hover:scale-105 transition duration-300"
-                    />
+                    <div className="w-full h-full rounded-[14px] overflow-hidden bg-[#111116] flex items-center justify-center">
+                      <img
+                        src={getCleanImageUrl(cat.image)}
+                        alt={cat.name_uz}
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = FALLBACK_PRODUCT_IMAGE;
+                        }}
+                        className={`w-full h-full object-cover transition-transform duration-300 ${
+                          isSelected ? 'scale-105' : 'group-hover:scale-105'
+                        }`}
+                      />
+                    </div>
                   </div>
                   <span
-                    className={`text-[10px] font-medium tracking-tight max-w-[68px] truncate text-center ${
-                      isSelected ? 'text-[#D4AF37] font-bold' : 'text-gray-300 group-hover:text-[#D4AF37]'
+                    className={`text-[11px] font-medium tracking-tight max-w-[72px] truncate ${
+                      isSelected ? 'text-[#D4AF37] font-bold' : 'text-gray-300 group-hover:text-white'
                     }`}
                   >
                     {language === 'uz' ? cat.name_uz : cat.name_ru}
                   </span>
-                </div>
+                </button>
               );
             })}
           </div>

@@ -67,10 +67,10 @@ export const CartScreen: React.FC<CartScreenProps> = ({ onOpenPayment }) => {
           return (
             <div
               key={`${item.productId}-${item.size}`}
-              className="p-3.5 bg-gradient-to-r from-[#1A0E2B] to-[#12081E] rounded-2xl border border-[#D4AF37]/20 flex gap-3 items-center relative group"
+              className="p-3.5 bg-gradient-to-r from-[#14141B] to-[#0E0E14] rounded-2xl border border-[#D4AF37]/20 flex gap-3 items-center relative group"
             >
               {/* Product Thumbnail */}
-              <div className="w-16 h-16 rounded-xl overflow-hidden bg-[#0A0510] border border-[#D4AF37]/30 flex-shrink-0">
+              <div className="w-16 h-16 rounded-xl overflow-hidden bg-[#0E0E14] border border-[#D4AF37]/30 flex-shrink-0">
                 <img
                   src={mainImg}
                   alt={item.product.name}
@@ -108,16 +108,16 @@ export const CartScreen: React.FC<CartScreenProps> = ({ onOpenPayment }) => {
 
                 <div className="flex items-center justify-between mt-2">
                   <div className="flex items-center gap-2">
-                    <span className="px-2 py-0.5 rounded-md bg-[#26123D] border border-[#D4AF37]/30 text-[10px] text-[#D4AF37] font-bold">
+                    <span className="px-2 py-0.5 rounded-md bg-[#1E1E28] border border-[#D4AF37]/30 text-[10px] text-[#D4AF37] font-bold">
                       {item.size}
                     </span>
                     {/* Quantity controls */}
-                    <div className="flex items-center gap-1.5 bg-[#12081E] px-2 py-0.5 rounded-lg border border-white/10">
+                    <div className="flex items-center gap-1.5 bg-[#14141B] px-2 py-0.5 rounded-lg border border-white/10">
                       <button
                         onClick={() => updateCartQuantity(item.productId, item.size, -1)}
                         className="text-gray-300 hover:text-white"
                       >
-                        <Minus className="w-3 h-3" />
+                        <Minus className="w-3.5 h-3.5" />
                       </button>
                       <span className="text-xs font-bold text-gray-100 w-4 text-center">
                         {item.quantity}
@@ -126,7 +126,7 @@ export const CartScreen: React.FC<CartScreenProps> = ({ onOpenPayment }) => {
                         onClick={() => updateCartQuantity(item.productId, item.size, 1)}
                         className="text-gray-300 hover:text-white"
                       >
-                        <Plus className="w-3 h-3" />
+                        <Plus className="w-3.5 h-3.5" />
                       </button>
                     </div>
                   </div>
@@ -142,7 +142,7 @@ export const CartScreen: React.FC<CartScreenProps> = ({ onOpenPayment }) => {
       </div>
 
       {/* Cart Summary Card */}
-      <div className="p-4 bg-[#1A0E2B] rounded-2xl border border-[#D4AF37]/30 space-y-2.5">
+      <div className="p-4 bg-[#14141B] rounded-2xl border border-[#D4AF37]/30 space-y-2.5">
         <h3 className="text-xs font-bold text-[#D4AF37] uppercase tracking-wider">
           {t('cartSummary')}
         </h3>

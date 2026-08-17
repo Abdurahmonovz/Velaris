@@ -37,7 +37,7 @@ const AdminLoginButton: React.FC = () => {
     <>
       <button
         onClick={() => setIsOpen(true)}
-        className="w-full p-3 rounded-2xl border border-white/10 bg-[#150B21] text-gray-300 hover:text-[#D4AF37] text-xs font-semibold flex items-center justify-between transition"
+        className="w-full p-3 rounded-2xl border border-white/10 bg-[#13131A] text-gray-300 hover:text-[#D4AF37] text-xs font-semibold flex items-center justify-between transition"
       >
         <div className="flex items-center gap-2">
           <Key className="w-4 h-4 text-[#D4AF37]" />
@@ -48,7 +48,7 @@ const AdminLoginButton: React.FC = () => {
 
       {isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
-          <div className="w-full max-w-xs bg-[#150B21] border border-[#D4AF37]/40 rounded-2xl p-5 text-gray-100 space-y-4 shadow-gold-glow">
+          <div className="w-full max-w-xs bg-[#13131A] border border-[#D4AF37]/40 rounded-2xl p-5 text-gray-100 space-y-4 shadow-sm">
             <div className="flex items-center justify-between border-b border-white/10 pb-2">
               <h4 className="text-xs font-bold text-[#D4AF37] uppercase flex items-center gap-1.5">
                 <Shield className="w-4 h-4" />
@@ -79,7 +79,7 @@ const AdminLoginButton: React.FC = () => {
                   onFocus={() => {
                     if (!adminPhone || adminPhone === '') setAdminPhone('+998 ');
                   }}
-                  className="w-full bg-[#1E0F30] border border-[#D4AF37]/30 rounded-xl px-3 py-2.5 text-xs text-gray-100 focus:outline-none focus:border-[#D4AF37]"
+                  className="w-full bg-[#181822] border border-[#D4AF37]/30 rounded-xl px-3 py-2.5 text-xs text-gray-100 focus:outline-none focus:border-[#D4AF37]"
                   required
                 />
               </div>
@@ -90,14 +90,14 @@ const AdminLoginButton: React.FC = () => {
                   type="password"
                   value={adminPassword}
                   onChange={(e) => setAdminPassword(e.target.value)}
-                  className="w-full bg-[#1E0F30] border border-[#D4AF37]/30 rounded-xl px-3 py-2.5 text-xs text-gray-100 focus:outline-none focus:border-[#D4AF37]"
+                  className="w-full bg-[#181822] border border-[#D4AF37]/30 rounded-xl px-3 py-2.5 text-xs text-gray-100 focus:outline-none focus:border-[#D4AF37]"
                   required
                 />
               </div>
 
               <button
                 type="submit"
-                className="w-full py-2.5 gold-btn rounded-xl text-xs font-bold shadow-gold-glow mt-1"
+                className="w-full py-2.5 gold-btn rounded-xl text-xs font-bold shadow-sm mt-1"
               >
                 Kirishni tasdiqlash
               </button>
@@ -117,11 +117,11 @@ export const ProfileScreen: React.FC = () => {
   return (
     <div className="space-y-6 pb-28 pt-2 px-4 max-w-md mx-auto">
       {/* Profile Card Header */}
-      <div className="relative p-5 bg-gradient-to-br from-[#1E0F30] via-[#150B21] to-[#0A0510] rounded-3xl border border-[#D4AF37]/40 shadow-gold-glow overflow-hidden">
+      <div className="relative p-5 bg-gradient-to-br from-[#181822] via-[#13131A] to-[#0A0A0E] rounded-3xl border border-[#D4AF37]/40 shadow-sm overflow-hidden">
         <div className="absolute top-0 right-0 w-32 h-32 bg-[#D4AF37]/10 rounded-full blur-2xl pointer-events-none" />
 
         <div className="flex items-center gap-4">
-          <div className="w-16 h-16 rounded-full bg-[#26123D] border-2 border-[#D4AF37] flex items-center justify-center text-[#D4AF37] shadow-gold-glow flex-shrink-0">
+          <div className="w-16 h-16 rounded-full bg-[#1E1E28] border-2 border-[#D4AF37] flex items-center justify-center text-[#D4AF37] shadow-sm flex-shrink-0">
             <UserIcon className="w-8 h-8" />
           </div>
 
@@ -147,7 +147,7 @@ export const ProfileScreen: React.FC = () => {
       {user?.role === 'admin' ? (
         <button
           onClick={() => setActiveTab('admin')}
-          className="w-full p-4 rounded-2xl bg-gradient-to-r from-[#D4AF37] via-[#FFF0B8] to-[#AA771C] text-black font-bold text-xs flex items-center justify-between shadow-gold-glow transition active:scale-95 animate-pulse"
+          className="w-full p-4 rounded-2xl bg-gradient-to-r from-[#D4AF37] via-[#FFF0B8] to-[#AA771C] text-black font-bold text-xs flex items-center justify-between shadow-sm transition active:scale-95 animate-pulse"
         >
           <div className="flex items-center gap-2">
             <Shield className="w-4 h-4" />
@@ -163,11 +163,11 @@ export const ProfileScreen: React.FC = () => {
       <div className="space-y-2">
         <h3 className="text-xs font-bold text-[#D4AF37] uppercase tracking-wider">Sozlamalar</h3>
 
-        <div className="bg-[#150B21] border border-[#D4AF37]/20 rounded-2xl divide-y divide-white/5 overflow-hidden">
+        <div className="bg-[#13131A] border border-[#D4AF37]/20 rounded-2xl divide-y divide-white/5 overflow-hidden">
           {/* Language Switch */}
           <button
             onClick={() => setLanguage(language === 'uz' ? 'ru' : 'uz')}
-            className="w-full p-3.5 flex items-center justify-between text-xs text-gray-200 hover:bg-[#1E0F30] transition"
+            className="w-full p-3.5 flex items-center justify-between text-xs text-gray-200 hover:bg-[#181822] transition"
           >
             <div className="flex items-center gap-2.5">
               <Globe className="w-4 h-4 text-[#D4AF37]" />
@@ -179,7 +179,7 @@ export const ProfileScreen: React.FC = () => {
       </div>
 
       {/* Add to Channel Card */}
-      <div className="p-4 bg-gradient-to-br from-[#1E0F30] via-[#150B21] to-[#0A0510] border border-[#D4AF37]/40 rounded-3xl space-y-3 shadow-gold-glow relative overflow-hidden">
+      <div className="p-4 bg-gradient-to-br from-[#181822] via-[#13131A] to-[#0A0A0E] border border-[#D4AF37]/40 rounded-3xl space-y-3 shadow-sm relative overflow-hidden">
         <div className="flex items-start gap-3">
           <div className="p-2.5 rounded-2xl bg-[#D4AF37]/20 border border-[#D4AF37]/40 text-[#D4AF37] flex-shrink-0">
             <Sparkles className="w-5 h-5" />
@@ -204,7 +204,7 @@ export const ProfileScreen: React.FC = () => {
                 window.open(url, '_blank');
               }
             }}
-            className="w-full py-2.5 gold-btn rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-gold-glow transition active:scale-95"
+            className="w-full py-2.5 gold-btn rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-sm transition active:scale-95"
           >
             <span>{t('addToChannelBtn')}</span>
           </button>
@@ -232,7 +232,7 @@ export const ProfileScreen: React.FC = () => {
         </div>
 
         {favoriteProducts.length === 0 ? (
-          <div className="text-center py-10 bg-[#140921] rounded-2xl border border-white/5 space-y-2">
+          <div className="text-center py-10 bg-[#13131A] rounded-2xl border border-white/5 space-y-2">
             <Heart className="w-8 h-8 text-gray-600 mx-auto" />
             <p className="text-xs text-gray-400">{t('noFavorites')}</p>
           </div>
