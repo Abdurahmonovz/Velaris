@@ -126,14 +126,14 @@ export const HomeScreen: React.FC = () => {
       </div>
 
 
-      {/* Hero Banner Slider */}
+      {/* Hero Luxury Promo Banner Slider */}
       {banners.length > 0 && !searchQuery && (
-        <div className="relative w-full aspect-[21/9] rounded-2xl overflow-hidden border border-[#D4AF37]/30 shadow-gold-glow group">
+        <div className="relative w-full aspect-[2/1] rounded-3xl overflow-hidden border border-[#D4AF37]/40 shadow-2xl group bg-[#0A0A0E]">
           {banners.map((banner, idx) => (
             <div
               key={banner.id}
-              className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${
-                activeBannerIdx === idx ? 'opacity-100 z-10' : 'opacity-0 z-0'
+              className={`absolute inset-0 transition-all duration-700 ease-in-out ${
+                activeBannerIdx === idx ? 'opacity-100 scale-100 z-10' : 'opacity-0 scale-105 z-0 pointer-events-none'
               }`}
             >
               <img
@@ -144,28 +144,40 @@ export const HomeScreen: React.FC = () => {
                 }}
                 className="w-full h-full object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-4 flex flex-col justify-end">
-                <span className="text-[10px] text-[#D4AF37] tracking-widest uppercase font-bold">
-                  VELARIS EXCLUSIVE
-                </span>
-                <h2 className="text-base font-serif font-bold text-gray-100 gold-gradient-text line-clamp-1">
-                  {language === 'uz' ? banner.title_uz : banner.title_ru}
-                </h2>
-                <p className="text-[10px] text-gray-300 line-clamp-1 mt-0.5">
-                  {language === 'uz' ? banner.subtitle_uz : banner.subtitle_ru}
-                </p>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/45 to-transparent p-4 sm:p-5 flex flex-col justify-end">
+                <div className="space-y-1">
+                  <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-black/60 backdrop-blur-md border border-[#D4AF37]/40 text-[9px] font-bold text-[#D4AF37] tracking-widest uppercase shadow">
+                    <Sparkles className="w-2.5 h-2.5 text-[#D4AF37]" />
+                    <span>VELARIS ATELIER</span>
+                  </div>
+
+                  <h2 className="text-base sm:text-lg font-serif font-bold text-gray-100 gold-gradient-text line-clamp-1 leading-snug">
+                    {language === 'uz' ? banner.title_uz : banner.title_ru}
+                  </h2>
+
+                  <p className="text-[11px] text-gray-300 line-clamp-1">
+                    {language === 'uz' ? banner.subtitle_uz : banner.subtitle_ru}
+                  </p>
+
+                  <div className="pt-1">
+                    <span className="inline-flex items-center gap-1 text-[10px] font-bold text-[#D4AF37] bg-[#D4AF37]/20 border border-[#D4AF37]/40 px-2.5 py-0.5 rounded-lg shadow-sm">
+                      Kolleksiyani ko'rish →
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
           ))}
 
-          {/* Dots */}
-          <div className="absolute bottom-2 right-3 z-20 flex gap-1.5">
+          {/* Dots Indicator */}
+          <div className="absolute bottom-3 right-3 z-20 flex items-center gap-1.5 bg-black/40 backdrop-blur-md px-2 py-1 rounded-full border border-white/10">
             {banners.map((_, idx) => (
-              <span
+              <button
                 key={idx}
                 onClick={() => setActiveBannerIdx(idx)}
-                className={`h-1.5 rounded-full transition-all cursor-pointer ${
-                  activeBannerIdx === idx ? 'w-5 bg-[#D4AF37]' : 'w-1.5 bg-white/40'
+                aria-label={`Slide ${idx + 1}`}
+                className={`h-1.5 rounded-full transition-all duration-300 ${
+                  activeBannerIdx === idx ? 'w-5 bg-gradient-to-r from-[#FFF0B8] to-[#D4AF37]' : 'w-1.5 bg-white/40 hover:bg-white/70'
                 }`}
               />
             ))}
@@ -174,8 +186,8 @@ export const HomeScreen: React.FC = () => {
       )}
 
       {/* Category Section with smooth horizontal scrolling */}
-      <div className="space-y-2">
-        <div className="flex items-center justify-between">
+      <div className="space-y-2.5">
+        <div className="flex items-center justify-between px-0.5">
           <h2 className="text-xs font-bold text-[#D4AF37] uppercase tracking-wider flex items-center gap-1.5">
             <Sparkles className="w-3.5 h-3.5 text-[#D4AF37]" />
             <span>{t('categoriesTitle')}</span>
@@ -192,7 +204,7 @@ export const HomeScreen: React.FC = () => {
         </div>
 
         <div className="w-full py-1">
-          <div className="flex items-center gap-3.5 px-0.5 overflow-x-auto no-scrollbar scroll-smooth">
+          <div className="flex items-center gap-3 px-0.5 overflow-x-auto no-scrollbar scroll-smooth">
             {categories.map((cat) => {
               const isSelected = selectedCategory === cat.slug;
               return (
@@ -204,27 +216,27 @@ export const HomeScreen: React.FC = () => {
                   className="flex flex-col items-center gap-1.5 flex-shrink-0 cursor-pointer group transition-all active:scale-95 text-center focus:outline-none"
                 >
                   <div
-                    className={`w-15 h-15 sm:w-16 sm:h-16 rounded-2xl transition-all duration-300 relative ${
+                    className={`w-12 h-12 rounded-full transition-all duration-300 relative ${
                       isSelected
-                        ? 'p-[2px] bg-gradient-to-b from-[#F5E4A0] via-[#D4AF37] to-[#997B20] shadow-sm scale-105'
-                        : 'p-[1px] bg-white/10 group-hover:bg-[#D4AF37]/40'
+                        ? 'p-[2px] bg-gradient-to-tr from-[#FFF0B8] via-[#D4AF37] to-[#AA771C] shadow-sm scale-105'
+                        : 'p-[1px] bg-white/20 group-hover:bg-[#D4AF37]/50'
                     }`}
                   >
-                    <div className="w-full h-full rounded-[14px] overflow-hidden bg-[#111116] flex items-center justify-center">
+                    <div className="w-full h-full rounded-full overflow-hidden bg-[#111116] flex items-center justify-center p-0.5">
                       <img
                         src={getCleanImageUrl(cat.image)}
                         alt={cat.name_uz}
                         onError={(e) => {
                           (e.target as HTMLImageElement).src = FALLBACK_PRODUCT_IMAGE;
                         }}
-                        className={`w-full h-full object-cover transition-transform duration-300 ${
+                        className={`w-full h-full object-cover rounded-full transition-transform duration-300 ${
                           isSelected ? 'scale-105' : 'group-hover:scale-105'
                         }`}
                       />
                     </div>
                   </div>
                   <span
-                    className={`text-[11px] font-medium tracking-tight max-w-[72px] truncate ${
+                    className={`text-[10px] font-medium tracking-tight max-w-[62px] truncate ${
                       isSelected ? 'text-[#D4AF37] font-bold' : 'text-gray-300 group-hover:text-white'
                     }`}
                   >

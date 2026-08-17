@@ -158,7 +158,7 @@ export const ProductDetailModal: React.FC = () => {
         <div className="overflow-y-auto flex-1 no-scrollbar space-y-5 pb-28">
           
           {/* Main Image Slider with Zoom Toggle & Badges */}
-          <div className={`relative w-full aspect-[4/3] product-modal-image-frame${isDarkBg ? ' dark-bg' : ''} overflow-hidden flex items-center justify-center border-b border-[#D4AF37]/15`}>
+          <div className="relative w-full aspect-[4/3] bg-white overflow-hidden flex items-center justify-center border-b border-[#D4AF37]/20">
             <img
               src={images[activeImageIdx]}
               alt={product.name}

@@ -295,13 +295,13 @@ export const CatalogScreen: React.FC = () => {
                 <button
                   key={cat.id}
                   onClick={() => setSelectedCategory(isSelected ? null : cat.slug)}
-                  className={`flex-shrink-0 w-28 p-2 rounded-2xl border transition-all cursor-pointer text-center space-y-1.5 relative overflow-hidden group active:scale-95 focus:outline-none ${
+                  className={`flex-shrink-0 w-24 p-1.5 rounded-xl border transition-all cursor-pointer text-center space-y-1 relative overflow-hidden group active:scale-95 focus:outline-none ${
                     isSelected
                       ? 'border-[#D4AF37] bg-[#1E1E28] shadow-sm scale-105'
                       : 'border-white/10 bg-[#13131A] hover:border-[#D4AF37]/50'
                   }`}
                 >
-                  <div className="w-full h-14 rounded-xl overflow-hidden border border-[#D4AF37]/20 bg-[#0E0E14] relative">
+                  <div className="w-full h-12 rounded-lg overflow-hidden border border-[#D4AF37]/20 bg-[#0E0E14] relative">
                     <img
                       src={getCleanImageUrl(cat.image)}
                       alt={cat.name_uz}
@@ -310,12 +310,12 @@ export const CatalogScreen: React.FC = () => {
                         (e.target as HTMLImageElement).src = FALLBACK_PRODUCT_IMAGE;
                       }}
                     />
-                    <span className="absolute bottom-1 right-1 px-1.5 py-0.5 rounded-md bg-black/80 text-[8px] font-bold text-[#D4AF37] border border-[#D4AF37]/30">
+                    <span className="absolute bottom-0.5 right-0.5 px-1 py-0.2 rounded bg-black/80 text-[7px] font-bold text-[#D4AF37] border border-[#D4AF37]/30">
                       {catProductCount}
                     </span>
                   </div>
                   <span
-                    className={`text-[10px] font-bold block truncate ${
+                    className={`text-[9px] font-bold block truncate ${
                       isSelected ? 'text-[#D4AF37]' : 'text-gray-200 group-hover:text-[#D4AF37]'
                     }`}
                   >

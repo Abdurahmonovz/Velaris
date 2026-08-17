@@ -143,12 +143,6 @@ const MainLayout: React.FC = () => {
       {/* Top Sticky Header */}
       <Header />
 
-      {/* Maintenance Notice Banner for verification */}
-      <div className="bg-amber-500/20 border-b border-amber-500/40 text-amber-300 px-4 py-2.5 text-center text-xs sm:text-sm font-bold flex items-center justify-center gap-2 shadow-md max-w-md mx-auto">
-        <span className="w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping shrink-0" />
-        <span>⚠️ Texnik ishlar olib borilmoqda</span>
-      </div>
-
       {/* Main Tab Screen Content */}
       <main className="animate-in fade-in duration-200">
         {activeTab === 'home' && <HomeScreen />}

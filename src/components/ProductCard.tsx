@@ -41,7 +41,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       className="group relative product-luxury-card rounded-2xl transition-all duration-300 flex flex-col justify-between cursor-pointer overflow-hidden active:scale-[0.98]"
     >
       {/* Top Badges & Like Button */}
-      <div className={`relative aspect-square w-full product-image-frame${isDarkBg ? ' dark-bg' : ''} overflow-hidden p-2.5 flex items-center justify-center`}>
+      <div className="relative aspect-square w-full bg-white rounded-t-2xl overflow-hidden p-3 flex items-center justify-center border-b border-[#D4AF37]/20">
         <img
           src={mainImage}
           alt={product.name}
@@ -53,17 +53,17 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         {/* Favorite Heart Button */}
         <button
           onClick={handleFavClick}
-          className="absolute top-2.5 right-2.5 p-2 rounded-full bg-black/40 backdrop-blur-md border border-white/10 text-white hover:border-[#D4AF37] transition active:scale-90 shadow"
+          className="absolute top-2.5 right-2.5 p-1.5 rounded-full bg-black/50 backdrop-blur-md border border-white/20 text-white hover:border-[#D4AF37] transition active:scale-90 shadow-sm z-10"
         >
           <Heart
             className={`w-3.5 h-3.5 transition-colors ${
-              isFav ? 'fill-red-500 text-red-500' : 'text-gray-300 group-hover:text-[#D4AF37]'
+              isFav ? 'fill-red-500 text-red-500' : 'text-white group-hover:text-[#D4AF37]'
             }`}
           />
         </button>
 
         {/* Badges: Bestseller / New */}
-        <div className="absolute top-2.5 left-2.5 flex flex-col gap-1">
+        <div className="absolute top-2.5 left-2.5 flex flex-col gap-1 z-10">
           {product.is_bestseller && (
             <span className="px-2 py-0.5 rounded-md bg-[#D4AF37] text-black text-[8px] font-black uppercase tracking-wider shadow">
               Bestseller
@@ -77,9 +77,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         </div>
 
         {/* Rating Pill */}
-        <div className="absolute bottom-2 left-2.5 flex items-center gap-1 bg-black/60 backdrop-blur-md px-2 py-0.5 rounded-full border border-[#D4AF37]/30 text-[10px] text-gray-200">
+        <div className="absolute bottom-2.5 left-2.5 flex items-center gap-1 bg-black/75 backdrop-blur-md px-2 py-0.5 rounded-full border border-[#D4AF37]/40 text-[10px] text-white shadow-sm z-10">
           <Star className="w-3 h-3 text-[#D4AF37] fill-[#D4AF37]" />
-          <span className="font-semibold">{product.rating}</span>
+          <span className="font-bold">{product.rating}</span>
         </div>
       </div>
 
