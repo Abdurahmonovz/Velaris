@@ -3,24 +3,7 @@
   "outputDirectory": "dist",
   "headers": [
     {
-      "source": "/",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "no-cache, no-store, must-revalidate, max-age=0"
-        },
-        {
-          "key": "Pragma",
-          "value": "no-cache"
-        },
-        {
-          "key": "Expires",
-          "value": "0"
-        }
-      ]
-    },
-    {
-      "source": "/index.html",
+      "source": "/(.*)",
       "headers": [
         {
           "key": "Cache-Control",
@@ -61,7 +44,7 @@
       "destination": "https://velaris-production.up.railway.app/api/:path*"
     },
     {
-      "source": "/((?!assets/|perfumes/|.*\\.(?:js|css|jpg|jpeg|png|gif|svg|ico|json|woff|woff2)).*)",
+      "source": "/(.*)",
       "destination": "/index.html"
     }
   ]
