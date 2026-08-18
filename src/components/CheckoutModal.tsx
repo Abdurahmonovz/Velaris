@@ -65,7 +65,9 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
   if (!isOpen) return null;
 
   const subtotal = cart.reduce((sum, item) => sum + item.totalPrice, 0);
-  const deliveryFee = deliveryType === 'courier' ? (appliedPromo ? 0 : 25000) : 0;
+  const isFreeDeliveryQualified = subtotal >= 500000;
+  const isFreeDelivery = isFreeDeliveryQualified || appliedPromo !== null;
+  const deliveryFee = deliveryType === 'courier' ? (isFreeDelivery ? 0 : 25000) : 0;
   const discountAmount = appliedPromo ? appliedPromo.discount_amount : 0;
   const totalAmount = Math.max(0, subtotal - discountAmount) + deliveryFee;
 
@@ -221,7 +223,17 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
                 </div>
                 <div>
                   <span className="block text-xs font-bold text-gray-100">{t('courierDelivery')}</span>
-                  <span className="block text-[10px] text-[#D4AF37]">25,000 so'm</span>
+                  {isFreeDeliveryQualified ? (
+                    <span className="block text-[10px] text-emerald-400 font-bold">
+                      0 so'm (500k+ Bepul)
+                    </span>
+                  ) : appliedPromo ? (
+                    <span className="block text-[10px] text-emerald-400 font-semibold">
+                      0 so'm (Promokod: Bepul)
+                    </span>
+                  ) : (
+                    <span className="block text-[10px] text-[#D4AF37]">25,000 so'm</span>
+                  )}
                 </div>
               </button>
 
@@ -423,12 +435,14 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
             )}
             <div className="flex items-center justify-between text-xs text-gray-300">
               <span>{t('deliveryFee')}</span>
-              <span className={appliedPromo && deliveryType === 'courier' ? 'text-emerald-400 font-semibold' : ''}>
-                {appliedPromo && deliveryType === 'courier'
-                  ? '0 so\'m (Promokod: Bepul)'
-                  : deliveryFee > 0
-                  ? `${deliveryFee.toLocaleString('uz-UZ')} ${t('som')}`
-                  : t('freeDelivery')}
+              <span className={deliveryType === 'pickup' || isFreeDelivery ? 'text-emerald-400 font-semibold' : ''}>
+                {deliveryType === 'pickup'
+                  ? t('freeDelivery')
+                  : isFreeDeliveryQualified
+                  ? "0 so'm (500k+ Aksiya: Bepul)"
+                  : appliedPromo
+                  ? "0 so'm (Promokod: Bepul)"
+                  : `${deliveryFee.toLocaleString('uz-UZ')} ${t('som')}`}
               </span>
             </div>
             <div className="pt-2 border-t border-[#D4AF37]/20 flex items-center justify-between font-bold text-sm">

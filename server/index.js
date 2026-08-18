@@ -482,6 +482,10 @@ app.post('/api/orders', async (req, res) => {
       address, location_lat, location_lng, notes, status = "To'lov kutilmoqda", payment_receipt_image
     } = req.body;
 
+    // Free delivery rule: subtotal >= 500,000 UZS or pickup
+    const finalDeliveryFee = delivery_type === 'pickup' || Number(subtotal) >= 500000 ? 0 : Number(delivery_fee !== undefined ? delivery_fee : 25000);
+    const finalTotalAmount = Number(total_amount !== undefined ? total_amount : (Number(subtotal) + finalDeliveryFee));
+
     const stmt = db.prepare(`
       INSERT INTO orders (
         user_id, customer_name, customer_phone, items_json,
@@ -495,9 +499,9 @@ app.post('/api/orders', async (req, res) => {
       customer_name,
       customer_phone,
       JSON.stringify(items),
-      subtotal,
-      delivery_fee,
-      total_amount,
+      Number(subtotal),
+      finalDeliveryFee,
+      finalTotalAmount,
       delivery_type,
       JSON.stringify(address),
       location_lat,
