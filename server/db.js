@@ -226,15 +226,17 @@ export function initDb() {
     );
   }
 
-  // Seed Products if empty
-  const prodCount = db.prepare('SELECT COUNT(*) as count FROM products').get().count;
-  if (prodCount === 0) {
-    const seedPath = path.join(__dirname, 'products_seed.json');
-    if (fs.existsSync(seedPath)) {
-      const productsData = JSON.parse(fs.readFileSync(seedPath, 'utf-8'));
+  // Seed Products: Always ensure SQLite has the exact 212 perfumes from Google Sheet seed
+  const seedPath = path.join(__dirname, 'products_seed.json');
+  if (fs.existsSync(seedPath)) {
+    const productsData = JSON.parse(fs.readFileSync(seedPath, 'utf-8'));
+    const prodCount = db.prepare('SELECT COUNT(*) as count FROM products').get().count;
+    if (prodCount !== productsData.length) {
+      console.log(`Syncing products table: current count (${prodCount}) != seed count (${productsData.length}). Re-seeding exact products...`);
+      db.prepare('DELETE FROM products').run();
       const insertProd = db.prepare(`
         INSERT INTO products (
-          name, brand, category_slug, gender,
+          id, name, brand, category_slug, gender,
           price_10g, price_20g, price_30g, price_50g, price_100g,
           rating, reviews_count,
           description_uz, description_ru,
@@ -242,12 +244,13 @@ export function initDb() {
           top_notes_uz, top_notes_ru,
           heart_notes_uz, heart_notes_ru,
           base_notes_uz, base_notes_ru,
-          images_json, is_bestseller, is_new, is_featured
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          images_json, is_bestseller, is_new, is_featured, stock
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `);
 
       for (const p of productsData) {
         insertProd.run(
+          p.id,
           p.name, p.brand, p.category_slug, p.gender,
           p.price_10g, p.price_20g, p.price_30g, p.price_50g, p.price_100g,
           p.rating, p.reviews_count,
@@ -256,9 +259,14 @@ export function initDb() {
           p.top_notes_uz, p.top_notes_ru,
           p.heart_notes_uz, p.heart_notes_ru,
           p.base_notes_uz, p.base_notes_ru,
-          p.images_json, p.is_bestseller, p.is_new, p.is_featured
+          p.images_json || JSON.stringify(p.images),
+          p.is_bestseller ? 1 : 0,
+          p.is_new ? 1 : 0,
+          p.is_featured ? 1 : 0,
+          p.stock || 100
         );
       }
+      console.log(`✅ Successfully seeded exact ${productsData.length} perfumes into SQLite.`);
     }
   }
 
