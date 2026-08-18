@@ -142,24 +142,29 @@ export const CatalogScreen: React.FC = () => {
         </span>
       </div>
 
-      {/* Search Input Bar */}
-      <div className="relative">
-        <input
-          type="text"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder={t('searchPlaceholder')}
-          className="w-full bg-[#160A26] border border-[#D4AF37]/30 focus:border-[#D4AF37] rounded-2xl py-3 pl-10 pr-10 text-xs text-gray-100 placeholder-gray-400 focus:outline-none transition shadow-inner"
-        />
-        <Search className="w-4 h-4 text-[#D4AF37] absolute left-3.5 top-1/2 -translate-y-1/2" />
-        {searchQuery && (
-          <button
-            onClick={() => setSearchQuery('')}
-            className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full bg-white/10 hover:bg-white/20 text-gray-300 text-xs"
-          >
-            <X className="w-3.5 h-3.5" />
-          </button>
-        )}
+      {/* Sticky Search Input Bar on Scroll */}
+      <div
+        className="sticky z-30 -mx-4 px-4 py-2 bg-[#09090D]/95 backdrop-blur-xl border-b border-[#D4AF37]/20 shadow-md transition-all"
+        style={{ top: 'calc(max(0.6rem, calc(env(safe-area-inset-top, 0px) + 0.6rem)) + 46px)' }}
+      >
+        <div className="relative">
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder={t('searchPlaceholder')}
+            className="w-full bg-[#161620] border border-[#D4AF37]/30 focus:border-[#D4AF37] rounded-2xl py-2.5 pl-10 pr-10 text-xs text-gray-100 placeholder-gray-400 focus:outline-none transition shadow-inner"
+          />
+          <Search className="w-4 h-4 text-[#D4AF37] absolute left-3.5 top-1/2 -translate-y-1/2" />
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery('')}
+              className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full bg-white/10 hover:bg-white/20 text-gray-300 text-xs"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Gender Filter Tabs */}
