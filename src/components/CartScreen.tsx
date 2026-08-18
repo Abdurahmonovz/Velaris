@@ -11,7 +11,7 @@ interface CartScreenProps {
 }
 
 export const CartScreen: React.FC<CartScreenProps> = ({ onOpenPayment }) => {
-  const { cart, updateCartQuantity, removeFromCart, setActiveTab, t } = useApp();
+  const { cart, updateCartQuantity, removeFromCart, setActiveTab, freeDeliveryThreshold, t } = useApp();
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
 
   const subtotal = cart.reduce((sum, item) => sum + item.totalPrice, 0);
@@ -141,26 +141,26 @@ export const CartScreen: React.FC<CartScreenProps> = ({ onOpenPayment }) => {
         })}
       </div>
 
-      {/* Free Delivery Threshold Tracker (500,000+ UZS) */}
+      {/* Free Delivery Threshold Tracker */}
       <div className="p-3.5 bg-gradient-to-r from-[#1A1A24] to-[#111116] rounded-2xl border border-[#D4AF37]/30 space-y-2">
         <div className="flex items-center justify-between text-xs">
-          {subtotal >= 500000 ? (
+          {subtotal >= freeDeliveryThreshold ? (
             <span className="text-emerald-400 font-bold flex items-center gap-1.5">
               🎉 Tabriklaymiz! Sizga yetkazib berish BEPUL!
             </span>
           ) : (
             <span className="text-gray-300 font-medium text-[11px]">
-              🚚 Bepul yetkazib berish uchun yana <strong className="text-[#D4AF37]">{(500000 - subtotal).toLocaleString('uz-UZ')} so'm</strong> xarid qiling!
+              🚚 Bepul yetkazib berish uchun yana <strong className="text-[#D4AF37]">{(freeDeliveryThreshold - subtotal).toLocaleString('uz-UZ')} so'm</strong> xarid qiling!
             </span>
           )}
           <span className="text-[10px] font-bold text-[#D4AF37]">
-            {Math.min(100, Math.round((subtotal / 500000) * 100))}%
+            {Math.min(100, Math.round((subtotal / freeDeliveryThreshold) * 100))}%
           </span>
         </div>
         <div className="w-full h-2 bg-[#0A0A0E] rounded-full overflow-hidden border border-white/10">
           <div
             className="h-full bg-gradient-to-r from-[#FFF0B8] via-[#D4AF37] to-[#AA771C] rounded-full transition-all duration-500 shadow-sm"
-            style={{ width: `${Math.min(100, Math.round((subtotal / 500000) * 100))}%` }}
+            style={{ width: `${Math.min(100, Math.round((subtotal / freeDeliveryThreshold) * 100))}%` }}
           />
         </div>
       </div>

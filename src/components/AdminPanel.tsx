@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import { Product, Order, Category, AdminStats } from '../types';
-import { Shield, Package, DollarSign, Users, Plus, Edit, Trash2, CheckCircle, RefreshCw, X, FolderPlus, Layers, LogOut, Clock, TrendingUp, Award, ShoppingBag, Tag, MapPin, Sparkles } from 'lucide-react';
+import { Shield, Package, DollarSign, Users, Plus, Edit, Trash2, CheckCircle, RefreshCw, X, FolderPlus, Layers, LogOut, Clock, TrendingUp, Award, ShoppingBag, Tag, MapPin, Sparkles, Truck } from 'lucide-react';
 import { getApiUrl } from '../config';
 import { getCleanImageUrl, getProductImages, FALLBACK_PRODUCT_IMAGE } from '../utils/imageUtils';
 
@@ -39,7 +39,7 @@ const compressImageFile = (file: File, maxWidth = 800, quality = 0.75): Promise<
 };
 
 export const AdminPanel: React.FC = () => {
-  const { user, products, categories, banners, refreshProducts, refreshCategories, refreshBanners, setActiveTab, t } = useApp();
+  const { user, products, categories, banners, refreshProducts, refreshCategories, refreshBanners, setActiveTab, deliveryFee, freeDeliveryThreshold, updateSettings, t } = useApp();
 
   const getHeaders = () => ({
     'Content-Type': 'application/json',
@@ -72,6 +72,29 @@ export const AdminPanel: React.FC = () => {
   const [promos, setPromos] = useState<any[]>([]);
   const [usersList, setUsersList] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+
+  // Delivery settings form state
+  const [adminDeliveryFeeInput, setAdminDeliveryFeeInput] = useState<number>(deliveryFee);
+  const [adminFreeThresholdInput, setAdminFreeThresholdInput] = useState<number>(freeDeliveryThreshold);
+  const [isSavingSettings, setIsSavingSettings] = useState(false);
+  const [settingsSuccessMsg, setSettingsSuccessMsg] = useState('');
+
+  useEffect(() => {
+    setAdminDeliveryFeeInput(deliveryFee);
+    setAdminFreeThresholdInput(freeDeliveryThreshold);
+  }, [deliveryFee, freeDeliveryThreshold]);
+
+  const handleSaveSettings = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSavingSettings(true);
+    setSettingsSuccessMsg('');
+    const success = await updateSettings(Number(adminDeliveryFeeInput), Number(adminFreeThresholdInput));
+    setIsSavingSettings(false);
+    if (success) {
+      setSettingsSuccessMsg('✅ Dastavka summasi muvaffaqiyatli saqlandi va dasturda yangilandi!');
+      setTimeout(() => setSettingsSuccessMsg(''), 4000);
+    }
+  };
 
   // New / Edit Promo Code state
   const [isPromoModalOpen, setIsPromoModalOpen] = useState(false);
@@ -724,6 +747,65 @@ export const AdminPanel: React.FC = () => {
             </div>
           </div>
 
+          {/* Delivery Fee Settings Card (Admin Manual Input) */}
+          <div className="p-4 bg-[#150B21] rounded-2xl border border-[#D4AF37]/40 space-y-3 shadow-gold-glow">
+            <div className="flex items-center justify-between border-b border-white/10 pb-2">
+              <h3 className="text-xs font-bold text-[#D4AF37] uppercase flex items-center gap-1.5">
+                <Truck className="w-4 h-4 text-[#D4AF37]" />
+                <span>🚚 Dastavka Summasi va Shartlarini Boshqarish</span>
+              </h3>
+              <span className="text-[9px] bg-[#D4AF37]/15 text-[#D4AF37] px-2 py-0.5 rounded-full border border-[#D4AF37]/30 font-bold">
+                Joriy: {deliveryFee.toLocaleString('uz-UZ')} so'm
+              </span>
+            </div>
+
+            <form onSubmit={handleSaveSettings} className="space-y-3">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-[10px] font-bold text-gray-300 block mb-1">
+                    Standard Dastavka Summasi (so'm)
+                  </label>
+                  <input
+                    type="number"
+                    value={adminDeliveryFeeInput}
+                    onChange={(e) => setAdminDeliveryFeeInput(Number(e.target.value))}
+                    required
+                    step="1000"
+                    placeholder="25000"
+                    className="w-full bg-[#1A0E2B] border border-[#D4AF37]/30 rounded-xl p-2.5 text-xs text-gray-100 font-bold focus:border-[#D4AF37] outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="text-[10px] font-bold text-gray-300 block mb-1">
+                    Bepul Dastavka Chegarasi (so'm)
+                  </label>
+                  <input
+                    type="number"
+                    value={adminFreeThresholdInput}
+                    onChange={(e) => setAdminFreeThresholdInput(Number(e.target.value))}
+                    required
+                    step="10000"
+                    placeholder="500000"
+                    className="w-full bg-[#1A0E2B] border border-[#D4AF37]/30 rounded-xl p-2.5 text-xs text-gray-100 font-bold focus:border-[#D4AF37] outline-none"
+                  />
+                </div>
+              </div>
+
+              {settingsSuccessMsg && (
+                <p className="text-xs font-bold text-emerald-400 animate-pulse">{settingsSuccessMsg}</p>
+              )}
+
+              <button
+                type="submit"
+                disabled={isSavingSettings}
+                className="w-full py-2.5 gold-btn rounded-xl text-xs font-bold shadow-gold-glow flex items-center justify-center gap-1.5 disabled:opacity-50"
+              >
+                <CheckCircle className="w-4 h-4" />
+                <span>{isSavingSettings ? 'Saqlanmoqda...' : 'Dastavka narxini saqlash'}</span>
+              </button>
+            </form>
+          </div>
+
           {/* Top Selling Perfumes Section */}
           <div className="p-4 bg-[#150B21] rounded-2xl border border-[#D4AF37]/30 space-y-3 shadow-gold-glow">
             <div className="flex items-center justify-between border-b border-white/10 pb-2">
@@ -1056,6 +1138,31 @@ export const AdminPanel: React.FC = () => {
                     <span>{item.totalPrice.toLocaleString('uz-UZ')} so'm</span>
                   </div>
                 ))}
+              </div>
+
+              {/* Customer Address & GPS Location Link */}
+              <div className="pt-2 border-t border-white/10 space-y-1.5 text-xs text-gray-300">
+                {o.address && (
+                  <p className="text-[11px] text-gray-300">
+                    📍 <strong>Manzil:</strong> {[o.address.region, o.address.district, o.address.mahalla, o.address.street, o.address.house].filter(Boolean).join(', ') || 'Manzil ko\'rsatilgan'}
+                  </p>
+                )}
+                {o.location_lat && o.location_lng ? (
+                  <div className="flex items-center justify-between bg-[#1E0F30] p-2.5 rounded-xl border border-[#D4AF37]/30">
+                    <span className="text-[10px] text-gray-300">
+                      🗺️ GPS: <strong className="text-[#D4AF37] font-mono">{Number(o.location_lat).toFixed(4)}, {Number(o.location_lng).toFixed(4)}</strong>
+                    </span>
+                    <a
+                      href={`https://www.google.com/maps?q=${o.location_lat},${o.location_lng}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-2.5 py-1 bg-[#D4AF37] hover:bg-[#B8952B] text-black font-bold text-[10px] rounded-lg transition shadow flex items-center gap-1 shrink-0"
+                    >
+                      <MapPin className="w-3 h-3" />
+                      <span>Xaritada ochish 🗺️</span>
+                    </a>
+                  </div>
+                ) : null}
               </div>
 
               {/* Action Buttons to Change Status */}

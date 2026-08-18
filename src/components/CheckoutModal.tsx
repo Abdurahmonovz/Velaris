@@ -36,7 +36,7 @@ const LocationMarker: React.FC<{
 };
 
 export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, onSuccess }) => {
-  const { user, cart, clearCart, updateUserProfile, t } = useApp();
+  const { user, cart, clearCart, updateUserProfile, deliveryFee: baseDeliveryFee, freeDeliveryThreshold, t } = useApp();
 
   const [customerName, setCustomerName] = useState(user?.name || '');
   const [customerPhone, setCustomerPhone] = useState(user?.phone ? formatPhoneNumber(user.phone) : '+998 ');
@@ -62,12 +62,29 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
   const [promoError, setPromoError] = useState('');
   const [isValidatingPromo, setIsValidatingPromo] = useState(false);
 
+  // Auto-detect current GPS Geolocation when modal opens
+  useEffect(() => {
+    if (isOpen && typeof navigator !== 'undefined' && navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          if (pos.coords.latitude && pos.coords.longitude) {
+            setMapPos([pos.coords.latitude, pos.coords.longitude]);
+          }
+        },
+        (err) => {
+          console.warn('GPS permission denied or timeout:', err);
+        },
+        { enableHighAccuracy: true, timeout: 6000 }
+      );
+    }
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   const subtotal = cart.reduce((sum, item) => sum + item.totalPrice, 0);
-  const isFreeDeliveryQualified = subtotal >= 500000;
+  const isFreeDeliveryQualified = subtotal >= freeDeliveryThreshold;
   const isFreeDelivery = isFreeDeliveryQualified || appliedPromo !== null;
-  const deliveryFee = deliveryType === 'courier' ? (isFreeDelivery ? 0 : 25000) : 0;
+  const deliveryFee = deliveryType === 'courier' ? (isFreeDelivery ? 0 : baseDeliveryFee) : 0;
   const discountAmount = appliedPromo ? appliedPromo.discount_amount : 0;
   const totalAmount = Math.max(0, subtotal - discountAmount) + deliveryFee;
 

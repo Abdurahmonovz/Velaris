@@ -173,6 +173,43 @@ app.get('/api/products', (req, res) => {
   }
 });
 
+// App Settings (Public GET)
+app.get('/api/settings', (req, res) => {
+  try {
+    const rows = db.prepare('SELECT * FROM settings').all();
+    const settingsObj = {};
+    for (const r of rows) {
+      settingsObj[r.key] = r.value;
+    }
+    res.json({
+      delivery_fee: Number(settingsObj.delivery_fee || 25000),
+      free_delivery_threshold: Number(settingsObj.free_delivery_threshold || 500000)
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// App Settings (Admin PUT)
+app.put('/api/admin/settings', requireAdmin, (req, res) => {
+  try {
+    const { delivery_fee, free_delivery_threshold } = req.body;
+    if (delivery_fee !== undefined) {
+      db.prepare('INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value').run('delivery_fee', String(delivery_fee));
+    }
+    if (free_delivery_threshold !== undefined) {
+      db.prepare('INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value').run('free_delivery_threshold', String(free_delivery_threshold));
+    }
+    res.json({
+      success: true,
+      delivery_fee: Number(delivery_fee),
+      free_delivery_threshold: Number(free_delivery_threshold)
+    });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
 // Get Single Product
 app.get('/api/products/:id', (req, res) => {
   try {

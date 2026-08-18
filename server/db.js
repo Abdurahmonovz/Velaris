@@ -169,6 +169,27 @@ export function initDb() {
     insertPromo.run('LUXURY15', 15, 300000);
   }
 
+  // App Settings Table
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS settings (
+      key TEXT PRIMARY KEY,
+      value TEXT NOT NULL
+    );
+  `);
+
+  try {
+    const checkFee = db.prepare('SELECT value FROM settings WHERE key = ?').get('delivery_fee');
+    if (!checkFee) {
+      db.prepare('INSERT INTO settings (key, value) VALUES (?, ?)').run('delivery_fee', '25000');
+    }
+    const checkThreshold = db.prepare('SELECT value FROM settings WHERE key = ?').get('free_delivery_threshold');
+    if (!checkThreshold) {
+      db.prepare('INSERT INTO settings (key, value) VALUES (?, ?)').run('free_delivery_threshold', '500000');
+    }
+  } catch (e) {
+    console.error('Settings table seed error:', e);
+  }
+
   // Seed Categories if empty
   const catCount = db.prepare('SELECT COUNT(*) as count FROM categories').get().count;
   if (catCount === 0) {

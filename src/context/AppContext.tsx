@@ -42,6 +42,10 @@ interface AppContextType {
   refreshOrders: () => Promise<void>;
   refreshBanners: () => Promise<void>;
   refreshCategories: () => Promise<void>;
+  deliveryFee: number;
+  freeDeliveryThreshold: number;
+  refreshSettings: () => Promise<void>;
+  updateSettings: (fee: number, threshold?: number) => Promise<boolean>;
   isLoading: boolean;
 }
 
@@ -103,6 +107,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [categories, setCategories] = useState<Category[]>(INITIAL_CATEGORIES);
   const [banners, setBanners] = useState<Banner[]>(INITIAL_BANNERS);
   const [orders, setOrders] = useState<Order[]>([]);
+  const [deliveryFee, setDeliveryFee] = useState<number>(25000);
+  const [freeDeliveryThreshold, setFreeDeliveryThreshold] = useState<number>(500000);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   // Translation helper
@@ -123,6 +129,44 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   useEffect(() => {
     localStorage.setItem('velaris_favs', JSON.stringify(favorites));
   }, [favorites]);
+
+  // Fetch App Settings (delivery fee & free delivery threshold)
+  const refreshSettings = async () => {
+    try {
+      const res = await fetch(getApiUrl('/api/settings'));
+      if (res.ok) {
+        const data = await res.json();
+        if (data.delivery_fee !== undefined) setDeliveryFee(Number(data.delivery_fee));
+        if (data.free_delivery_threshold !== undefined) setFreeDeliveryThreshold(Number(data.free_delivery_threshold));
+      }
+    } catch (err) {
+      console.error('Failed to fetch settings:', err);
+    }
+  };
+
+  const updateSettings = async (fee: number, threshold = 500000): Promise<boolean> => {
+    try {
+      const res = await fetch(getApiUrl('/api/admin/settings'), {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-telegram-id': user?.telegram_id || '',
+        },
+        body: JSON.stringify({
+          delivery_fee: fee,
+          free_delivery_threshold: threshold,
+        }),
+      });
+      if (res.ok) {
+        setDeliveryFee(fee);
+        setFreeDeliveryThreshold(threshold);
+        return true;
+      }
+    } catch (err) {
+      console.error('Failed to update settings:', err);
+    }
+    return false;
+  };
 
   // Fetch initial data
   const refreshProducts = async () => {
@@ -198,7 +242,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   useEffect(() => {
     const initApp = async () => {
       setIsLoading(true);
-      await Promise.all([refreshProducts(), fetchCategories(), fetchBanners()]);
+      await Promise.all([refreshProducts(), fetchCategories(), fetchBanners(), refreshSettings()]);
 
       // Telegram WebApp detection & initialization
       let tgId = '';
@@ -418,6 +462,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         refreshOrders,
         refreshBanners: fetchBanners,
         refreshCategories: fetchCategories,
+        deliveryFee,
+        freeDeliveryThreshold,
+        refreshSettings,
+        updateSettings,
         isLoading,
       }}
     >

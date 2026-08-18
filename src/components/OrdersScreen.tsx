@@ -187,12 +187,30 @@ export const OrdersScreen: React.FC<OrdersScreenProps> = ({ onOpenPayment }) => 
                   </div>
                 </div>
 
-                {/* Address info */}
-                <div className="text-[10px] text-gray-400 flex items-center gap-1 pt-1">
-                  <MapPin className="w-3 h-3 text-[#D4AF37]" />
-                  <span className="truncate">
-                    {order.address.region}, {order.address.district}, {order.address.street}
-                  </span>
+                {/* Address & GPS Location info */}
+                <div className="pt-2 border-t border-white/5 space-y-1 text-[10px] text-gray-400">
+                  <div className="flex items-center gap-1">
+                    <MapPin className="w-3 h-3 text-[#D4AF37] shrink-0" />
+                    <span className="truncate">
+                      {[order.address?.region, order.address?.district, order.address?.street].filter(Boolean).join(', ') || 'Yetkazib berish manzili'}
+                    </span>
+                  </div>
+                  {order.location_lat && order.location_lng ? (
+                    <div className="flex items-center justify-between pt-0.5">
+                      <span className="text-[#D4AF37] font-mono">
+                        📍 GPS: {Number(order.location_lat).toFixed(4)}, {Number(order.location_lng).toFixed(4)}
+                      </span>
+                      <a
+                        href={`https://www.google.com/maps?q=${order.location_lat},${order.location_lng}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[#D4AF37] font-bold underline hover:text-white"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        📍 Xaritada ko'rish 🗺️
+                      </a>
+                    </div>
+                  ) : null}
                 </div>
               </div>
             );
